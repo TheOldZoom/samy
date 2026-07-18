@@ -3,12 +3,13 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/index.ts",
+    "dev": "nodemon --watch src --exec bun src/index.ts",
     "prisma": "prisma"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "dotenv": "^17.4.2",
+    "nodemon": "^3.1.14",
     "prisma": "^7.8.0"
   },
   "peerDependencies": {

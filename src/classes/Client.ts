@@ -25,7 +25,7 @@ export default class Client extends Discord.Client {
   }
 
   async connect() {
-    CheckEnvs(["NODE_ENV", "DATABASE_URL", "DISCORD_TOKEN"]);
+    CheckEnvs(["NODE_ENV", "DATABASE_URL"]);
 
     await LoadEvents(this);
 
