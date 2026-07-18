@@ -3,6 +3,7 @@
 An open source alternative to Bleed-like Discord bots. A modern open source Discord bot built for automation, moderation, and powerful customization.
 
 > Hyze is currently in active development. Features may change, break, or be incomplete.
+> **Support:** [https://discord.gg/mCaNMPkW8U](https://discord.gg/mCaNMPkW8U)
 
 Built with:
 
@@ -11,8 +12,6 @@ Built with:
 - Discord.js
 - Prisma
 - PostgreSQL
-
-> **Support:** [https://discord.gg/mCaNMPkW8U](https://discord.gg/mCaNMPkW8U)
 
 ## License
 
