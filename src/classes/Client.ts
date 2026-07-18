@@ -11,6 +11,7 @@ import {
 export default class Client extends Discord.Client {
   public slashCommands = new Discord.Collection<string, SlashCommand>();
   public messageCommands = new Discord.Collection<string, MessageCommand>();
+  public prefix = ",";
 
   constructor(public readonly logger = new Logger()) {
     super({

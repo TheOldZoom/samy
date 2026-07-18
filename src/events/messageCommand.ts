@@ -7,7 +7,7 @@ export default new Event({
     if (message.author.bot) return;
     if (!message.guild) return;
 
-    const prefix = ",";
+    const prefix = client.prefix;
 
     if (!message.content.startsWith(prefix)) return;
 
