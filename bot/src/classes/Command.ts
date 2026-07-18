@@ -1,15 +1,15 @@
-import { readdir } from "node:fs/promises";
-import { join } from "node:path";
 import type {
   ChatInputCommandInteraction,
+  Collection,
   ContextMenuCommandBuilder,
   ContextMenuCommandInteraction,
   Message,
   PermissionResolvable,
   SlashCommandBuilder,
 } from "discord.js";
-import type { Collection } from "discord.js";
 import type Client from "./Client";
+import { readdir } from "fs/promises";
+import { join } from "path";
 
 export interface BaseCommandOptions {
   category?: string;
@@ -53,6 +53,10 @@ export class SlashCommand {
   get name() {
     return this.options.data.name;
   }
+
+  execute(client: Client, interaction: ChatInputCommandInteraction) {
+    return this.options.execute(client, interaction);
+  }
 }
 
 export class MessageCommand {
@@ -61,6 +65,10 @@ export class MessageCommand {
   get name() {
     return this.options.name;
   }
+
+  execute(client: Client, message: Message, args: string[]) {
+    return this.options.execute(client, message, args);
+  }
 }
 
 export class ContextCommand {
@@ -68,6 +76,10 @@ export class ContextCommand {
 
   get name() {
     return this.options.data.name;
+  }
+
+  execute(client: Client, interaction: ContextMenuCommandInteraction) {
+    return this.options.execute(client, interaction);
   }
 }
 
