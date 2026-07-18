@@ -1,9 +1,10 @@
 import * as Discord from "discord.js";
 import { CheckEnvs } from "../utils/env";
 import { LoadEvents } from "./Event";
+import Logger from "./Logger";
 
 export default class Client extends Discord.Client {
-  constructor() {
+  constructor(public readonly logger = new Logger()) {
     super({
       intents: [
         Discord.GatewayIntentBits.Guilds,
