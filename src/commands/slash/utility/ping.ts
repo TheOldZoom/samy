@@ -1,11 +1,24 @@
-import { SlashCommandBuilder } from "discord.js";
+import {
+  ApplicationIntegrationType,
+  InteractionContextType,
+  SlashCommandBuilder,
+} from "discord.js";
 import { SlashCommand } from "../../../classes/Command";
 import { PingCommand } from "../../shared/ping";
 
 export default new SlashCommand({
   data: new SlashCommandBuilder()
     .setName(PingCommand.name)
-    .setDescription(PingCommand.description),
+    .setDescription(PingCommand.description)
+    .setContexts(
+      InteractionContextType.BotDM,
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel,
+    )
+    .setIntegrationTypes(
+      ApplicationIntegrationType.GuildInstall,
+      ApplicationIntegrationType.UserInstall,
+    ),
 
   category: PingCommand.category,
 
