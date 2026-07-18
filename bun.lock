@@ -13,6 +13,7 @@
       },
       "devDependencies": {
         "@types/bun": "latest",
+        "dotenv": "^17.4.2",
         "prisma": "^7.8.0",
       },
       "peerDependencies": {
