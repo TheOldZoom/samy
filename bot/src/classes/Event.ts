@@ -1,24 +1,40 @@
-import { readdir } from "fs/promises";
-import type Client from "./Client";
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 import type { ClientEvents } from "discord.js";
-import { join } from "path";
+import type Client from "./Client";
+
+export interface EventOptions<K extends keyof ClientEvents> {
+  name: K;
+  once?: boolean;
+
+  execute: (client: Client, ...args: ClientEvents[K]) => Promise<void> | void;
+}
 
 export default class Event<K extends keyof ClientEvents> {
-  constructor(
-    public name: K,
-    public execute: (
-      client: Client,
-      ...args: ClientEvents[K]
-    ) => Promise<void> | void,
-    public once = false,
-  ) {}
+  public readonly name: K;
+  public readonly once: boolean;
+  public readonly execute: (
+    client: Client,
+    ...args: ClientEvents[K]
+  ) => Promise<void> | void;
+
+  constructor(options: EventOptions<K>) {
+    this.name = options.name;
+    this.once = options.once ?? false;
+    this.execute = options.execute;
+  }
 }
 
 export async function LoadEvents(client: Client) {
   const files = await readdir(join(import.meta.dir, "../events"));
 
   for (const file of files) {
-    const event = (await import(`../events/${file}`)).default;
+    if (!file.endsWith(".ts") && !file.endsWith(".js")) continue;
+
+    const event = (await import(`../events/${file}`)).default as Event<
+      keyof ClientEvents
+    >;
+
     client.logger.info(`Loaded event: ${event.name}`);
 
     if (event.once) {
