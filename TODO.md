@@ -187,6 +187,7 @@ A list of planned features and improvements for Hyze.
 - [ ] Custom bot instances
 - [ ] Custom command support
 - [ ] More integrations
+- [ ] Add sharding
 
 More ideas to come.
 
