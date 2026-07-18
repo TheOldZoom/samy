@@ -1,15 +1,19 @@
-# bot
+# Hyze
 
-To install dependencies:
+An open source alternative to Bleed-like Discord bots.
 
-```bash
-bun install
-```
+> Hyze is currently in active development. Features may change, break, or be incomplete.
 
-To run:
+Built with:
 
-```bash
-bun run src/index.ts
-```
+- TypeScript
+- Bun
+- Discord.js
+- Prisma
+- PostgreSQL
 
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+## License
+
+Hyze is licensed under the [GNU Affero General Public License v3.0](LICENSE).
+
+Any modified versions of Hyze must also be released under the AGPL-3.0 license. If you run a modified version of Hyze as a service, you must make the source code available to users of that service.
