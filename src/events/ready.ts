@@ -105,7 +105,7 @@ export async function DeployCommands(client: Client) {
           command: name,
           differences,
         },
-        "Command changes detected",
+        "Slash command changes detected",
       );
     }
   }
@@ -117,7 +117,7 @@ export async function DeployCommands(client: Client) {
   }
 
   if (added.length === 0 && updated.length === 0 && removed.length === 0) {
-    client.logger.debug("No command changes detected");
+    client.logger.debug("No slash command changes detected");
 
     return;
   }
@@ -128,7 +128,7 @@ export async function DeployCommands(client: Client) {
       updated: updated.map((c) => c.name),
       removed: removed.map((c) => c.name),
     },
-    "Command deployment changes",
+    "Slash command deployment changes",
   );
 
   await rest.put(route, {
