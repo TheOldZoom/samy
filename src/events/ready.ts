@@ -8,7 +8,6 @@ export default new Event({
 
   async execute(client) {
     await DeployCommands(client);
-
     client.logger.info(`Logged in as ${client.user?.tag}`);
   },
 });
