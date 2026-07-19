@@ -1,6 +1,6 @@
-# Hyze TODO
+# Samy TODO
 
-A list of planned features and improvements for Hyze.
+A list of planned features and improvements for Samy.
 
 > If you have an idea, feature request, or improvement, please create an issue.
 
@@ -22,7 +22,7 @@ A list of planned features and improvements for Hyze.
 
 ## Commands
 
-### Moderation Commands
+### Moderation Commandsw23
 
 - [ ] Ban
 - [ ] Softban
