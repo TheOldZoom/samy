@@ -1,4 +1,6 @@
+import { MessageFlags, type InteractionReplyOptions } from "discord.js";
 import Event from "../classes/Event";
+import { Container, Text } from "../ui/components";
 
 export default new Event({
   name: "interactionCreate",
@@ -18,16 +20,20 @@ export default new Event({
         command: interaction.commandName,
       });
 
+      const reply: InteractionReplyOptions = {
+        flags: MessageFlags.IsComponentsV2,
+        ephemeral: true,
+        components: [
+          new Container().addTextDisplayComponents(
+            Text("Something went wrong while executing this command."),
+          ),
+        ],
+      };
+
       if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: "There was an error executing this command.",
-          ephemeral: true,
-        });
+        await interaction.followUp(reply);
       } else {
-        await interaction.reply({
-          content: "There was an error executing this command.",
-          ephemeral: true,
-        });
+        await interaction.reply(reply);
       }
     }
   },

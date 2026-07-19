@@ -12,7 +12,7 @@ A list of planned features and improvements for Samy.
 - [x] Message command handler
 - [x] Command deployment system
 - [x] Structured logging system
-- [ ] Improve error handling
+- [x] Improve error handling
 - [ ] Add configuration system
 - [x] Add environment validation
 - [ ] Add graceful shutdown handling

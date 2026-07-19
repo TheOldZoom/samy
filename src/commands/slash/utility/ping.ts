@@ -29,7 +29,9 @@ export default new SlashCommand({
   async execute(client, interaction) {
     const sent = await interaction.reply({
       flags: MessageFlags.IsComponentsV2,
-      components: [new Container().text(Text("Pinging..."))],
+      components: [
+        new Container().text(Text(`**Latency:** \`${client.ws.ping}ms\``)),
+      ],
       withResponse: true,
     });
 
@@ -39,8 +41,8 @@ export default new SlashCommand({
       sent.resource.message.createdTimestamp - interaction.createdTimestamp;
 
     const page = new Container().text(
-      Text(`**API Latency:** \`${client.ws.ping}ms\``),
-      Text(`**edit:** \`${latency}ms\``),
+      Text(`**Latency:** \`${client.ws.ping}ms\``),
+      Text(`**Edit:** \`${latency}ms\``),
     );
 
     await interaction.editReply({

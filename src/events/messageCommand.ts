@@ -1,4 +1,6 @@
+import { MessageFlags, type MessageReplyOptions } from "discord.js";
 import Event from "../classes/Event";
+import { Container, Text } from "../ui/components";
 
 export default new Event({
   name: "messageCreate",
@@ -29,7 +31,14 @@ export default new Event({
         command: commandName,
       });
 
-      await message.reply("There was an error executing this command.");
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().addTextDisplayComponents(
+            Text("Something went wrong while executing this command."),
+          ),
+        ],
+      });
     }
   },
 });

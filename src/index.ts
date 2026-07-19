@@ -13,3 +13,21 @@ manager.on("shardCreate", (shard) => {
 });
 
 manager.spawn();
+
+process.on("unhandledRejection", (reason) => {
+  new Logger().error("Unhandled Rejection", reason as any);
+});
+
+process.on("uncaughtException", (error) => {
+  new Logger().error("Uncaught Exception", error);
+});
+
+process.on("SIGINT", () => {
+  new Logger().info("Stopping ShardingManager...");
+  process.exit(0);
+});
+
+process.on("SIGTERM", () => {
+  new Logger().info("Stopping ShardingManager...");
+  process.exit(0);
+});

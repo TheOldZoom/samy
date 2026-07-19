@@ -13,14 +13,16 @@ export default new MessageCommand({
   async execute(client, message) {
     const sent = await message.reply({
       flags: MessageFlags.IsComponentsV2,
-      components: [new Container().text(Text("Pinging.."))],
+      components: [
+        new Container().text(Text(`**Latency:** \`${client.ws.ping}ms\``)),
+      ],
     });
 
     const latency = sent.createdTimestamp - message.createdTimestamp;
 
     const page = new Container().text(
-      Text(`**API Latency:** \`${client.ws.ping}ms\``),
-      Text(`**Message Latency:** \`${latency}ms\``),
+      Text(`**Latency:** \`${client.ws.ping}ms\``),
+      Text(`**Edit:** \`${latency}ms\``),
     );
 
     await sent.edit({
