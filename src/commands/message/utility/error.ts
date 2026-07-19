@@ -1,4 +1,4 @@
-import { MessageCommand } from "../../../classes/Command";
+import { MessageCommand } from "@/classes/Command";
 
 export default new MessageCommand({
   name: "error",

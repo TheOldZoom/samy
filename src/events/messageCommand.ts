@@ -1,6 +1,6 @@
-import { MessageFlags, type MessageReplyOptions } from "discord.js";
+import { MessageFlags } from "discord.js";
 import Event from "../classes/Event";
-import { Container, Text } from "../ui/components";
+import { Container, Text } from "@/ui/components";
 
 export default new Event({
   name: "messageCreate",

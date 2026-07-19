@@ -1,6 +1,6 @@
 import Event from "../classes/Event";
 import { REST, Routes } from "discord.js";
-import type Client from "../classes/Client";
+import type Client from "@/classes/Client";
 
 export default new Event({
   name: "clientReady",

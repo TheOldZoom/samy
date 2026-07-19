@@ -1,9 +1,9 @@
 import { MessageFlags } from "discord.js";
 
-import { MessageCommand } from "../../../classes/Command";
-import { PingCommand } from "../../shared/ping";
+import { MessageCommand } from "@/classes/Command";
+import { PingCommand } from "@/commands/shared/ping";
 
-import { Container, Text } from "../../../ui/components";
+import { Container, Text } from "@/ui/components";
 
 export default new MessageCommand({
   name: PingCommand.name,

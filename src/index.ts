@@ -1,6 +1,6 @@
 import { ShardingManager } from "discord.js";
-import Logger from "./classes/Logger";
-import { CheckEnvs } from "./utils/env";
+import Logger from "@/classes/Logger";
+import { CheckEnvs } from "@/utils/env";
 
 CheckEnvs(["DISCORD_TOKEN"]);
 

@@ -1,5 +1,5 @@
 import * as Discord from "discord.js";
-import { CheckEnvs } from "../utils/env";
+import { CheckEnvs } from "@/utils/env";
 import { LoadEvents } from "./Event";
 import Logger from "./Logger";
 import {

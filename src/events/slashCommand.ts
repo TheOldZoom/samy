@@ -1,6 +1,6 @@
 import { MessageFlags, type InteractionReplyOptions } from "discord.js";
-import Event from "../classes/Event";
-import { Container, Text } from "../ui/components";
+import Event from "@/classes/Event";
+import { Container, Text } from "@/ui/components";
 
 export default new Event({
   name: "interactionCreate",

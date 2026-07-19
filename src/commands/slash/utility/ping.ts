@@ -5,10 +5,10 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-import { SlashCommand } from "../../../classes/Command";
-import { PingCommand } from "../../shared/ping";
+import { SlashCommand } from "@/classes/Command";
+import { PingCommand } from "@/commands/shared/ping";
 
-import { Container, Text } from "../../../ui/components";
+import { Container, Text } from "@/ui/components";
 
 export default new SlashCommand({
   data: new SlashCommandBuilder()
