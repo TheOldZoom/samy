@@ -22,7 +22,7 @@ A list of planned features and improvements for Samy.
 
 ## Commands
 
-### Moderation Commandsw23
+### Moderation Commands
 
 - [ ] Ban
 - [ ] Softban
