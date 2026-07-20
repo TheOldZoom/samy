@@ -7,11 +7,16 @@ import {
   type MessageCommand,
   type SlashCommand,
 } from "./Command";
+import { config } from "@/config/config";
+
+//@ts-ignore
+Discord.DefaultWebSocketManagerOptions.identifyProperties.browser =
+  config.presence.browser;
 
 export default class Client extends Discord.Client {
   public slashCommands = new Discord.Collection<string, SlashCommand>();
   public messageCommands = new Discord.Collection<string, MessageCommand>();
-  public prefix = ",";
+  public prefix = config.defaultPrefix;
 
   constructor(public readonly logger = new Logger()) {
     super({
@@ -21,6 +26,9 @@ export default class Client extends Discord.Client {
         Discord.GatewayIntentBits.GuildMessages,
         Discord.GatewayIntentBits.MessageContent,
       ],
+      presence: {
+        status: config.presence.status,
+      },
     });
   }
 
