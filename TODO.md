@@ -13,9 +13,9 @@ A list of planned features and improvements for Samy.
 - [x] Command deployment system
 - [x] Structured logging system
 - [x] Improve error handling
-- [ ] Add configuration system
+- [x] Add configuration system
 - [x] Add environment validation
-- [ ] Add graceful shutdown handling
+- [x] Add graceful shutdown handling
 - [ ] Add command cooldown system
 - [ ] Add permission checking system
 - [ ] Add command usage tracking
