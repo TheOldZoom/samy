@@ -48,6 +48,9 @@ export default new Event({
     ) {
       return;
     }
+
+    const start = performance.now();
+
     try {
       while (args.length > 0) {
         const name = args[0];
@@ -136,12 +139,34 @@ export default new Event({
         path,
       });
 
+      const commandPath = [command.name, ...path].join(":");
+
+      client.logger.info("Executing message command", {
+        command: commandPath,
+        user: message.author.id,
+        guild: message.guild.id,
+        channel: message.channel.id,
+      });
+
       await current.execute(client, message, args);
+
+      client.logger.info("Message command completed", {
+        command: commandPath,
+        user: message.author.id,
+        guild: message.guild.id,
+        channel: message.channel.id,
+        duration: `${(performance.now() - start).toFixed(2)}ms`,
+      });
     } catch (error) {
+      const commandPath = [command.name, ...path].join(":");
+
       client.logger.error("Error executing message command", {
         error,
-        command: commandName,
-        path,
+        command: commandPath,
+        user: message.author.id,
+        guild: message.guild.id,
+        channel: message.channel.id,
+        duration: `${(performance.now() - start).toFixed(2)}ms`,
       });
 
       await message.reply({

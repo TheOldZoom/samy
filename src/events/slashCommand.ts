@@ -23,6 +23,7 @@ export default new Event({
 
     if (!interaction.guild || !interaction.channel) return;
     if (interaction.channel.isDMBased()) return;
+
     const member = interaction.member as GuildMember | null;
     const botMember = interaction.guild.members.me;
 
@@ -94,12 +95,47 @@ export default new Event({
       interaction,
     });
 
+    const start = performance.now();
+
     try {
+      const group = interaction.options.getSubcommandGroup(false);
+      const subcommand = interaction.options.getSubcommand(false);
+
+      const path = [interaction.commandName, group, subcommand].filter(Boolean);
+
+      const commandPath = path.join(":");
+
+      client.logger.info("Executing slash command", {
+        command: commandPath,
+        user: interaction.user.id,
+        guild: interaction.guild.id,
+        channel: interaction.channel.id,
+      });
+
       await command.execute(client, interaction);
+
+      client.logger.info("Slash command completed", {
+        command: commandPath,
+        user: interaction.user.id,
+        guild: interaction.guild.id,
+        channel: interaction.channel.id,
+        duration: `${(performance.now() - start).toFixed(2)}ms`,
+      });
     } catch (error) {
+      const group = interaction.options.getSubcommandGroup(false);
+      const subcommand = interaction.options.getSubcommand(false);
+
+      const commandPath = [interaction.commandName, group, subcommand]
+        .filter(Boolean)
+        .join(":");
+
       client.logger.error("Error executing slash command", {
         error,
-        command: interaction.commandName,
+        command: commandPath,
+        user: interaction.user.id,
+        guild: interaction.guild.id,
+        channel: interaction.channel.id,
+        duration: `${(performance.now() - start).toFixed(2)}ms`,
       });
 
       const reply: InteractionReplyOptions = {
