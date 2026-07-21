@@ -3,11 +3,13 @@ import {
   TimestampStyles,
   time,
   type InteractionReplyOptions,
+  type GuildMember,
 } from "discord.js";
 
 import Event from "@/classes/Event";
 import { Container, Text } from "@/ui/components";
 import { checkCooldown, setCooldown } from "@/utils/cooldown";
+import { checkPermissions } from "@/utils/permission";
 
 export default new Event({
   name: "interactionCreate",
@@ -18,6 +20,43 @@ export default new Event({
     const command = client.slashCommands.get(interaction.commandName);
 
     if (!command) return;
+
+    if (!interaction.guild || !interaction.channel) return;
+    if (interaction.channel.isDMBased()) return;
+    const member = interaction.member as GuildMember | null;
+    const botMember = interaction.guild.members.me;
+
+    if (!member || !botMember) return;
+
+    if (
+      !checkPermissions(member, interaction.channel, command.userPermissions)
+    ) {
+      await interaction.reply({
+        flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+        components: [
+          new Container().text(
+            Text("You don't have permission to use this command."),
+          ),
+        ],
+      });
+
+      return;
+    }
+
+    if (
+      !checkPermissions(botMember, interaction.channel, command.botPermissions)
+    ) {
+      await interaction.reply({
+        flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+        components: [
+          new Container().text(
+            Text("I don't have permission to run this command."),
+          ),
+        ],
+      });
+
+      return;
+    }
 
     const cooldown = command.cooldown ?? client.config.defaults.cooldown;
 

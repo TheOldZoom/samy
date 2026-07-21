@@ -4,6 +4,7 @@ import Event from "@/classes/Event";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 
 import { checkCooldown, setCooldown } from "@/utils/cooldown";
+import { checkPermissions } from "@/utils/permission";
 
 import { Container, Text } from "@/ui/components";
 
@@ -13,6 +14,10 @@ export default new Event({
   async execute(client, message) {
     if (message.author.bot) return;
     if (!message.guild) return;
+
+    if (!message.channel.isTextBased() || !("guild" in message.channel)) {
+      return;
+    }
 
     const prefix = client.prefix;
 
@@ -31,6 +36,18 @@ export default new Event({
     let current: MessageCommand | MessageSubcommand = command;
     const path: string[] = [];
 
+    const botMember = message.guild.members.me;
+
+    if (!botMember) return;
+
+    if (
+      !checkPermissions(botMember, message.channel, [
+        "ReadMessageHistory",
+        "SendMessages",
+      ])
+    ) {
+      return;
+    }
     try {
       while (args.length > 0) {
         const name = args[0];
@@ -48,6 +65,38 @@ export default new Event({
       }
 
       if (!current.execute) {
+        return;
+      }
+
+      const member = message.member;
+
+      if (!member) return;
+
+      if (!checkPermissions(member, message.channel, current.userPermissions)) {
+        await message.reply({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text("You don't have permission to use this command."),
+            ),
+          ],
+        });
+
+        return;
+      }
+
+      if (
+        !checkPermissions(botMember, message.channel, current.botPermissions)
+      ) {
+        await message.reply({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text("I don't have permission to run this command."),
+            ),
+          ],
+        });
+
         return;
       }
 
@@ -71,7 +120,10 @@ export default new Event({
           components: [
             new Container().text(
               Text(
-                `You may use this command ${time(retryAt, TimestampStyles.RelativeTime)}`,
+                `You may use this command ${time(
+                  retryAt,
+                  TimestampStyles.RelativeTime,
+                )}`,
               ),
             ),
           ],

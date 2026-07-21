@@ -16,7 +16,7 @@ A list of planned features and improvements for Samy.
 - [x] Add configuration system
 - [x] Add environment validation
 - [x] Add graceful shutdown handling
-- [ ] Add command cooldown system
+- [x] Add command cooldown system
 - [ ] Add permission checking system
 - [ ] Add command usage tracking
 
