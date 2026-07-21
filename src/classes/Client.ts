@@ -14,8 +14,11 @@ Discord.DefaultWebSocketManagerOptions.identifyProperties.browser =
   config.presence.browser;
 
 export default class Client extends Discord.Client {
+  public config = config;
   public slashCommands = new Discord.Collection<string, SlashCommand>();
+  public cooldowns = new Discord.Collection<string, number>(); // key is `CommandType:userid:commandName:subcommands`
   public messageCommands = new Discord.Collection<string, MessageCommand>();
+
   public prefix = config.defaultPrefix;
 
   constructor(public readonly logger = new Logger()) {

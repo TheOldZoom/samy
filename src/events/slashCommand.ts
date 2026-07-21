@@ -1,6 +1,13 @@
-import { MessageFlags, type InteractionReplyOptions } from "discord.js";
+import {
+  MessageFlags,
+  TimestampStyles,
+  time,
+  type InteractionReplyOptions,
+} from "discord.js";
+
 import Event from "@/classes/Event";
 import { Container, Text } from "@/ui/components";
+import { checkCooldown, setCooldown } from "@/utils/cooldown";
 
 export default new Event({
   name: "interactionCreate",
@@ -12,6 +19,42 @@ export default new Event({
 
     if (!command) return;
 
+    const cooldown = command.cooldown ?? client.config.defaults.cooldown;
+
+    const remaining = checkCooldown(
+      client,
+      "slash",
+      interaction.user.id,
+      command,
+      {
+        interaction,
+      },
+    );
+
+    if (remaining) {
+      const retryAt = Math.floor(Date.now() / 1000) + remaining;
+
+      await interaction.reply({
+        flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+        components: [
+          new Container().text(
+            Text(
+              `You may use this command ${time(
+                retryAt,
+                TimestampStyles.RelativeTime,
+              )}`,
+            ),
+          ),
+        ],
+      });
+
+      return;
+    }
+
+    setCooldown(client, "slash", interaction.user.id, command, cooldown, {
+      interaction,
+    });
+
     try {
       await command.execute(client, interaction);
     } catch (error) {
@@ -21,8 +64,7 @@ export default new Event({
       });
 
       const reply: InteractionReplyOptions = {
-        flags: MessageFlags.IsComponentsV2,
-        ephemeral: true,
+        flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
         components: [
           new Container().addTextDisplayComponents(
             Text("Something went wrong while executing this command."),
