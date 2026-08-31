@@ -158,7 +158,7 @@ export async function setLogChannel(
         webhookToken,
       },
     });
-  } catch (error) {
+  } catch {
     await client.prisma.logChannel.upsert({
       where: {
         guildId_category: { guildId, category: toEnumCategory(category) },

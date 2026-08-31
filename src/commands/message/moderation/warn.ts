@@ -127,7 +127,9 @@ async function executeWarn({
           ),
         ],
       });
-    } catch {}
+    } catch {
+      // ignore
+    }
 
     await message.reply({
       flags: MessageFlags.IsComponentsV2,

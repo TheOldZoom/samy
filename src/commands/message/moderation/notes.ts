@@ -4,11 +4,9 @@ import { icons } from "@/utils/icons";
 
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
-import { renderNoteDetail, renderNotesList } from "@/ui/notes";
+import { renderNotesList } from "@/ui/notes";
 import type Client from "@/classes/client";
 import { ensureGuild } from "@/utils/guild";
-
-const PAGE_SIZE = 10;
 
 async function executeNotes({
   message,

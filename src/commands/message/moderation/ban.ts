@@ -116,7 +116,9 @@ async function executeBan({
           ),
         ],
       });
-    } catch {}
+    } catch {
+      // ignore
+    }
     await message.guild.members.ban(target, {
       reason: auditReason,
     });

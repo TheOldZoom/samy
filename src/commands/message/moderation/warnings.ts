@@ -7,8 +7,6 @@ import { Container, Text } from "@/ui/components";
 import { renderWarningsList } from "@/ui/warnings";
 import type Client from "@/classes/client";
 
-const PAGE_SIZE = 10;
-
 async function executeWarnings({
   message,
   client,

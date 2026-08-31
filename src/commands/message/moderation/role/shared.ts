@@ -1,4 +1,4 @@
-import { MessageFlags, type Role } from "discord.js";
+import { MessageFlags, type Message, type Role } from "discord.js";
 
 import { Container, Text } from "@/ui/components";
 import { icons } from "@/utils/icons";
@@ -7,7 +7,7 @@ import { canBotManageRole } from "@/utils/role";
 
 export const ROLE_ICON = icons.roles;
 
-export function guildOnlyReply(client: any, message: any) {
+export function guildOnlyReply(client: { i18n: { t: (key: string) => string } }, message: Message) {
   return message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [
@@ -19,8 +19,8 @@ export function guildOnlyReply(client: any, message: any) {
 }
 
 export async function replyKey(
-  client: any,
-  message: any,
+  client: { i18n: { t: (key: string, vars?: Record<string, unknown>) => string } },
+  message: Message,
   icon: string,
   key: string,
   vars?: Record<string, unknown>,
@@ -34,15 +34,15 @@ export async function replyKey(
   });
 }
 
-export async function replyText(client: any, message: any, text: string) {
+export async function replyText(client: { i18n: { t: (key: string) => string } }, message: Message, text: string) {
   await message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [new Container().text(Text(text))],
   });
 }
 
-export function ensureGuild(message: any): message is any & {
-  guild: NonNullable<typeof message.guild>;
+export function ensureGuild(message: Message): message is Message & {
+  guild: NonNullable<Message["guild"]>;
   guildId: string;
 } {
   return Boolean(message.guild);
@@ -53,8 +53,8 @@ export function isManagedOrEveryone(role: Role): boolean {
 }
 
 export async function resolveRoleList(
-  client: any,
-  message: any,
+  client: { i18n: { t: (key: string) => string } },
+  message: Message,
   raw: string,
 ): Promise<{ roles: Role[]; errors: string[] }> {
   const roleArg = ArgumentRegistry.get("role");
@@ -81,8 +81,8 @@ export async function resolveRoleList(
 }
 
 export async function checkManageable(
-  client: any,
-  message: any,
+  client: { i18n: { t: (key: string) => string } },
+  message: Message,
   role: Role,
 ): Promise<
   { ok: true } | { ok: false; key: string; vars?: Record<string, unknown> }

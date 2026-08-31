@@ -5,7 +5,6 @@ import { icons } from "@/utils/icons";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 
 import { Container, Text } from "@/ui/components";
-import type Client from "@/classes/client";
 import { getGuildPrefix, getUserPrefix } from "@/utils/settings";
 
 export default new MessageCommand({

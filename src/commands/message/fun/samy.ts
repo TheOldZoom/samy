@@ -1,7 +1,7 @@
 import { MessageFlags } from "discord.js";
 
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
-import { GetSamyImages, SamyResult } from "@/commands/shared/samy";
+import { SamyResult } from "@/commands/shared/samy";
 import { Container, Text } from "@/ui/components";
 import errorUI from "@/ui/error";
 

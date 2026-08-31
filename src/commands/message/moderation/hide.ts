@@ -79,21 +79,11 @@ export default new MessageCommand({
       hideState = false;
     }
 
-    let targetId: string | null = null;
-    let targetName: string = message.guild.roles.everyone.toString();
-
     const targetRole = args.getRole("target");
     const targetMember = args.getMember("target");
 
-    if (targetRole) {
-      targetId = targetRole.id;
-      targetName = targetRole.toString();
-    } else if (targetMember) {
-      targetId = targetMember.id;
-      targetName = targetMember.toString();
-    } else {
-      targetId = message.guild.roles.everyone.id;
-    }
+    const targetId = targetRole?.id ?? targetMember?.id ?? message.guild.roles.everyone.id;
+    const targetName = targetRole?.toString() ?? targetMember?.toString() ?? message.guild.roles.everyone.toString();
 
     try {
       const overwrite = channel.permissionOverwrites.cache.get(targetId);

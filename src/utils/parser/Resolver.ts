@@ -10,7 +10,6 @@ import {
 
 import type {
   ArgumentResolveResult,
-  ArgumentResolverContext,
   ArgumentTypeDefinition,
   ArgumentTypeName,
 } from "../../types/ArgumentType";

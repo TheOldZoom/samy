@@ -59,7 +59,9 @@ export const addSubcommand = new MessageSubcommand({
       try {
         await member.roles.add(role, `Role add by ${message.author.tag}`);
         added++;
-      } catch {}
+      } catch {
+        // ignore
+      }
     }
 
     await replyKey(
@@ -184,7 +186,9 @@ export const removeSubcommand = new MessageSubcommand({
       try {
         await member.roles.remove(role, `Role remove by ${message.author.tag}`);
         removed++;
-      } catch {}
+      } catch {
+        // ignore
+      }
     }
 
     await replyKey(

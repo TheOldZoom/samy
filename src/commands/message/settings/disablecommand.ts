@@ -1,9 +1,8 @@
-import { Message, MessageFlags } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { icons } from "@/utils/icons";
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
-import type Client from "@/classes/client";
 import { setCommandEnabledForGuild } from "@/utils/settings";
 
 export default new MessageCommand({

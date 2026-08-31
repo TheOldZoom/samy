@@ -3,7 +3,6 @@ import { MessageFlags, type GuildTextBasedChannel } from "discord.js";
 import { icons } from "@/utils/icons";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
-import type Client from "@/classes/client";
 import { getFakePermissions } from "@/utils/settings";
 
 function formatPermissionList(perms: string[]): string {

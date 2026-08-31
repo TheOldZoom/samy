@@ -221,7 +221,7 @@ export default new MessageCommand({
 });
 
 async function replyError(
-  client: any,
+  client: { i18n: { t: (key: string, variables?: Record<string, unknown>) => string } },
   message: Message,
   key: string,
   variables?: Record<string, unknown>,

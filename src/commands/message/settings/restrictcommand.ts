@@ -13,7 +13,7 @@ import {
   removeCommandRestriction,
 } from "@/utils/settings";
 
-function resolveCommandPath(client: any, input: string): string | null {
+function resolveCommandPath(client: { messageCommands: { get: (name: string) => unknown; find: (fn: (cmd: { aliases: string[] }) => boolean) => unknown } }, input: string): string | null {
   const parts = input
     .trim()
     .toLowerCase()
@@ -25,9 +25,9 @@ function resolveCommandPath(client: any, input: string): string | null {
     return null;
   }
 
-  let command =
+  const command =
     client.messageCommands.get(parts[0]) ??
-    client.messageCommands.find((cmd: any) => cmd.aliases.includes(parts[0]));
+    client.messageCommands.find((cmd: { aliases: string[] }) => cmd.aliases.includes(parts[0]));
 
   if (!command) {
     return null;

@@ -755,14 +755,6 @@ export async function hasFakeAdministratorPermission(
   );
 }
 
-async function hasRealGuildPermission(
-  _guildId: string,
-  _userId: string,
-  _permission: string,
-): Promise<boolean> {
-  return false;
-}
-
 export async function addFakePermission(
   guildId: string,
   roleId: string,

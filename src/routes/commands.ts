@@ -44,8 +44,8 @@ interface SerializedCommand {
 
 export default (manager: ShardingManager) =>
   new Elysia({ prefix: "/commands" }).get("/", async () => {
-    const perShard = (await manager.broadcastEval((client: any) => {
-      const serializeSubcommand = (sub: any): any => ({
+    const perShard = (await manager.broadcastEval((client: { [key: string]: unknown }) => {
+      const serializeSubcommand = (sub: { name: string; aliases: string[]; description?: string; arguments: unknown[]; cooldown?: number; guildOnly?: boolean; ownerOnly?: boolean; userPermissions?: string[]; botPermissions?: string[]; hasExecute: boolean; subcommands?: unknown[] }): SerializedSubcommand => ({
         name: sub.name,
         aliases: sub.aliases,
         description: sub.description ?? null,
@@ -64,7 +64,7 @@ export default (manager: ShardingManager) =>
         subcommands: (sub.subcommands ?? []).map(serializeSubcommand),
       });
 
-      const serializeCommand = (command: any): any => ({
+      const serializeCommand = (command: { name: string; aliases: string[]; description?: string; options?: { category?: string }; arguments: unknown[]; cooldown?: number; guildOnly?: boolean; ownerOnly?: boolean; userPermissions?: string[]; botPermissions?: string[]; hasExecute: boolean; subcommands?: unknown[] }): SerializedCommand => ({
         name: command.name,
         aliases: command.aliases,
         description: command.description ?? null,

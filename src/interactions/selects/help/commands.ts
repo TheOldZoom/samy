@@ -9,7 +9,7 @@ export default new SelectHandler({
   action: "commands",
 
   async execute(client, interaction, params, invokerId, value) {
-    const [category, page] = params;
+    const [category, _page] = params;
 
     if (!category || !value) {
       return;

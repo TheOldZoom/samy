@@ -1,5 +1,3 @@
-import type { Channel, GuildMember, Role, User } from "discord.js";
-
 import type Client from "@/classes/client";
 import type { Message } from "discord.js";
 

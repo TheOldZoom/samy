@@ -1,4 +1,4 @@
-import { MessageFlags, type Message, type User } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { icons } from "@/utils/icons";
 

@@ -15,8 +15,8 @@ export default new ButtonHandler({
     const noteId = params[0];
     if (!noteId) return;
 
-    const page = Number(params[1] ?? 0);
-    const targetId = params[2];
+    const _page = Number(params[1] ?? 0);
+    const _targetId = params[2];
 
     const note = await client.prisma.memberNote.findFirst({
       where: { id: noteId, guildId: guild.id },

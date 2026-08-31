@@ -1,9 +1,8 @@
-import { Message, MessageFlags } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { icons } from "@/utils/icons";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
-import type Client from "@/classes/client";
 import {
   addFakePermission,
   getFakePermissions,
@@ -66,14 +65,14 @@ const VALID_PERMISSIONS = new Set([
   "BypassSlowmode",
 ]);
 
-function canManageRole(member: any, role: any): boolean {
+function canManageRole(member: { id: string; permissions: { has: (perm: string) => boolean }; roles: { highest: { position: number } } }, role: { id: string; position: number }): boolean {
   if (member.id === role.id) return false;
   if (member.permissions.has("Administrator")) return true;
   if (!member.permissions.has("ManageRoles")) return false;
   return member.roles.highest.position > role.position;
 }
 
-function canManageFakePermission(member: any, permission: string): boolean {
+function canManageFakePermission(member: { permissions: { has: (perm: string) => boolean; flags: Record<string, unknown> } }, permission: string): boolean {
   if (member.permissions.has("Administrator")) return true;
   if (member.permissions.has("ManageGuild")) return true;
 

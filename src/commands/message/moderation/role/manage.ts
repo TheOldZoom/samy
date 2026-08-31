@@ -309,7 +309,7 @@ export const editSubcommand = new MessageSubcommand({
   },
 });
 
-function canAuthorManageRole(member: any, role: any) {
+function canAuthorManageRole(member: { roles: { highest: { position: number } } }, role: { position: number }) {
   if (role.position >= member.roles.highest.position) {
     return { ok: false, reason: "hierarchy" };
   }

@@ -1,6 +1,6 @@
 let intervalStarted = false;
 
-export function startTemporaryRoleCleanup(client: any): void {
+export function startTemporaryRoleCleanup(client: { logger?: { error?: (message: string, data: Record<string, unknown>) => void } }): void {
   if (intervalStarted) return;
   intervalStarted = true;
 
@@ -16,7 +16,7 @@ export function startTemporaryRoleCleanup(client: any): void {
   void tick();
 }
 
-export async function runTemporaryRoleCleanup(client: any): Promise<void> {
+export async function runTemporaryRoleCleanup(client: { prisma: { temporaryRole: { findMany: (args: Record<string, unknown>) => Promise<{ guildId: string; userId: string; roleId: string }[]>; delete: (args: Record<string, unknown>) => Promise<unknown> } } }): Promise<void> {
   const now = new Date();
   const expired = await client.prisma.temporaryRole.findMany({
     where: { expiresAt: { lte: now } },
@@ -35,7 +35,9 @@ export async function runTemporaryRoleCleanup(client: any): Promise<void> {
             .remove(entry.roleId, "Temporary role expired")
             .catch(() => null);
         }
-      } catch {}
+      } catch {
+        // ignore
+      }
     }
 
     await client.prisma.temporaryRole.delete({
