@@ -1,5 +1,7 @@
 import { MessageFlags, type Message, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import { renderWarningsList } from "@/ui/warnings";
@@ -23,7 +25,7 @@ async function executeWarnings({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.warnings.guild_only")),
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.guild_only")),
         ),
       ],
     });
@@ -82,7 +84,7 @@ async function executeRemove({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.warnings.guild_only")),
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.guild_only")),
         ),
       ],
     });
@@ -102,8 +104,7 @@ async function executeRemove({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.warnings.remove.not_found", {
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.remove.not_found", {
               user: target.tag,
             }),
           ),
@@ -129,8 +130,7 @@ async function executeRemove({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.warnings.remove.success", {
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.remove.success", {
               id: warning.id.slice(-6),
               user: target.tag,
             }),
@@ -144,7 +144,7 @@ async function executeRemove({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.warnings.remove.failed")),
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.remove.failed")),
         ),
       ],
     });
@@ -165,7 +165,7 @@ async function executeClear({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.warnings.guild_only")),
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.guild_only")),
         ),
       ],
     });
@@ -182,8 +182,7 @@ async function executeClear({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.warnings.clear.none", {
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.clear.none", {
               user: target.tag,
             }),
           ),
@@ -211,8 +210,7 @@ async function executeClear({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.warnings.clear.success", {
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.clear.success", {
               count: String(count),
               user: target.tag,
             }),
@@ -226,7 +224,7 @@ async function executeClear({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.warnings.clear.failed")),
+          Text(icons.warning + " " + client.i18n.t("commands.warnings.clear.failed")),
         ),
       ],
     });
@@ -290,7 +288,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.warnings.remove.user_not_found")),
+                Text(icons.warning + " " + client.i18n.t("commands.warnings.remove.user_not_found")),
               ),
             ],
           });
@@ -303,7 +301,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.warnings.remove.missing_id")),
+                Text(icons.warning + " " + client.i18n.t("commands.warnings.remove.missing_id")),
               ),
             ],
           });
@@ -336,7 +334,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.warnings.clear.user_not_found")),
+                Text(icons.warning + " " + client.i18n.t("commands.warnings.clear.user_not_found")),
               ),
             ],
           });

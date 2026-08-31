@@ -9,6 +9,8 @@ import {
   type TextChannel,
 } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import { checkPermissions } from "@/utils/permission";
@@ -41,7 +43,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.nuke.text_channel_only")),
+            Text(icons.delete + " " + client.i18n.t("commands.nuke.text_channel_only")),
           ),
         ],
       });
@@ -60,7 +62,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.nuke.protected"))),
+          new Container().text(Text(icons.delete + " " + client.i18n.t("commands.nuke.protected"))),
         ],
       });
 
@@ -72,7 +74,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.nuke.missing_permission")),
+            Text(icons.delete + " " + client.i18n.t("commands.nuke.missing_permission")),
           ),
         ],
       });
@@ -100,8 +102,7 @@ export default new MessageCommand({
       components: [
         new Container()
           .text(
-            Text(
-              client.i18n.t("commands.nuke.confirm", {
+            Text(icons.delete + " " + client.i18n.t("commands.nuke.confirm", {
                 channel: oldChannel.toString(),
               }),
             ),
@@ -126,7 +127,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(client.i18n.t("commands.nuke.cancelled")),
+              Text(icons.delete + " " + client.i18n.t("commands.nuke.cancelled")),
             ),
           ],
         });
@@ -142,7 +143,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(client.i18n.t("commands.nuke.permission_revoked")),
+              Text(icons.delete + " " + client.i18n.t("commands.nuke.permission_revoked")),
             ),
           ],
         });
@@ -154,8 +155,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.nuke.recreating", {
+            Text(icons.delete + " " + client.i18n.t("commands.nuke.recreating", {
                 user: interaction.user.toString(),
                 channel: oldChannel.toString(),
               }),
@@ -179,8 +179,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.nuke.complete", {
+            Text(icons.delete + " " + client.i18n.t("commands.nuke.complete", {
                 user: interaction.user.toString(),
               }),
             ),
@@ -191,7 +190,7 @@ export default new MessageCommand({
       await confirmation.edit({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.nuke.timeout"))),
+          new Container().text(Text(icons.delete + " " + client.i18n.t("commands.nuke.timeout"))),
         ],
       });
     }

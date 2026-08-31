@@ -1,5 +1,7 @@
 import { MessageFlags, type Message, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -25,7 +27,7 @@ async function executeTimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.timeout.guild_only")),
+          Text(icons.timeout + " " + client.i18n.t("commands.timeout.guild_only")),
         ),
       ],
     });
@@ -39,7 +41,7 @@ async function executeTimeout({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.timeout.self"))),
+        new Container().text(Text(icons.timeout + " " + client.i18n.t("commands.timeout.self"))),
       ],
     });
 
@@ -50,7 +52,7 @@ async function executeTimeout({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.timeout.bot"))),
+        new Container().text(Text(icons.timeout + " " + client.i18n.t("commands.timeout.bot"))),
       ],
     });
 
@@ -62,7 +64,7 @@ async function executeTimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.timeout.not_in_guild")),
+          Text(icons.timeout + " " + client.i18n.t("commands.timeout.not_in_guild")),
         ),
       ],
     });
@@ -75,7 +77,7 @@ async function executeTimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.timeout.not_moderatable")),
+          Text(icons.timeout + " " + client.i18n.t("commands.timeout.not_moderatable")),
         ),
       ],
     });
@@ -94,7 +96,7 @@ async function executeTimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.timeout.role_hierarchy")),
+          Text(icons.timeout + " " + client.i18n.t("commands.timeout.role_hierarchy")),
         ),
       ],
     });
@@ -110,7 +112,7 @@ async function executeTimeout({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.timeout.failed"))),
+        new Container().text(Text(icons.timeout + " " + client.i18n.t("commands.timeout.failed"))),
       ],
     });
 
@@ -121,8 +123,7 @@ async function executeTimeout({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(
-          client.i18n.t("commands.timeout.success", {
+        Text(icons.timeout + " " + client.i18n.t("commands.timeout.success", {
             user: target.tag,
             duration: msToHuman(cappedDurationMs),
             reason,
@@ -176,7 +177,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.timeout.user_not_found")),
+            Text(icons.timeout + " " + client.i18n.t("commands.timeout.user_not_found")),
           ),
         ],
       });
@@ -192,7 +193,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.timeout.invalid_duration")),
+            Text(icons.timeout + " " + client.i18n.t("commands.timeout.invalid_duration")),
           ),
         ],
       });

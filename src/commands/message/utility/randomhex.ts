@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { RandomHexResult } from "@/commands/shared/randomhex";
 import errorUI from "@/ui/error";
@@ -24,7 +26,7 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.randomhex.fetch_error"))],
+        components: [errorUI(icons.colornitro + " " + client.i18n.t("commands.randomhex.fetch_error"))],
       });
     }
   },

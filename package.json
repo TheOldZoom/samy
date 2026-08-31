@@ -8,12 +8,17 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "icons": "bun scripts/icons/index.ts"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bun": "^1.4.0",
     "dotenv": "^17.4.2",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
     "nodemon": "^3.1.14",
+    "prettier": "^3.9.6",
     "prisma": "7.10.0"
   },
   "peerDependencies": {

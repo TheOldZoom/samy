@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import {
   getTimezone,
@@ -74,8 +76,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.timezone.details", {
+            Text(icons.clock + " " + client.i18n.t("commands.timezone.details", {
                 owner: self ? "Your" : `**${targetUser.username}'s**`,
                 time: tzData.timeString,
                 date: tzData.dateString,
@@ -93,7 +94,7 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.timezone.fetch_error"))],
+        components: [errorUI(icons.clock + " " + client.i18n.t("commands.timezone.fetch_error"))],
       });
     }
   },
@@ -119,7 +120,7 @@ export default new MessageCommand({
         if (!input) {
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
-            components: [errorUI(client.i18n.t("commands.timezone.provide"))],
+            components: [errorUI(icons.clock + " " + client.i18n.t("commands.timezone.provide"))],
           });
 
           return;
@@ -132,8 +133,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.timezone.set", {
+                Text(icons.clock + " " + client.i18n.t("commands.timezone.set", {
                     timezone: result.timezone,
                     offset: result.offsetString,
                     time: result.timeString,
@@ -170,7 +170,7 @@ export default new MessageCommand({
           if (!removed) {
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
-              components: [errorUI(client.i18n.t("commands.timezone.not_set"))],
+              components: [errorUI(icons.clock + " " + client.i18n.t("commands.timezone.not_set"))],
             });
 
             return;
@@ -180,7 +180,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.timezone.removed")),
+                Text(icons.clock + " " + client.i18n.t("commands.timezone.removed")),
               ),
             ],
           });
@@ -193,7 +193,7 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(client.i18n.t("commands.timezone.remove_error")),
+              errorUI(icons.clock + " " + client.i18n.t("commands.timezone.remove_error")),
             ],
           });
         }
@@ -258,8 +258,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.timezone.details", {
+              Text(icons.clock + " " + client.i18n.t("commands.timezone.details", {
                   owner: self ? "Your" : `**${targetUser.username}'s**`,
                   time: tzData.timeString,
                   date: tzData.dateString,

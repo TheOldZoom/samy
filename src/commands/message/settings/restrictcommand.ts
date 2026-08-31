@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 
 import { Container, Text } from "@/ui/components";
@@ -99,8 +101,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.restrictcommand.command_not_found", {
+                Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.command_not_found", {
                     command: commandInput,
                   }),
                 ),
@@ -123,8 +124,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.restrictcommand.added", {
+                Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.added", {
                     command: commandName,
                     role: role.name,
                   }),
@@ -195,8 +195,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.restrictcommand.command_not_found", {
+                Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.command_not_found", {
                     command: commandInput,
                   }),
                 ),
@@ -219,7 +218,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.restrictcommand.not_found")),
+                Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.not_found")),
               ),
             ],
           });
@@ -231,7 +230,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(client.i18n.t("commands.restrictcommand.removed")),
+              Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.removed")),
             ),
           ],
         });
@@ -275,8 +274,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.restrictcommand.command_not_found", {
+                Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.command_not_found", {
                     command: commandInput,
                   }),
                 ),
@@ -297,8 +295,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.restrictcommand.cleared", {
+              Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.cleared", {
                   count,
                   command: commandName,
                 }),
@@ -325,7 +322,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.restrictcommand.none")),
+                Text(icons.ban + " " + client.i18n.t("commands.restrictcommand.none")),
               ),
             ],
           });

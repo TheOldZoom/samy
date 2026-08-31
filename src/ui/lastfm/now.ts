@@ -2,6 +2,8 @@ import type { LastFMNow } from "@/libs/lastfm/src/types/now";
 import type { TranslationVariables } from "@/libs/i18n";
 import { Container, Text } from "../components";
 
+import { icons } from "@/utils/icons";
+
 type Translate = (key: string, variables?: TranslationVariables) => string;
 
 export default function LastFMNowUI(data: LastFMNow, t: Translate) {
@@ -24,7 +26,7 @@ export default function LastFMNowUI(data: LastFMNow, t: Translate) {
   return new Container().addSectionComponents((section) => {
     section.addTextDisplayComponents(
       Text(
-        t("commands.lastfm.now_details", {
+        `${icons.music} ${t("commands.lastfm.now_details", {
           state: t(
             isPlaying
               ? "commands.lastfm.now_playing"
@@ -39,7 +41,7 @@ export default function LastFMNowUI(data: LastFMNow, t: Translate) {
           albumScrobbles: albumScrobbles.toLocaleString(),
           trackScrobbles: trackScrobbles.toLocaleString(),
           totalScrobbles: totalScrobbles.toLocaleString(),
-        }),
+        })}`,
       ),
     );
 

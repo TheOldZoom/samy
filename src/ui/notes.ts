@@ -1,4 +1,6 @@
 import type { Guild } from "discord.js";
+
+import { icons } from "@/utils/icons";
 import { ButtonStyle } from "discord.js";
 
 import type Client from "@/classes/client";
@@ -55,7 +57,7 @@ export async function renderNotesList(
 
   if (notes.length === 0) {
     return new Container().text(
-      Text(t("commands.notes.none_user", { user: userTag })),
+      Text(icons.book + " " + t("commands.notes.none_user", { user: userTag })),
     );
   }
 
@@ -87,7 +89,7 @@ export async function renderNotesList(
   return new Container()
     .text(
       Text(
-        t("commands.notes.title", {
+        icons.book + " " + t("commands.notes.title", {
           user: userTag,
           count: String(total),
         }),

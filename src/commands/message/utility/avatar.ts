@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Avatar } from "@/commands/shared/avatar";
 import errorUI from "@/ui/error";
@@ -37,7 +39,7 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.avatar.fetch_error"))],
+        components: [errorUI(icons.image + " " + client.i18n.t("commands.avatar.fetch_error"))],
       });
     }
   },

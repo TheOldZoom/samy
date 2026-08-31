@@ -5,6 +5,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { SlashCommand } from "@/classes/Command";
 import { JumboResult } from "@/commands/shared/jumbo";
 import errorUI from "@/ui/error";
@@ -46,7 +48,7 @@ export default new SlashCommand({
 
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-        components: [errorUI(client.i18n.t("commands.jumbo.fetch_error"))],
+        components: [errorUI(icons.image + " " + client.i18n.t("commands.jumbo.fetch_error"))],
       });
     }
   },

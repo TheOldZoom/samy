@@ -1,5 +1,7 @@
 import type { Guild } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import {
   ActionRow,
@@ -15,11 +17,11 @@ export function GuildIcon(client: Client, guild: Guild) {
   const iconURL = guild.iconURL({ size: 1024 });
 
   if (!iconURL) {
-    return errorUI(client.i18n.t("commands.guildicon.none"));
+    return errorUI(icons.image + " " + client.i18n.t("commands.guildicon.none"));
   }
 
   return new Container()
-    .text(Text(client.i18n.t("commands.guildicon.title", { name: guild.name })))
+    .text(Text(icons.image + " " + client.i18n.t("commands.guildicon.title", { name: guild.name })))
     .media(Media(iconURL))
     .separator(Separator())
     .actionRow(

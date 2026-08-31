@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { ChooseResult } from "@/commands/shared/choose";
 import errorUI from "@/ui/error";
@@ -25,7 +27,7 @@ export default new MessageCommand({
     if (!raw) {
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.choose.provide_options"))],
+        components: [errorUI(icons.spark + " " + client.i18n.t("commands.choose.provide_options"))],
       });
       return;
     }

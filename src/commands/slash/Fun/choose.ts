@@ -5,6 +5,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { SlashCommand } from "@/classes/Command";
 import { ChooseResult } from "@/commands/shared/choose";
 import errorUI from "@/ui/error";
@@ -43,7 +45,7 @@ export default new SlashCommand({
     if (options.length < 2) {
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-        components: [errorUI(client.i18n.t("commands.choose.provide_options"))],
+        components: [errorUI(icons.spark + " " + client.i18n.t("commands.choose.provide_options"))],
       });
       return;
     }

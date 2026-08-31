@@ -5,6 +5,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { SlashCommand } from "@/classes/Command";
 import { Banner } from "@/commands/shared/banner";
 import errorUI from "@/ui/error";
@@ -52,7 +54,7 @@ export default new SlashCommand({
 
       await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.banner.fetch_error"))],
+        components: [errorUI(icons.image + " " + client.i18n.t("commands.banner.fetch_error"))],
       });
     }
   },

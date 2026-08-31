@@ -140,9 +140,7 @@ function decompileCv2Component(
     case ComponentType.Button:
       return decompileButton(item);
     default:
-      throw new Error(
-        `Cannot decompile unsupported component type ${item.type}.`,
-      );
+      return [];
   }
 }
 
@@ -185,15 +183,11 @@ function decompileSection(component: AnyComponent): string[] {
 
 function decompileButton(component: AnyComponent): string[] {
   if (component.type !== ComponentType.Button) {
-    throw new Error(
-      `Cannot decompile unsupported action row component type ${component.type}.`,
-    );
+    return [];
   }
-
+  
   if (component.style !== ButtonStyle.Link) {
-    throw new Error(
-      "Cannot decompile non-link buttons because scripts only support URL buttons.",
-    );
+    return [];
   }
 
   return [
@@ -201,7 +195,7 @@ function decompileButton(component: AnyComponent): string[] {
       "button",
       requiredString(component.label, "button label"),
       requiredString(component.url, "button url"),
-      component.disabled ? "disabled" : undefined,
+      "disabled",
     ),
   ];
 }

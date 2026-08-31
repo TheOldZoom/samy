@@ -1,5 +1,7 @@
 import { ButtonStyle, type Guild } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import {
   ActionRow,
@@ -57,7 +59,7 @@ export function buildBotListView(
   const container = new Container()
     .text(
       Text(
-        `**${t("commands.botlist.title", { guild: guild.name, count: bots.length })}**`,
+        `${icons.bots} **${t("commands.botlist.title", { guild: guild.name, count: bots.length })}**`,
       ),
     )
     .separator(Separator())

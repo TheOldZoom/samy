@@ -1,5 +1,7 @@
 import { MessageFlags, type Message, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -20,7 +22,7 @@ async function executeSoftban({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.softban.guild_only")),
+          Text(icons.ban + " " + client.i18n.t("commands.softban.guild_only")),
         ),
       ],
     });
@@ -34,7 +36,7 @@ async function executeSoftban({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.softban.self"))),
+        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.softban.self"))),
       ],
     });
 
@@ -45,7 +47,7 @@ async function executeSoftban({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.softban.bot"))),
+        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.softban.bot"))),
       ],
     });
 
@@ -58,7 +60,7 @@ async function executeSoftban({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.softban.not_bannable")),
+            Text(icons.ban + " " + client.i18n.t("commands.softban.not_bannable")),
           ),
         ],
       });
@@ -76,7 +78,7 @@ async function executeSoftban({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.softban.role_hierarchy")),
+            Text(icons.ban + " " + client.i18n.t("commands.softban.role_hierarchy")),
           ),
         ],
       });
@@ -98,7 +100,7 @@ async function executeSoftban({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.softban.failed"))),
+        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.softban.failed"))),
       ],
     });
 
@@ -109,8 +111,7 @@ async function executeSoftban({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(
-          client.i18n.t("commands.softban.success", {
+        Text(icons.ban + " " + client.i18n.t("commands.softban.success", {
             user: target.tag,
             reason,
           }),
@@ -155,7 +156,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.softban.user_not_found")),
+            Text(icons.ban + " " + client.i18n.t("commands.softban.user_not_found")),
           ),
         ],
       });

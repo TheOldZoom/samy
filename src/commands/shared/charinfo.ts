@@ -1,3 +1,4 @@
+import { icons } from "@/utils/icons";
 import type Client from "@/classes/client";
 import { Container, Text } from "@/ui/components";
 import errorUI from "@/ui/error";
@@ -6,7 +7,7 @@ export function CharInfoResult(client: Client, input: string) {
   const char = input[0];
 
   if (!char) {
-    return errorUI(client.i18n.t("commands.charinfo.provide"));
+    return errorUI(icons.info + " " + client.i18n.t("commands.charinfo.provide"));
   }
 
   const codePoint = char.codePointAt(0)!;
@@ -19,8 +20,7 @@ export function CharInfoResult(client: Client, input: string) {
     .join(" ");
 
   return new Container().text(
-    Text(
-      client.i18n.t("commands.charinfo.result", {
+    Text(icons.info + " " + client.i18n.t("commands.charinfo.result", {
         char,
         hex,
         decimal: codePoint.toString(),

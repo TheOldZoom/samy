@@ -1,5 +1,7 @@
 import { ButtonStyle } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import type { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { buildHelp } from "@/utils/parser/HelpGenerator";
@@ -130,7 +132,7 @@ export function buildOverview(client: Client, userId: string, page = 0) {
   const container = new Container()
     .text(
       Text(
-        `**${t("commands.help.overview_description", {
+        `${icons.info} **${t("commands.help.overview_description", {
           command: `${client.prefix}help <command>`,
         })}**`,
       ),
@@ -204,14 +206,14 @@ export function buildCategoryView(
   const container = new Container()
     .text(
       Text(
-        `${t("commands.help.category_title", {
+        `icons.info ${t("commands.help.category_title", {
           category,
         })}`,
       ),
     )
     .text(
       Text(
-        t("commands.help.category_description", {
+        icons.info + " " + t("commands.help.category_description", {
           count: commands.length,
           noun: commands.length === 1 ? "command" : "commands",
         }),
@@ -293,7 +295,7 @@ export function buildCommandView(
   const prefix = client.prefix;
 
   const lines = [
-    `**${t("commands.help.command_title", {
+    `${icons.info} **${t("commands.help.command_title", {
       prefix,
       name: command.name,
     })}**`,
@@ -428,7 +430,7 @@ export function buildSubcommandView(
   const parentPathKey = canonicalPath.slice(0, -1).join(",");
 
   const lines = [
-    `**${t("commands.help.command_title", {
+    `${icons.info} **${t("commands.help.command_title", {
       prefix,
       name: usageName,
     })}**`,

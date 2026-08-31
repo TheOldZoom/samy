@@ -5,6 +5,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { SlashCommand } from "@/classes/Command";
 import { compileCv2Script } from "@/libs/scripting/cv2";
 import {
@@ -108,7 +110,7 @@ export default new SlashCommand({
             parse: [],
           },
           components: [
-            errorUI(client.i18n.t("commands.builder.missing_embed_example")),
+            errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_embed_example")),
           ],
         });
 
@@ -160,7 +162,7 @@ export default new SlashCommand({
           parse: [],
         },
         components: [
-          errorUI(client.i18n.t("commands.builder.missing_cv2_example")),
+          errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_cv2_example")),
         ],
       });
 

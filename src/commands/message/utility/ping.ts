@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { PingCommand } from "@/commands/shared/ping";
 
@@ -15,8 +17,7 @@ export default new MessageCommand({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.ping.latency", { latency: client.ws.ping }),
+          Text(icons.ping + " " + client.i18n.t("commands.ping.latency", { latency: client.ws.ping }),
           ),
         ),
       ],
@@ -25,8 +26,8 @@ export default new MessageCommand({
     const latency = sent.createdTimestamp - message.createdTimestamp;
 
     const page = new Container().text(
-      Text(client.i18n.t("commands.ping.latency", { latency: client.ws.ping })),
-      Text(client.i18n.t("commands.ping.edit", { latency })),
+      Text(icons.ping + " " + client.i18n.t("commands.ping.latency", { latency: client.ws.ping })),
+      Text(icons.ping + " " + client.i18n.t("commands.ping.edit", { latency })),
     );
 
     await sent.edit({

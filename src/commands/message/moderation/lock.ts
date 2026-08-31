@@ -1,5 +1,7 @@
 import { GuildChannel, MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import {
@@ -39,7 +41,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.lock.guild_only"))),
+          new Container().text(Text(icons.locked + " " + client.i18n.t("commands.lock.guild_only"))),
         ],
       });
 
@@ -53,7 +55,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.lock.channel_not_found")),
+            Text(icons.locked + " " + client.i18n.t("commands.lock.channel_not_found")),
           ),
         ],
       });
@@ -66,8 +68,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.lock.already_locked", {
+            Text(icons.locked + " " + client.i18n.t("commands.lock.already_locked", {
                 channel: channel.toString(),
               }),
             ),
@@ -106,8 +107,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.lock.success", {
+            Text(icons.locked + " " + client.i18n.t("commands.lock.success", {
                 channel: channel.toString(),
               }),
             ),
@@ -118,7 +118,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.lock.failed"))),
+          new Container().text(Text(icons.locked + " " + client.i18n.t("commands.lock.failed"))),
         ],
       });
     }

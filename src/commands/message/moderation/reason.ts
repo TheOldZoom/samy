@@ -1,5 +1,7 @@
 import { MessageFlags, type Message } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -19,7 +21,7 @@ async function executeReason({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.reason.guild_only"))),
+        new Container().text(Text(icons.edit + " " + client.i18n.t("commands.reason.guild_only"))),
       ],
     });
 
@@ -33,7 +35,7 @@ async function executeReason({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.reason.invalid_case")),
+          Text(icons.edit + " " + client.i18n.t("commands.reason.invalid_case")),
         ),
       ],
     });
@@ -55,8 +57,7 @@ async function executeReason({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.reason.not_found", {
+          Text(icons.edit + " " + client.i18n.t("commands.reason.not_found", {
               case: caseNumber,
             }),
           ),
@@ -82,8 +83,7 @@ async function executeReason({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.reason.success", {
+          Text(icons.edit + " " + client.i18n.t("commands.reason.success", {
               case: String(numericCase),
               reason,
             }),
@@ -95,7 +95,7 @@ async function executeReason({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.reason.failed"))),
+        new Container().text(Text(icons.edit + " " + client.i18n.t("commands.reason.failed"))),
       ],
     });
   }
@@ -135,7 +135,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.reason.missing_case")),
+            Text(icons.edit + " " + client.i18n.t("commands.reason.missing_case")),
           ),
         ],
       });
@@ -148,7 +148,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.reason.missing_reason")),
+            Text(icons.edit + " " + client.i18n.t("commands.reason.missing_reason")),
           ),
         ],
       });

@@ -1,5 +1,7 @@
 import { MessageFlags, type Message, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -19,7 +21,7 @@ async function executeKick({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.kick.guild_only"))),
+        new Container().text(Text(icons.kick + " " + client.i18n.t("commands.kick.guild_only"))),
       ],
     });
 
@@ -32,7 +34,7 @@ async function executeKick({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.kick.self"))),
+        new Container().text(Text(icons.kick + " " + client.i18n.t("commands.kick.self"))),
       ],
     });
 
@@ -43,7 +45,7 @@ async function executeKick({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.kick.bot"))),
+        new Container().text(Text(icons.kick + " " + client.i18n.t("commands.kick.bot"))),
       ],
     });
 
@@ -54,7 +56,7 @@ async function executeKick({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.kick.not_in_guild"))),
+        new Container().text(Text(icons.kick + " " + client.i18n.t("commands.kick.not_in_guild"))),
       ],
     });
 
@@ -65,7 +67,7 @@ async function executeKick({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.kick.not_kickable"))),
+        new Container().text(Text(icons.kick + " " + client.i18n.t("commands.kick.not_kickable"))),
       ],
     });
 
@@ -82,7 +84,7 @@ async function executeKick({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.kick.role_hierarchy")),
+          Text(icons.kick + " " + client.i18n.t("commands.kick.role_hierarchy")),
         ),
       ],
     });
@@ -96,7 +98,7 @@ async function executeKick({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.kick.failed"))),
+        new Container().text(Text(icons.kick + " " + client.i18n.t("commands.kick.failed"))),
       ],
     });
 
@@ -107,8 +109,7 @@ async function executeKick({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(
-          client.i18n.t("commands.kick.success", {
+        Text(icons.kick + " " + client.i18n.t("commands.kick.success", {
             user: target.tag,
             reason,
           }),
@@ -153,7 +154,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.kick.user_not_found")),
+            Text(icons.kick + " " + client.i18n.t("commands.kick.user_not_found")),
           ),
         ],
       });

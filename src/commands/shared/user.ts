@@ -1,5 +1,7 @@
 import { time, TimestampStyles, type GuildMember, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import { getBirthday } from "@/commands/shared/birthday";
 import { getTimezone } from "@/commands/shared/timezone";
@@ -55,8 +57,7 @@ export async function UserInfo(
 
   return new Container().addSectionComponents((section) => {
     section.addTextDisplayComponents(
-      Text(
-        client.i18n.t("commands.user.details", {
+      Text(icons.Person + " " + client.i18n.t("commands.user.details", {
           tag: target.tag,
           id: target.id,
           displayName,

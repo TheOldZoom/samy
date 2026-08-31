@@ -1,5 +1,7 @@
 import { MessageFlags, type Message, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import { renderCaseDetail, renderCasesList } from "@/ui/cases";
@@ -43,7 +45,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.cases.guild_only")),
+            Text(icons.list + " " + client.i18n.t("commands.cases.guild_only")),
           ),
         ],
       });
@@ -64,8 +66,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.cases.not_found", { case: caseNumber }),
+              Text(icons.list + " " + client.i18n.t("commands.cases.not_found", { case: caseNumber }),
               ),
             ),
           ],
@@ -88,8 +89,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.cases.not_found", { case: caseNumber }),
+              Text(icons.list + " " + client.i18n.t("commands.cases.not_found", { case: caseNumber }),
               ),
             ),
           ],

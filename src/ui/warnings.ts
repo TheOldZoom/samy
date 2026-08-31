@@ -1,4 +1,6 @@
 import type { Guild } from "discord.js";
+
+import { icons } from "@/utils/icons";
 import { ButtonStyle } from "discord.js";
 
 import type Client from "@/classes/client";
@@ -55,7 +57,7 @@ export async function renderWarningsList(
 
   if (warnings.length === 0) {
     return new Container().text(
-      Text(t("commands.warnings.none_user", { user: userTag })),
+      Text(icons.warning + " " + t("commands.warnings.none_user", { user: userTag })),
     );
   }
 
@@ -87,7 +89,7 @@ export async function renderWarningsList(
   return new Container()
     .text(
       Text(
-        t("commands.warnings.title", {
+        icons.warning + " " + t("commands.warnings.title", {
           user: userTag,
           count: String(total),
         }),

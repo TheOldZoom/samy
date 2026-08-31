@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 
@@ -37,7 +39,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.autorole.managed")),
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.managed")),
               ),
             ],
           });
@@ -52,7 +54,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.autorole.user_hierarchy")),
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.user_hierarchy")),
               ),
             ],
           });
@@ -65,7 +67,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.autorole.hierarchy")),
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.hierarchy")),
               ),
             ],
           });
@@ -86,8 +88,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.autorole.already_exists", {
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.already_exists", {
                     role: role.toString(),
                   }),
                 ),
@@ -114,8 +115,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.autorole.added", {
+              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.added", {
                   role: role.toString(),
                 }),
               ),
@@ -159,8 +159,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.autorole.not_found", {
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.not_found", {
                     role: role.toString(),
                   }),
                 ),
@@ -183,8 +182,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.autorole.removed", {
+              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.removed", {
                   role: role.toString(),
                 }),
               ),
@@ -212,7 +210,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.autorole.none")),
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.none")),
               ),
             ],
           });
@@ -225,8 +223,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.autorole.list", {
+              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.list", {
                   count: autoroles.length,
                   roles,
                 }),
@@ -254,7 +251,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.autorole.none")),
+                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.none")),
               ),
             ],
           });
@@ -265,8 +262,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.autorole.cleared", {
+              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.cleared", {
                   count: result.count,
                 }),
               ),

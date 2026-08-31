@@ -1,5 +1,7 @@
 import { MessageFlags, type Message } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -29,7 +31,7 @@ async function executePurge({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(client.i18n.t("commands.purge.text_channel_only")),
+          Text(icons.delete + " " + client.i18n.t("commands.purge.text_channel_only")),
         ),
       ],
     });
@@ -95,7 +97,7 @@ async function executePurge({
     const response = await message.channel.send({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.purge.none"))),
+        new Container().text(Text(icons.delete + " " + client.i18n.t("commands.purge.none"))),
       ],
     });
 
@@ -120,8 +122,7 @@ async function executePurge({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(
-          client.i18n.t("commands.purge.deleted", {
+        Text(icons.delete + " " + client.i18n.t("commands.purge.deleted", {
             count: deletedCount,
             noun: deletedCount === 1 ? "message" : "messages",
           }),

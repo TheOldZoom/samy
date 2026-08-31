@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { GuildBanner } from "@/commands/shared/guildbanner";
 import errorUI from "@/ui/error";
@@ -30,7 +32,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          errorUI(client.i18n.t("commands.guildbanner.fetch_error")),
+          errorUI(icons.image + " " + client.i18n.t("commands.guildbanner.fetch_error")),
         ],
       });
     }

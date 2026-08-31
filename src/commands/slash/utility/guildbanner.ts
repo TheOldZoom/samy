@@ -5,6 +5,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { SlashCommand } from "@/classes/Command";
 import { GuildBanner } from "@/commands/shared/guildbanner";
 import errorUI from "@/ui/error";
@@ -45,7 +47,7 @@ export default new SlashCommand({
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
         components: [
-          errorUI(client.i18n.t("commands.guildbanner.fetch_error")),
+          errorUI(icons.image + " " + client.i18n.t("commands.guildbanner.fetch_error")),
         ],
       });
     }

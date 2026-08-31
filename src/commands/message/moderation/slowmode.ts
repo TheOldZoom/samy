@@ -1,5 +1,7 @@
 import { ChannelType, MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import { parseDuration } from "@/utils/duration";
@@ -36,7 +38,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.slowmode.guild_only")),
+            Text(icons.clock + " " + client.i18n.t("commands.slowmode.guild_only")),
           ),
         ],
       });
@@ -60,7 +62,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.slowmode.invalid_channel")),
+            Text(icons.clock + " " + client.i18n.t("commands.slowmode.invalid_channel")),
           ),
         ],
       });
@@ -75,7 +77,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.slowmode.invalid_duration")),
+            Text(icons.clock + " " + client.i18n.t("commands.slowmode.invalid_duration")),
           ),
         ],
       });
@@ -95,7 +97,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.slowmode.invalid_duration")),
+            Text(icons.clock + " " + client.i18n.t("commands.slowmode.invalid_duration")),
           ),
         ],
       });
@@ -128,7 +130,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.slowmode.failed"))),
+          new Container().text(Text(icons.clock + " " + client.i18n.t("commands.slowmode.failed"))),
         ],
       });
     }

@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { JumboResult } from "@/commands/shared/jumbo";
 import errorUI from "@/ui/error";
@@ -8,7 +10,7 @@ export default new MessageCommand({
   name: "jumbo",
   description: "Enlarge a custom emoji.",
   category: "Utility",
-  aliases: ["enlarge", "bigemoji", "jumboemoji"],
+  aliases: ["enlarge", "bigemoji", "jumboemoji", "emoji", "e"],
   arguments: [
     {
       name: "emoji",
@@ -25,7 +27,7 @@ export default new MessageCommand({
     if (!raw) {
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.jumbo.provide_emoji"))],
+        components: [errorUI(icons.image + " " + client.i18n.t("commands.jumbo.provide_emoji"))],
       });
       return;
     }
@@ -42,7 +44,7 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.jumbo.fetch_error"))],
+        components: [errorUI(icons.image + " " + client.i18n.t("commands.jumbo.fetch_error"))],
       });
     }
   },

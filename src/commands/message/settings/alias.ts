@@ -1,4 +1,6 @@
 import { Message, MessageFlags } from "discord.js";
+
+import { icons } from "@/utils/icons";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -72,7 +74,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.alias.already_exists", { alias })),
+                Text(icons.link + " " + client.i18n.t("commands.alias.already_exists", { alias })),
               ),
             ],
           });
@@ -100,8 +102,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.alias.added", {
+                Text(icons.link + " " + client.i18n.t("commands.alias.added", {
                     alias,
                     command: cmd.name,
                   }),
@@ -158,7 +159,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.alias.not_found", { alias })),
+                Text(icons.link + " " + client.i18n.t("commands.alias.not_found", { alias })),
               ),
             ],
           });
@@ -170,7 +171,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(client.i18n.t("commands.alias.removed", { alias })),
+              Text(icons.link + " " + client.i18n.t("commands.alias.removed", { alias })),
             ),
           ],
         });
@@ -189,7 +190,7 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              new Container().text(Text(client.i18n.t("commands.alias.none"))),
+              new Container().text(Text(icons.link + " " + client.i18n.t("commands.alias.none"))),
             ],
           });
 
@@ -204,8 +205,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.alias.list_title", { aliases: lines }),
+              Text(icons.link + " " + client.i18n.t("commands.alias.list_title", { aliases: lines }),
               ),
             ),
           ],

@@ -1,4 +1,6 @@
 import { Container, Section, Separator, Text } from "@/ui/components";
+
+import { icons } from "@/utils/icons";
 import type { LogCategoryKey } from "@/commands/shared/logs";
 
 const CATEGORY_ACCENTS: Record<LogCategoryKey, number> = {
@@ -38,7 +40,7 @@ export function buildLogEntry(options: LogEntryOptions): Container {
       }),
     );
   } else {
-    container.text(Text(`## ${options.title}`));
+    container.text(Text(`${icons.list} ## ${options.title}`));
 
     if (options.description) {
       container.text(Text(options.description));

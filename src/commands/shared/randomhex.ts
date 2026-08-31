@@ -1,3 +1,4 @@
+import { icons } from "@/utils/icons";
 import type Client from "@/classes/client";
 import { Container, Media, Text } from "@/ui/components";
 
@@ -15,8 +16,7 @@ export function RandomHexResult(client: Client) {
 
   return new Container()
     .text(
-      Text(
-        client.i18n.t("commands.randomhex.result", {
+      Text(icons.colornitro + " " + client.i18n.t("commands.randomhex.result", {
           hex,
           r,
           g,

@@ -1,5 +1,7 @@
 import type { GuildMember, User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import {
   ActionRow,
@@ -19,8 +21,7 @@ export function ServerAvatar(
   const serverAvatarURL = member?.avatarURL({ size: 1024 });
 
   if (!serverAvatarURL) {
-    return errorUI(
-      client.i18n.t("commands.serveravatar.none", { user: target.username }),
+    return errorUI(icons.image + " " + client.i18n.t("commands.serveravatar.none", { user: target.username }),
     );
   }
 

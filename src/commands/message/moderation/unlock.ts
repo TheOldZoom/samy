@@ -1,5 +1,7 @@
 import { GuildChannel, MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import {
@@ -39,7 +41,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.unlock.guild_only")),
+            Text(icons.unlock + " " + client.i18n.t("commands.unlock.guild_only")),
           ),
         ],
       });
@@ -54,7 +56,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.unlock.channel_not_found")),
+            Text(icons.unlock + " " + client.i18n.t("commands.unlock.channel_not_found")),
           ),
         ],
       });
@@ -67,8 +69,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.unlock.not_locked", {
+            Text(icons.unlock + " " + client.i18n.t("commands.unlock.not_locked", {
                 channel: channel.toString(),
               }),
             ),
@@ -101,8 +102,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.unlock.success", {
+            Text(icons.unlock + " " + client.i18n.t("commands.unlock.success", {
                 channel: channel.toString(),
               }),
             ),
@@ -113,7 +113,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.unlock.failed"))),
+          new Container().text(Text(icons.unlock + " " + client.i18n.t("commands.unlock.failed"))),
         ],
       });
     }

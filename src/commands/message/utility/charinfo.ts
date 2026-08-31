@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { CharInfoResult } from "@/commands/shared/charinfo";
 import errorUI from "@/ui/error";
@@ -25,7 +27,7 @@ export default new MessageCommand({
     if (!raw) {
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.charinfo.provide"))],
+        components: [errorUI(icons.info + " " + client.i18n.t("commands.charinfo.provide"))],
       });
       return;
     }

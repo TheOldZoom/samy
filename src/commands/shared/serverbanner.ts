@@ -1,5 +1,7 @@
 import type { GuildMember, User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import {
   ActionRow,
@@ -20,8 +22,7 @@ export async function ServerBanner(
   const serverBannerURL = fetchedMember?.bannerURL({ size: 1024 });
 
   if (!serverBannerURL) {
-    return errorUI(
-      client.i18n.t("commands.serverbanner.none", { user: target.username }),
+    return errorUI(icons.image + " " + client.i18n.t("commands.serverbanner.none", { user: target.username }),
     );
   }
 

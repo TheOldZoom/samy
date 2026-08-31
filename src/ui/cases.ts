@@ -1,4 +1,6 @@
 import type { Guild } from "discord.js";
+
+import { icons } from "@/utils/icons";
 import { ButtonStyle } from "discord.js";
 
 import type Client from "@/classes/client";
@@ -55,9 +57,11 @@ export async function renderCasesList(
   if (cases.length === 0) {
     return new Container().text(
       Text(
-        resolvedTarget
-          ? t("commands.cases.none_user", { user: `<@${resolvedTarget}>` })
-          : t("commands.cases.none"),
+        `${icons.list} ${
+          resolvedTarget
+            ? t("commands.cases.none_user", { user: `<@${resolvedTarget}>` })
+            : t("commands.cases.none")
+        }`,
       ),
     );
   }
@@ -91,7 +95,7 @@ export async function renderCasesList(
   const targetParam = encodeTarget(targetId);
 
   return new Container()
-    .text(Text(title))
+    .text(Text(`${icons.list} ${title}`))
     .separator(Separator())
     .text(Text(lines.join("\n")))
     .actionRow(

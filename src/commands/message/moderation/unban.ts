@@ -1,5 +1,7 @@
 import { MessageFlags, type Message, type User } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
@@ -19,7 +21,7 @@ async function executeUnban({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.unban.guild_only"))),
+        new Container().text(Text(icons.unbanmember + " " + client.i18n.t("commands.unban.guild_only"))),
       ],
     });
 
@@ -50,8 +52,7 @@ async function executeUnban({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.unban.not_banned", {
+          Text(icons.unbanmember + " " + client.i18n.t("commands.unban.not_banned", {
               user: target.tag,
             }),
           ),
@@ -71,7 +72,7 @@ async function executeUnban({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.unban.failed"))),
+          new Container().text(Text(icons.unbanmember + " " + client.i18n.t("commands.unban.failed"))),
         ],
       });
 
@@ -97,8 +98,7 @@ async function executeUnban({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.unban.dm", {
+          Text(icons.unbanmember + " " + client.i18n.t("commands.unban.dm", {
               guild: message.guild.name,
               reason,
             }),
@@ -112,8 +112,7 @@ async function executeUnban({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(
-          client.i18n.t("commands.unban.success", {
+        Text(icons.unbanmember + " " + client.i18n.t("commands.unban.success", {
             user: target.tag,
             reason,
           }),
@@ -158,7 +157,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.unban.user_not_found")),
+            Text(icons.unbanmember + " " + client.i18n.t("commands.unban.user_not_found")),
           ),
         ],
       });

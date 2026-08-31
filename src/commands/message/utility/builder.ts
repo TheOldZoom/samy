@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import {
   buildBuilderCopyContainer,
@@ -115,7 +117,7 @@ export default new MessageCommand({
           parse: [],
         },
         components: [
-          errorUI(client.i18n.t("commands.builder.provide_message")),
+          errorUI(icons.code + " " + client.i18n.t("commands.builder.provide_message")),
         ],
       });
 
@@ -187,7 +189,7 @@ export default new MessageCommand({
             parse: [],
           },
           components: [
-            errorUI(client.i18n.t("commands.builder.missing_embed_example")),
+            errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_embed_example")),
           ],
         });
 
@@ -239,7 +241,7 @@ export default new MessageCommand({
           parse: [],
         },
         components: [
-          errorUI(client.i18n.t("commands.builder.missing_cv2_example")),
+          errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_cv2_example")),
         ],
       });
 

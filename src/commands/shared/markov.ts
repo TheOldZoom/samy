@@ -1,4 +1,6 @@
 import type { Message, MessageComponentInteraction } from "discord.js";
+
+import { icons } from "@/utils/icons";
 import { ComponentType, MessageFlags, SeparatorBuilder } from "discord.js";
 import type Client from "@/classes/client";
 import { ActionRow, Buttons, Container, Text } from "@/ui/components";
@@ -6,16 +8,16 @@ import errorUI from "@/ui/error";
 
 export function MarkovGenerateResult(client: Client, sentence: string) {
   return new Container().text(
-    Text(client.i18n.t("commands.markov.result", { sentence })),
+    Text(icons.message + " " + client.i18n.t("commands.markov.result", { sentence })),
   );
 }
 
 export function MarkovNoChainError(client: Client) {
-  return errorUI(client.i18n.t("commands.markov.no_chain"));
+  return errorUI(icons.message + " " + client.i18n.t("commands.markov.no_chain"));
 }
 
 export function MarkovSeedNotFoundError(client: Client, seed: string) {
-  return errorUI(client.i18n.t("commands.markov.seed_not_found", { seed }));
+  return errorUI(icons.message + " " + client.i18n.t("commands.markov.seed_not_found", { seed }));
 }
 
 export interface MarkovConfirmOptions {
@@ -63,7 +65,7 @@ export async function confirmMarkovAction({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(client.i18n.t("commands.markov.cancelled")),
+            Text(icons.message + " " + client.i18n.t("commands.markov.cancelled")),
           ),
         ],
       });
@@ -82,7 +84,7 @@ export async function confirmMarkovAction({
       await interaction.update({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.markov.failed"))),
+          new Container().text(Text(icons.message + " " + client.i18n.t("commands.markov.failed"))),
         ],
       });
     }
@@ -90,7 +92,7 @@ export async function confirmMarkovAction({
     await confirmation.edit({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(client.i18n.t("commands.markov.timeout"))),
+        new Container().text(Text(icons.message + " " + client.i18n.t("commands.markov.timeout"))),
       ],
     });
   }

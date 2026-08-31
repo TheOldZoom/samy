@@ -1,5 +1,7 @@
 import type { Guild } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import type Client from "@/classes/client";
 import {
   ActionRow,
@@ -31,7 +33,6 @@ export function JumboResult(client: Client, raw: string, guild?: Guild | null) {
     const url = `https://cdn.discordapp.com/emojis/${id}.${extension}?size=256`;
 
     return new Container()
-      .text(Text(client.i18n.t("commands.jumbo.result")))
       .media(Media(url))
       .separator(Separator())
       .actionRow(
@@ -39,5 +40,5 @@ export function JumboResult(client: Client, raw: string, guild?: Guild | null) {
       );
   }
 
-  return errorUI(client.i18n.t("commands.jumbo.not_found"));
+  return errorUI(icons.image + " " + client.i18n.t("commands.jumbo.not_found"));
 }

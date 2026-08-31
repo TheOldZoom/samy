@@ -1,5 +1,7 @@
 import { MessageFlags } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import { ensureGuild, ensureUser } from "@/utils/guild";
@@ -29,7 +31,7 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(client.i18n.t("commands.afk.limit"))),
+          new Container().text(Text(icons.idle + " " + client.i18n.t("commands.afk.limit"))),
         ],
       });
       return;
@@ -70,8 +72,7 @@ export default new MessageCommand({
       },
       components: [
         new Container().text(
-          Text(
-            client.i18n.t("commands.afk.set", {
+          Text(icons.idle + " " + client.i18n.t("commands.afk.set", {
               reason,
             }),
           ),

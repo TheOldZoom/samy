@@ -1,5 +1,7 @@
 import { MessageFlags, time, TimestampStyles } from "discord.js";
 
+import { icons } from "@/utils/icons";
+
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import {
   getBirthday,
@@ -70,8 +72,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              client.i18n.t("commands.birthday.details", {
+            Text(icons.bday + " " + client.i18n.t("commands.birthday.details", {
                 owner: self ? "Your" : `**${targetUser.username}'s**`,
                 date: bday.formattedDate,
                 next,
@@ -89,7 +90,7 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(client.i18n.t("commands.birthday.fetch_error"))],
+        components: [errorUI(icons.bday + " " + client.i18n.t("commands.birthday.fetch_error"))],
       });
     }
   },
@@ -116,7 +117,7 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(client.i18n.t("commands.birthday.provide_date")),
+              errorUI(icons.bday + " " + client.i18n.t("commands.birthday.provide_date")),
             ],
           });
 
@@ -145,8 +146,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.birthday.saved", {
+                Text(icons.bday + " " + client.i18n.t("commands.birthday.saved", {
                     date: result.formattedDate,
                     next,
                     age,
@@ -182,7 +182,7 @@ export default new MessageCommand({
           if (!removed) {
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
-              components: [errorUI(client.i18n.t("commands.birthday.not_set"))],
+              components: [errorUI(icons.bday + " " + client.i18n.t("commands.birthday.not_set"))],
             });
 
             return;
@@ -192,7 +192,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(client.i18n.t("commands.birthday.removed")),
+                Text(icons.bday + " " + client.i18n.t("commands.birthday.removed")),
               ),
             ],
           });
@@ -205,7 +205,7 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(client.i18n.t("commands.birthday.remove_error")),
+              errorUI(icons.bday + " " + client.i18n.t("commands.birthday.remove_error")),
             ],
           });
         }
@@ -221,7 +221,7 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(client.i18n.t("commands.birthday.guild_only")),
+              errorUI(icons.bday + " " + client.i18n.t("commands.birthday.guild_only")),
             ],
           });
 
@@ -239,7 +239,7 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(client.i18n.t("commands.birthday.none_upcoming")),
+                  Text(icons.bday + " " + client.i18n.t("commands.birthday.none_upcoming")),
                 ),
               ],
             });
@@ -269,8 +269,7 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(
-                  client.i18n.t("commands.birthday.upcoming", {
+                Text(icons.bday + " " + client.i18n.t("commands.birthday.upcoming", {
                     birthdays: lines.join("\n"),
                   }),
                 ),
@@ -286,7 +285,7 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(client.i18n.t("commands.birthday.upcoming_error")),
+              errorUI(icons.bday + " " + client.i18n.t("commands.birthday.upcoming_error")),
             ],
           });
         }
@@ -351,8 +350,7 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(
-                client.i18n.t("commands.birthday.details", {
+              Text(icons.bday + " " + client.i18n.t("commands.birthday.details", {
                   owner: self ? "Your" : `**${targetUser.username}'s**`,
                   date: bday.formattedDate,
                   next,
