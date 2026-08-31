@@ -36,7 +36,10 @@ export default new ContextCommand({
     const target = interaction.targetMessage;
 
     try {
-      const script = decompileMessageForBuilder(target);
+      const script = decompileMessageForBuilder(target, {
+        clean: false,
+      });
+
       const response = buildBuilderCopyContainer(script);
 
       await interaction.reply({

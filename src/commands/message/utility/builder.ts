@@ -51,6 +51,13 @@ export default new MessageCommand({
             "A Discord message link. You can also reply to a message.",
           required: false,
         },
+        {
+          name: "clean",
+          aliases: ["c"],
+          type: "boolean",
+          description: "Show actual line breaks instead of \\n.",
+          required: false,
+        },
       ],
 
       botPermissions: ["SendMessages", "ReadMessageHistory"],
@@ -74,11 +81,14 @@ export default new MessageCommand({
               ),
             ],
           });
+
           return;
         }
 
         try {
-          const script = decompileMessageForBuilder(target);
+          const script = decompileMessageForBuilder(target, {
+            clean: args.getBoolean("clean"),
+          });
 
           await message.reply({
             ...buildBuilderCopyContainer(script),
@@ -117,7 +127,11 @@ export default new MessageCommand({
           parse: [],
         },
         components: [
-          errorUI(icons.code + " " + client.i18n.t("commands.builder.provide_message")),
+          errorUI(
+            icons.code +
+              " " +
+              client.i18n.t("commands.builder.provide_message"),
+          ),
         ],
       });
 
@@ -136,6 +150,7 @@ export default new MessageCommand({
     });
 
     let detected;
+
     try {
       detected = detectScriptKind(script);
     } catch (error) {
@@ -147,8 +162,10 @@ export default new MessageCommand({
           },
           components: [errorUI(error.message)],
         });
+
         return;
       }
+
       throw error;
     }
 
@@ -159,7 +176,9 @@ export default new MessageCommand({
           parse: [],
         },
       });
+
       scheduleMessageDeletion(sent, detected.deleteMs);
+
       return;
     }
 
@@ -189,7 +208,11 @@ export default new MessageCommand({
             parse: [],
           },
           components: [
-            errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_embed_example")),
+            errorUI(
+              icons.code +
+                " " +
+                client.i18n.t("commands.builder.missing_embed_example"),
+            ),
           ],
         });
 
@@ -231,6 +254,7 @@ export default new MessageCommand({
       });
 
       scheduleMessageDeletion(sent, deleteMs);
+
       return;
     }
 
@@ -241,7 +265,11 @@ export default new MessageCommand({
           parse: [],
         },
         components: [
-          errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_cv2_example")),
+          errorUI(
+            icons.code +
+              " " +
+              client.i18n.t("commands.builder.missing_cv2_example"),
+          ),
         ],
       });
 
