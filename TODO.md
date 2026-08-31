@@ -152,11 +152,11 @@ A roadmap for Samy's development.
 - [x] Lockdown all channels at once (`lockdown all` / `unlock all`)
 - [x] Lockdown ignore list (channels excluded from lock/unlock all)
 - [x] Configurable default lockdown role
-- [ ] Hide/unhide a channel from a role or member
-- [ ] Toggle NSFW temporarily on a channel (`naughty`)
-- [ ] Revoke attach files/embed permissions per channel (`revokefiles`)
-- [ ] Move all members between voice channels (`moveall`)
-- [ ] Drag member(s) into a voice channel (`drag`)
+- [x] Hide/unhide a channel from a role or member
+- [x] Toggle NSFW temporarily on a channel (`naughty`)
+- [x] Revoke attach files/embed permissions per channel (`revokefiles`)
+- [x] Move all members between voice channels (`moveall`)
+- [x] Drag member(s) into a voice channel (`drag`)
 - [ ] Thread management (rename, lock/unlock, add/remove member, watch for archival)
 
 ## Role Management
