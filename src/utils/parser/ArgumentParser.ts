@@ -189,42 +189,53 @@ export class ArgumentParser {
           });
         } else if (definition.default !== undefined) {
           resolved.set(definition.name, {
-            type: definition.type,
+            type: Array.isArray(definition.type) ? definition.type.join("|") : definition.type,
             value: definition.default,
           });
         }
         continue;
       }
 
-      const typeDefinition = ArgumentRegistry.get(definition.type);
+      const types = Array.isArray(definition.type)
+        ? definition.type
+        : [definition.type];
 
-      if (!typeDefinition) {
-        errors.push({
-          code: "UNKNOWN_TYPE",
-          argument: definition.name,
-          message: `Unknown argument type: ${definition.type}`,
+      let resolvedValue: { success: true; value: unknown } | null = null;
+      const typeErrors: string[] = [];
+
+      for (const typeName of types) {
+        const typeDefinition = ArgumentRegistry.get(typeName);
+
+        if (!typeDefinition) {
+          typeErrors.push(`Unknown argument type: ${typeName}`);
+          continue;
+        }
+
+        const resolveResult = await typeDefinition.resolve(raw, {
+          client,
+          message,
+          raw,
         });
-        continue;
+
+        if (resolveResult.success) {
+          resolvedValue = resolveResult;
+          break;
+        }
+        typeErrors.push(resolveResult.error);
       }
 
-      const result = await typeDefinition.resolve(raw, {
-        client,
-        message,
-        raw,
-      });
-
-      if (!result.success) {
+      if (!resolvedValue) {
         errors.push({
           code: "INVALID_TYPE",
           argument: definition.name,
-          message: `Invalid value for ${definition.name}: ${result.error}`,
+          message: `Invalid value for ${definition.name}: ${typeErrors.join(", ")}`,
         });
         continue;
       }
 
       resolved.set(definition.name, {
-        type: definition.type,
-        value: result.value,
+        type: Array.isArray(definition.type) ? definition.type.join("|") : definition.type,
+        value: resolvedValue.value,
       });
     }
 

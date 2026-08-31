@@ -9,7 +9,7 @@ import type {
 import type { ArgumentTypeName } from "../../types/ArgumentType";
 
 export interface ResolvedArgumentValue {
-  type: ArgumentTypeName;
+  type: ArgumentTypeName | string;
   value: unknown;
 }
 
@@ -60,5 +60,9 @@ export class ParsedArguments {
 
   getChannelLike(name: string): GuildBasedChannel | undefined {
     return this.get<GuildBasedChannel>(name);
+  }
+
+  getResolvedType(name: string): string | undefined {
+    return this.values.get(name)?.type;
   }
 }
