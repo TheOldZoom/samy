@@ -9,7 +9,7 @@ import {
   type Message,
 } from "discord.js";
 import { decompileMessageToScript } from "@/libs/scripting";
-
+import type { DecompileOptions } from "@/libs/scripting/decompile";
 const MESSAGE_LINK =
   /^https?:\/\/(?:(?:canary|ptb)\.)?discord(?:app)?\.com\/channels\/(?<guildId>@me|\d{15,20})\/(?<channelId>\d{15,20})\/(?<messageId>\d{15,20})/i;
 
@@ -52,14 +52,20 @@ export async function fetchBuilderCopyTarget(
   return options.reply.fetchReference().catch(() => null);
 }
 
-export function decompileMessageForBuilder(message: Message): string {
-  return decompileMessageToScript({
-    content: message.content,
-    embeds: message.embeds.map((embed) => embed.toJSON() as APIEmbed),
-    components: message.components.map(
-      (component) => component.toJSON() as APIMessageTopLevelComponent,
-    ),
-  });
+export function decompileMessageForBuilder(
+  message: Message,
+  options: DecompileOptions = {},
+): string {
+  return decompileMessageToScript(
+    {
+      content: message.content,
+      embeds: message.embeds.map((embed) => embed.toJSON() as APIEmbed),
+      components: message.components.map(
+        (component) => component.toJSON() as APIMessageTopLevelComponent,
+      ),
+    },
+    options,
+  );
 }
 
 export function buildBuilderCopyContainer(script: string): {
