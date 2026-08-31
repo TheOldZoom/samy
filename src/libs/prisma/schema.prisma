@@ -67,6 +67,8 @@ model Guild {
   markovSettings         MarkovSettings?
   markovChannels         MarkovChannel[]
   autoroles              Autorole[]
+  stickyRoles            StickyRole[]
+  temporaryRoles         TemporaryRole[]
 }
 
 model GuildBan {
@@ -439,7 +441,7 @@ model Autorole {
   id String @id @default(cuid())
 
   guildId String
-  guild   Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild   Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
   roleId String
 
@@ -448,4 +450,40 @@ model Autorole {
   @@unique([guildId, roleId])
   @@index([guildId])
   @@index([roleId])
+}
+
+model StickyRole {
+  id String @id @default(cuid())
+
+  guildId String
+  guild   Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  userId  String
+  roleId  String
+
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, userId, roleId])
+  @@index([guildId])
+  @@index([guildId, userId])
+  @@index([roleId])
+}
+
+model TemporaryRole {
+  id String @id @default(cuid())
+
+  guildId String
+  guild   Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  userId  String
+  roleId  String
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, userId, roleId])
+  @@index([expiresAt])
+  @@index([guildId])
+  @@index([guildId, userId])
 }

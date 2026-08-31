@@ -3,6 +3,7 @@ import { REST, Routes } from "discord.js";
 import type Client from "@/classes/client";
 import { reconcileGuildBans } from "@/utils/guildBan";
 import { ensureGuild } from "@/utils/guild";
+import { startTemporaryRoleCleanup } from "@/utils/temporaryRoles";
 
 export default new Event({
   name: "clientReady",
@@ -13,6 +14,7 @@ export default new Event({
     await reconcileGuildBans(client);
     await registerGuilds(client);
     await cacheStuff(client);
+    startTemporaryRoleCleanup(client);
     client.logger.info(`Logged in as ${client.user?.tag}`);
   },
 });
