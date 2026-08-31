@@ -12,7 +12,9 @@ export type ArgumentTypeName =
   | "member"
   | "role"
   | "channel"
-  | "channelLike";
+  | "channelLike"
+  | "userList"
+  | "memberList";
 
 export interface ArgumentResolverContext {
   client: Client;

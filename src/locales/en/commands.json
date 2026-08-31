@@ -662,5 +662,44 @@
     "channel_remove_not_found": "**{channel}** is not in the Markov learning whitelist.",
     "channel_list_none": "No channels are whitelisted for Markov learning. Markov will not learn from messages until you add channels with `markov channel add <channel>`.",
     "channel_list_title": "Markov learning whitelist ({count}):\n{channels}"
+  },
+  "hide": {
+    "guild_only": "This command can only be used in a server.",
+    "channel_not_found": "I couldn't find that channel.",
+    "target_not_found": "I couldn't find that role or member.",
+    "hidden": "**{channel}** has been hidden from **{target}**.",
+    "unhidden": "**{channel}** has been unhidden from **{target}**.",
+    "failed": "I couldn't update the channel permissions."
+  },
+  "naughty": {
+    "guild_only": "This command can only be used in a server.",
+    "channel_not_found": "I couldn't find that channel.",
+    "text_only": "NSFW can only be toggled on text channels.",
+    "enabled": "NSFW has been enabled in **{channel}**.",
+    "disabled": "NSFW has been disabled in **{channel}**.",
+    "failed": "I couldn't toggle NSFW."
+  },
+  "revokefiles": {
+    "guild_only": "This command can only be used in a server.",
+    "channel_not_found": "I couldn't find that channel.",
+    "revoked": "Attach files and embed permissions have been revoked in **{channel}**.",
+    "restored": "Attach files and embed permissions have been restored in **{channel}**.",
+    "failed": "I couldn't update the permissions."
+  },
+  "moveall": {
+    "guild_only": "This command can only be used in a server.",
+    "from_not_found": "I couldn't find the source voice channel.",
+    "to_not_found": "I couldn't find the target voice channel.",
+    "same_channel": "The source and target channels cannot be the same.",
+    "success": "Moved **{count}** members from **{from}** to **{to}**.",
+    "failed": "I couldn't move the members."
+  },
+  "drag": {
+    "guild_only": "This command can only be used in a server.",
+    "no_channel": "Join a voice channel or specify a target channel.",
+    "not_voice": "The target must be a voice channel.",
+    "no_members": "No valid members provided.",
+    "success": "Dragged **{count}** members to **{channel}**.\nFailed: {failed}",
+    "failed": "I couldn't drag the members."
   }
 }

@@ -154,12 +154,39 @@ export class ArgumentParser {
 
       const isLastDefinition = index === definitions.length - 1;
 
-      if (isLastDefinition && definition.type === "string") {
+      const isStringType = definition.type === "string";
+      const isListType =
+        definition.type === "userList" ||
+        definition.type === "memberList";
+
+      if (isLastDefinition && (isStringType || isListType)) {
         rawValues.set(
           definition.name,
           positionalTokens.slice(positionalIndex).join(" "),
         );
         positionalIndex = positionalTokens.length;
+        continue;
+      }
+
+      if (isListType) {
+        const remainingRequired = definitions
+          .slice(index + 1)
+          .filter((d) => d.required && !rawValues.has(d.name)).length;
+        const remainingOptional = definitions
+          .slice(index + 1)
+          .filter((d) => !d.required && !rawValues.has(d.name)).length;
+        const availableTokens = positionalTokens.length - positionalIndex;
+
+        let tokensForThis = Math.max(1, availableTokens - remainingRequired);
+        if (remainingOptional > 0 && availableTokens > remainingRequired + 1) {
+          tokensForThis = availableTokens - remainingOptional;
+        }
+
+        rawValues.set(
+          definition.name,
+          positionalTokens.slice(positionalIndex, positionalIndex + tokensForThis).join(" "),
+        );
+        positionalIndex += tokensForThis;
         continue;
       }
 

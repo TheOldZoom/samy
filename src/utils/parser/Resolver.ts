@@ -698,3 +698,90 @@ ArgumentRegistry.register<GuildBasedChannel>({
     return fail(`No channel, thread, or forum found matching "${raw}"`);
   },
 });
+
+ArgumentRegistry.register<User[]>({
+  name: "userList",
+  description: "A list of Discord users (mentions or IDs, separated by spaces).",
+
+  resolve: async (raw, context): Promise<ArgumentResolveResult<User[]>> => {
+    const { message } = context;
+
+    if (!message.guild) {
+      return fail("This argument can only be used in a server");
+    }
+
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length === 0) {
+      return fail("No users provided");
+    }
+
+    const users: User[] = [];
+    const errors: string[] = [];
+
+    for (const part of parts) {
+      const userArg = ArgumentRegistry.get("user");
+      if (!userArg) {
+        errors.push("User resolver not found");
+        continue;
+      }
+
+      const result = await userArg.resolve(part, context);
+      if (result.success) {
+        users.push(result.value as User);
+      } else {
+        errors.push(`"${part}": ${result.error}`);
+      }
+    }
+
+    if (users.length === 0) {
+      return fail(`No valid users found. Errors: ${errors.join(", ")}`);
+    }
+
+    return ok(users);
+  },
+});
+
+ArgumentRegistry.register<GuildMember[]>({
+  name: "memberList",
+  description: "A list of guild members (mentions or IDs, separated by spaces).",
+
+  resolve: async (
+    raw,
+    context,
+  ): Promise<ArgumentResolveResult<GuildMember[]>> => {
+    const { message } = context;
+
+    if (!message.guild) {
+      return fail("This argument can only be used in a server");
+    }
+
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length === 0) {
+      return fail("No members provided");
+    }
+
+    const members: GuildMember[] = [];
+    const errors: string[] = [];
+
+    for (const part of parts) {
+      const memberArg = ArgumentRegistry.get("member");
+      if (!memberArg) {
+        errors.push("Member resolver not found");
+        continue;
+      }
+
+      const result = await memberArg.resolve(part, context);
+      if (result.success) {
+        members.push(result.value as GuildMember);
+      } else {
+        errors.push(`"${part}": ${result.error}`);
+      }
+    }
+
+    if (members.length === 0) {
+      return fail(`No valid members found. Errors: ${errors.join(", ")}`);
+    }
+
+    return ok(members);
+  },
+});
