@@ -137,17 +137,20 @@ export function decompileMessageToScript(
   }
 
   if (embeds.length > 0) {
-    if (embeds.length > 1) {
-      throw new Error(
-        "Cannot decompile multiple embeds because this script compiler supports one embed per script.",
-      );
-    }
-
     if (content && content.trim().length > 0) {
       pushParam(parts, "content", content, options);
     }
 
-    parts.push(decompileEmbedToScript(embeds[0]!, options));
+    const embedParts: string[] = [];
+    for (let i = 0; i < embeds.length; i++) {
+      const script = decompileEmbedToScript(embeds[i]!, options);
+      if (i === 0) {
+        embedParts.push(script);
+      } else {
+        embedParts.push(`{embed}$v${script}`);
+      }
+    }
+    parts.push(embedParts.join("$v"));
     parts.push(...decompileEmbedButtons(components, options));
 
     return joinScript("embed", parts);
@@ -481,8 +484,12 @@ function formatColor(color: number): string {
   return `#${color.toString(16).padStart(6, "0")}`;
 }
 
+const SIBLING_DELIMITER = "$v";
+
 function joinScript(kind: "embed" | "cv2", parts: string[]): string {
-  return `{${kind}} ${joinParts(parts)}`.trim();
+  const joined = joinParts(parts);
+  if (!joined) return `{${kind}}`;
+  return `{${kind}}${SIBLING_DELIMITER}${joined}`;
 }
 
 function joinParts(parts: string[]): string {

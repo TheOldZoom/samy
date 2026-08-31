@@ -19,6 +19,12 @@ export interface EmbedRenderResult {
   deleteMs?: number;
 }
 
+export interface MultiEmbedRenderResult {
+  embeds: EmbedRenderResult[];
+  content?: string;
+  deleteMs?: number;
+}
+
 export interface EmbedRenderOptions {
   variables?: VariableContext;
   resolver?: VariableResolver;
@@ -52,6 +58,31 @@ export class EmbedRenderer {
       deleteMs: target.deleteMs,
     };
   }
+
+  renderMultiple(
+    scripts: EmbedScript[],
+    options: EmbedRenderOptions = {},
+  ): MultiEmbedRenderResult {
+    let globalContent: string | undefined;
+    let globalDeleteMs: number | undefined;
+
+    const embeds = scripts.map((script) => {
+      const result = this.render(script, options);
+      if (result.content) {
+        globalContent = result.content;
+      }
+      if (result.deleteMs) {
+        globalDeleteMs = result.deleteMs;
+      }
+      return result;
+    });
+
+    return {
+      embeds,
+      content: globalContent,
+      deleteMs: globalDeleteMs,
+    };
+  }
 }
 
 function chunkButtons(
@@ -72,4 +103,11 @@ export function renderEmbedScript(
   options?: EmbedRenderOptions,
 ): EmbedRenderResult {
   return new EmbedRenderer().render(script, options);
+}
+
+export function renderMultiEmbedScripts(
+  scripts: EmbedScript[],
+  options?: EmbedRenderOptions,
+): MultiEmbedRenderResult {
+  return new EmbedRenderer().renderMultiple(scripts, options);
 }

@@ -5,6 +5,7 @@ export const MAX_DELETE_DURATION_MS = 24 * 24 * 60 * 60 * 1000;
 
 export type DetectedScript =
   | { kind: "embed"; source: string; content?: string; deleteMs?: number }
+  | { kind: "multi-embed"; source: string; content?: string; deleteMs?: number }
   | { kind: "cv2"; source: string; content?: string; deleteMs?: number }
   | { kind: "text"; source: string; deleteMs?: number };
 
@@ -83,12 +84,30 @@ export function detectScriptKind(input: string): DetectedScript {
     deleteMs = extracted.deleteMs;
   }
 
+  if (marker.kind === "embed") {
+    const embedCount = countEmbedMarkers(trimmed);
+    if (embedCount > 1) {
+      return {
+        kind: "multi-embed",
+        source: trimmed,
+        content,
+        deleteMs,
+      };
+    }
+  }
+
   return {
     kind: marker.kind,
     source,
     content,
     deleteMs,
   };
+}
+
+function countEmbedMarkers(source: string): number {
+  const regex = /\{embed\}\s*(?:\$v\s*)?/gi;
+  const matches = source.match(regex);
+  return matches ? matches.length : 0;
 }
 
 function findScriptMarker(

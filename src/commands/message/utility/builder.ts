@@ -13,7 +13,7 @@ import {
   detectScriptKind,
   mergeMessageContent,
 } from "@/libs/scripting/detectScriptKind";
-import { compileEmbedScript } from "@/libs/scripting/embed";
+import { compileEmbedScript, compileMultiEmbedScripts } from "@/libs/scripting/embed";
 import { extractRawScript } from "@/libs/scripting/extractRawScript";
 import { isScriptError } from "@/libs/scripting/common/ScriptError";
 import { scheduleMessageDeletion } from "@/libs/scripting/scheduleMessageDeletion";
@@ -200,7 +200,7 @@ export default new MessageCommand({
       return;
     }
 
-    if (detected.kind === "embed") {
+    if (detected.kind === "embed" || detected.kind === "multi-embed") {
       if (!detected.source) {
         await message.reply({
           flags: MessageFlags.IsComponentsV2,
@@ -215,6 +215,52 @@ export default new MessageCommand({
             ),
           ],
         });
+
+        return;
+      }
+
+      if (detected.kind === "multi-embed") {
+        const compiled = compileMultiEmbedScripts(detected.source);
+
+        if (!compiled.success) {
+          await message.reply({
+            flags: MessageFlags.IsComponentsV2,
+            allowedMentions: {
+              parse: [],
+            },
+            components: [errorUI(compiled.error.message)],
+          });
+
+          return;
+        }
+
+        const content = mergeMessageContent(
+          detected.content,
+          compiled.result.content,
+        );
+
+        const deleteMs = compiled.result.deleteMs ?? detected.deleteMs;
+
+        const allComponents: typeof compiled.result.embeds[number]["components"] = [];
+        const embeds = compiled.result.embeds.map((e) => {
+          allComponents.push(...e.components);
+          return e.embed;
+        });
+
+        const sent = await message.reply({
+          ...(content ? { content } : {}),
+          allowedMentions: {
+            parse: [],
+          },
+          embeds,
+          ...(allComponents.length > 0
+            ? {
+                components: allComponents,
+              }
+            : {}),
+        });
+
+        scheduleMessageDeletion(sent, deleteMs);
 
         return;
       }

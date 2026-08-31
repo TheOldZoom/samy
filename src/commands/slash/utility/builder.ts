@@ -13,7 +13,7 @@ import {
   detectScriptKind,
   mergeMessageContent,
 } from "@/libs/scripting/detectScriptKind";
-import { compileEmbedScript } from "@/libs/scripting/embed";
+import { compileEmbedScript, compileMultiEmbedScripts } from "@/libs/scripting/embed";
 import { isScriptError } from "@/libs/scripting/common/ScriptError";
 import { scheduleMessageDeletion } from "@/libs/scripting/scheduleMessageDeletion";
 import { replaceVariables } from "@/libs/scripting/variables";
@@ -102,7 +102,7 @@ export default new SlashCommand({
       return;
     }
 
-    if (detected.kind === "embed") {
+    if (detected.kind === "embed" || detected.kind === "multi-embed") {
       if (!detected.source) {
         await interaction.reply({
           flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
@@ -114,6 +114,51 @@ export default new SlashCommand({
           ],
         });
 
+        return;
+      }
+
+      if (detected.kind === "multi-embed") {
+        const compiled = compileMultiEmbedScripts(detected.source);
+
+        if (!compiled.success) {
+          await interaction.reply({
+            flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+            allowedMentions: {
+              parse: [],
+            },
+            components: [errorUI(compiled.error.message)],
+          });
+
+          return;
+        }
+
+        const content = mergeMessageContent(
+          detected.content,
+          compiled.result.content,
+        );
+
+        const deleteMs = compiled.result.deleteMs ?? detected.deleteMs;
+
+        const allComponents: typeof compiled.result.embeds[number]["components"] = [];
+        const embeds = compiled.result.embeds.map((e) => {
+          allComponents.push(...e.components);
+          return e.embed;
+        });
+
+        const response = await interaction.reply({
+          ...(content ? { content } : {}),
+          allowedMentions: {
+            parse: [],
+          },
+          embeds,
+          ...(allComponents.length > 0
+            ? {
+                components: allComponents,
+              }
+            : {}),
+        });
+
+        scheduleMessageDeletion(response, deleteMs);
         return;
       }
 
