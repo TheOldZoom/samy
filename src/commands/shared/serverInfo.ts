@@ -1,4 +1,4 @@
-import { GuildVerificationLevel, type Guild } from "discord.js";
+import { GuildVerificationLevel, type Guild, ChannelType } from "discord.js";
 
 import type Client from "@/classes/client";
 import { Container, Media, Section, Separator } from "@/ui/components";
@@ -22,7 +22,7 @@ export async function ServerInfo(client: Client, guild: Guild) {
 
   const voiceChannels = channels.filter((c) => c.isVoiceBased()).size;
 
-  const categories = channels.filter((c) => c.type === 4).size;
+  const categories = channels.filter((c) => c.type === ChannelType.GuildCategory).size;
 
   const humanCount = guild.members.cache.filter((m) => !m.user.bot).size;
   const botCount = guild.members.cache.filter((m) => m.user.bot).size;

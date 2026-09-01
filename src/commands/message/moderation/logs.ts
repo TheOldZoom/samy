@@ -627,7 +627,7 @@ export default new MessageCommand({
         if (!message.guild) return;
 
         for (const cat of categories) {
-          await emitTestLogs(client, message.guild, cat, message.author);
+          emitTestLogs(client, message.guild, cat, message.author);
         }
 
         await reply(
@@ -738,12 +738,12 @@ export default new MessageCommand({
   ],
 });
 
-async function emitTestLogs(
+function emitTestLogs(
   client: Client,
   guild: Guild,
   category: LogCategoryKey,
   author: User,
-) {
+): void {
   switch (category) {
     case "channels":
       emitChannelEvents(client, guild, author);
@@ -903,7 +903,7 @@ function createFakeCollection<T>(entries: [string, T][] = []): Map<string, T> {
       for (const [key, value] of map) {
         if (fn(value, key, map)) result.set(key, value);
       }
-      return createFakeCollection([...result]);
+      return createFakeCollection<T>([...result] as [string, T][]);
     },
     map: (fn: (value: T, key: string, map: Map<string, T>) => unknown) => [...map].map(([key, value]) => fn(value, key, map)),
     find: (fn: (value: T, key: string, map: Map<string, T>) => boolean) => {
@@ -912,7 +912,7 @@ function createFakeCollection<T>(entries: [string, T][] = []): Map<string, T> {
       }
       return undefined;
     },
-  }) as Map<string, T> & { filter: (fn: (value: T, key: string, map: Map<string, T>) => boolean) => Map<string, T>; map: (fn: (value: T, key: string, map: Map<string, T>) => unknown) => unknown[]; find: (fn: (value: T, key: string, map: Map<string, T>) => boolean) => T | undefined };
+  });
 }
 
 function emitMemberEvents(client: Client, guild: Guild, author: User) {

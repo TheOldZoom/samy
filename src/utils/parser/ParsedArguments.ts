@@ -9,7 +9,7 @@ import type {
 import type { ArgumentTypeName } from "../../types/ArgumentType";
 
 export interface ResolvedArgumentValue {
-  type: ArgumentTypeName | string;
+  type: ArgumentTypeName;
   value: unknown;
 }
 

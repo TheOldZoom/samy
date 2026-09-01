@@ -16,14 +16,14 @@ export async function LoadInteractions<T extends { name: string }>(
   for (const file of files) {
     if (!file.endsWith(".ts") && !file.endsWith(".js")) continue;
 
-    const module = await import(join(import.meta.dir, directory, file));
+    const module = await import(join(import.meta.dir, directory, file)) as { default?: T };
 
     if (!module.default) {
       client.logger.warn(`Skipping ${file}: no default export found`);
       continue;
     }
 
-    const handler = module.default as T;
+    const handler = module.default;
 
     if (!handler.name) {
       client.logger.warn(`Skipping ${file}: missing handler name`);

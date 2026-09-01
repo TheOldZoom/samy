@@ -307,7 +307,7 @@ export const topSubcommand = new MessageSubcommand({
       );
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -362,7 +362,7 @@ export const topColorSubcommand = new MessageSubcommand({
       return replyKey(client, message, "warning", "commands.role.no_top_role");
     }
 
-    const botCheck = await checkManageable(client, message, topRole);
+    const botCheck = checkManageable(client, message, topRole);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -446,7 +446,7 @@ export const copySubcommand = new MessageSubcommand({
       );
     }
 
-    const botCheck = await checkManageable(client, message, target);
+    const botCheck = checkManageable(client, message, target);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -470,7 +470,7 @@ export const copySubcommand = new MessageSubcommand({
         await target.edit({
           ...updates,
           reason: `Role copy by ${message.author.tag}`,
-        } as Parameters<typeof target.edit>[0]);
+        });
       }
 
       if (fields.includes("icon")) {

@@ -1,4 +1,6 @@
 import {
+  ApplicationIntegrationType,
+  InteractionContextType,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";

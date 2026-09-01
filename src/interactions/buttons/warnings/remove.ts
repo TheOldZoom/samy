@@ -15,7 +15,7 @@ export default new ButtonHandler({
     const warningId = params[0];
     if (!warningId) return;
 
-    const _page = Number(params[1] ?? 0);
+    const page = Number(params[1] ?? 0);
     const _targetId = params[2];
 
     const warning = await client.prisma.warning.findFirst({

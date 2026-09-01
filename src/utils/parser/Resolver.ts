@@ -189,7 +189,7 @@ class ArgumentRegistryClass {
   register<T>(definition: ArgumentTypeDefinition<T>): void {
     this.types.set(
       definition.name.toLowerCase(),
-      definition as ArgumentTypeDefinition<unknown>,
+      definition,
     );
   }
 

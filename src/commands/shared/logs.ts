@@ -48,7 +48,7 @@ async function createLogWebhook(
       avatar: client.user?.displayAvatarURL(),
     });
 
-    return { id: webhook.id, token: webhook.token! };
+    return { id: webhook.id, token: webhook.token };
   } catch (error) {
     client.logger.warn("Failed to create log webhook", {
       error,

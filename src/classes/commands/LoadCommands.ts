@@ -16,14 +16,14 @@ export async function LoadCommands<T extends { name: string }>(
   for (const file of files) {
     if (!file.endsWith(".ts") && !file.endsWith(".js")) continue;
 
-    const module = await import(join(import.meta.dir, directory, file));
+    const module = await import(join(import.meta.dir, directory, file)) as { default?: T };
 
     if (!module.default) {
       client.logger.warn(`Skipping ${file}: no default export found`);
       continue;
     }
 
-    const command = module.default as T;
+    const command = module.default;
 
     if (!command.name) {
       client.logger.warn(`Skipping ${file}: missing command name`);

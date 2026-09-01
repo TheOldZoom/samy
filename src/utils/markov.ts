@@ -145,11 +145,11 @@ export async function learnMarkov(
   if (tokens.length === 0) return;
 
   const chain = (await getChain(client, guildId)) ?? {};
-  const sequence = [...Array(order).fill(START), ...tokens, END];
+  const sequence: string[] = [...Array<string>(order).fill(START), ...tokens, END];
 
   for (let i = 0; i < sequence.length - order; i++) {
     const key = sequence.slice(i, i + order).join(" ");
-    recordTransition(chain, key, sequence[i + order]!);
+    recordTransition(chain, key, sequence[i + order]);
   }
 
   client.markovChains.set(guildId, JSON.stringify(chain));
@@ -248,7 +248,7 @@ export function generateMarkov(
 ): string | null {
   const startKey =
     seed !== undefined
-      ? [...Array(Math.max(order - 1, 0)).fill(START), seed.toLowerCase()].join(
+      ? [...Array<string>(Math.max(order - 1, 0)).fill(START), seed.toLowerCase()].join(
           " ",
         )
       : startStateKey(order);

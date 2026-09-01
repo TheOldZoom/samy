@@ -15,7 +15,7 @@ export const allSubcommand = new MessageSubcommand({
     await message.guild.members.fetch().catch(() => null);
 
     const roles = [...message.guild.roles.cache.values()]
-      .filter((r) => r.id !== message.guild!.roles.everyone.id)
+      .filter((r) => r.id !== message.guild.roles.everyone.id)
       .sort((a, b) => b.members.size - a.members.size)
       .slice(0, 25);
 
@@ -65,7 +65,7 @@ export const allAddSubcommand = new MessageSubcommand({
       return replyKey(client, message, "warning", "commands.role.invalid_type");
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -130,7 +130,7 @@ export const allRemoveSubcommand = new MessageSubcommand({
       return replyKey(client, message, "warning", "commands.role.invalid_type");
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -197,7 +197,7 @@ export const massAddSubcommand = new MessageSubcommand({
       return replyKey(client, message, "warning", "commands.role.copy_same");
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -249,7 +249,7 @@ export const massRemoveSubcommand = new MessageSubcommand({
     const role = args.getRole("role");
     if (!target || !role) return;
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }

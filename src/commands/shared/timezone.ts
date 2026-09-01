@@ -71,7 +71,7 @@ export function resolveTimezone(input: string): string | null {
         part
           .slice(1)
           .toLowerCase()
-          .replace(/_([a-z])/g, (_, c) => `_${c.toUpperCase()}`),
+          .replace(/_([a-z])/g, (_, c: string) => `_${c.toUpperCase()}`),
     )
     .join("/");
 

@@ -7,7 +7,7 @@ CheckEnvs(["DISCORD_TOKEN"]);
 const logger = new Logger();
 const client = new Client(logger);
 
-client.connect();
+void client.connect();
 
 async function shutdown(signal: string) {
   logger.info(`${signal} received, shutting down...`);
@@ -17,5 +17,5 @@ async function shutdown(signal: string) {
   process.exit(0);
 }
 
-process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => void shutdown("SIGINT"));
+process.on("SIGTERM", () => void shutdown("SIGTERM"));

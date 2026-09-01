@@ -27,7 +27,7 @@ export default (manager: ShardingManager) =>
       const installs = (await manager.broadcastEval(
         async (client) =>
           (await client.application?.fetch())?.approximateUserInstallCount ?? 0,
-      )) as number[];
+      ));
 
       userInstallCount =
         installs.find((n) => typeof n === "number" && n > 0) ?? 0;

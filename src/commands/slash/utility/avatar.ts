@@ -40,7 +40,7 @@ export default new SlashCommand({
     await interaction.deferReply();
 
     try {
-      const container = await Avatar(client, target, member);
+      const container = Avatar(client, target, member);
 
       await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,

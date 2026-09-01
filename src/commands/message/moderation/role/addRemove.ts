@@ -54,7 +54,7 @@ export const addSubcommand = new MessageSubcommand({
 
     for (const role of roles) {
       if (member.roles.cache.has(role.id)) continue;
-      const check = await checkManageable(client, message, role);
+      const check = checkManageable(client, message, role);
       if (!check.ok) continue;
       try {
         await member.roles.add(role, `Role add by ${message.author.tag}`);
@@ -109,7 +109,7 @@ export const toggleSubcommand = new MessageSubcommand({
       );
     }
 
-    const check = await checkManageable(client, message, role);
+    const check = checkManageable(client, message, role);
     if (!check.ok) {
       return replyKey(client, message, "warning", check.key, check.vars);
     }
@@ -181,7 +181,7 @@ export const removeSubcommand = new MessageSubcommand({
 
     for (const role of roles) {
       if (!member.roles.cache.has(role.id)) continue;
-      const check = await checkManageable(client, message, role);
+      const check = checkManageable(client, message, role);
       if (!check.ok) continue;
       try {
         await member.roles.remove(role, `Role remove by ${message.author.tag}`);

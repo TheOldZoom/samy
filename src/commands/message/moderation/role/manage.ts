@@ -155,7 +155,7 @@ export const deleteSubcommand = new MessageSubcommand({
       }
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -256,7 +256,7 @@ export const editSubcommand = new MessageSubcommand({
       );
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -284,7 +284,7 @@ export const editSubcommand = new MessageSubcommand({
         await role.edit({
           ...updates,
           reason: `Role edit by ${message.author.tag}`,
-        } as Parameters<typeof role.edit>[0]);
+        });
       }
 
       if (iconInput !== undefined) {

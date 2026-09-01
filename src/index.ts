@@ -46,12 +46,12 @@ async function main() {
 
   await manager.spawn({ timeout: -1 });
 
-  process.on("SIGINT", () => shutdown("SIGINT", manager));
-  process.on("SIGTERM", () => shutdown("SIGTERM", manager));
+  process.on("SIGINT", () => void shutdown("SIGINT", manager));
+  process.on("SIGTERM", () => void shutdown("SIGTERM", manager));
 }
 
-main().catch((err) => {
-  logger.error(`Failed to start: ${err?.stack ?? err}`);
+main().catch((err: unknown) => {
+  logger.error(`Failed to start: ${err instanceof Error ? err.stack : String(err)}`);
   process.exit(1);
 });
 

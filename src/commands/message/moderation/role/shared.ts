@@ -4,11 +4,12 @@ import { Container, Text } from "@/ui/components";
 import { icons } from "@/utils/icons";
 import { ArgumentRegistry } from "@/utils/parser/Resolver";
 import { canBotManageRole } from "@/utils/role";
+import type { TranslationVariables } from "@/libs/i18n";
 
 export const ROLE_ICON = icons.roles;
 
-export function guildOnlyReply(client: { i18n: { t: (key: string) => string } }, message: Message) {
-  return message.reply({
+export function guildOnlyReply(client: { i18n: { t: (key: string) => string } }, message: Message): void {
+  void message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
@@ -19,12 +20,12 @@ export function guildOnlyReply(client: { i18n: { t: (key: string) => string } },
 }
 
 export async function replyKey(
-  client: { i18n: { t: (key: string, vars?: Record<string, unknown>) => string } },
+  client: { i18n: { t: (key: string, vars?: TranslationVariables) => string } },
   message: Message,
   icon: string,
   key: string,
-  vars?: Record<string, unknown>,
-) {
+  vars?: TranslationVariables,
+): Promise<void> {
   const iconChar = (icons as Record<string, string>)[icon] ?? ROLE_ICON;
   await message.reply({
     flags: MessageFlags.IsComponentsV2,
@@ -34,7 +35,7 @@ export async function replyKey(
   });
 }
 
-export async function replyText(client: { i18n: { t: (key: string) => string } }, message: Message, text: string) {
+export async function replyText(client: { i18n: { t: (key: string) => string } }, message: Message, text: string): Promise<void> {
   await message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [new Container().text(Text(text))],
@@ -80,13 +81,11 @@ export async function resolveRoleList(
   return { roles, errors };
 }
 
-export async function checkManageable(
+export function checkManageable(
   client: { i18n: { t: (key: string) => string } },
   message: Message,
   role: Role,
-): Promise<
-  { ok: true } | { ok: false; key: string; vars?: Record<string, unknown> }
-> {
+): { ok: true } | { ok: false; key: string; vars?: TranslationVariables } {
   if (isManagedOrEveryone(role)) {
     return { ok: false, key: "commands.role.cannot_manage" };
   }
@@ -96,7 +95,7 @@ export async function checkManageable(
     return {
       ok: false,
       key: "commands.role.bot_hierarchy",
-      vars: { reason: botCheck.reason ?? "" },
+      vars: botCheck.reason ? { reason: botCheck.reason } : undefined,
     };
   }
 

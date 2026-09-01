@@ -22,7 +22,7 @@ export async function request<T>(
     ),
   });
 
-  const url = `${client.baseUrl}?${searchParams}`;
+  const url = `${client.baseUrl}?${String(searchParams)}`;
 
   logger.debug("Last.fm request", {
     method,

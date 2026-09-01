@@ -15,7 +15,7 @@ export default new ButtonHandler({
     const noteId = params[0];
     if (!noteId) return;
 
-    const _page = Number(params[1] ?? 0);
+    const page = Number(params[1] ?? 0);
     const _targetId = params[2];
 
     const note = await client.prisma.memberNote.findFirst({

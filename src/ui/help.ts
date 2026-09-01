@@ -115,7 +115,7 @@ export function resolveSubcommand(
   }
 
   return {
-    sub: current as MessageSubcommand,
+    sub: current,
     canonicalPath,
   };
 }

@@ -85,7 +85,7 @@ export default (manager: ShardingManager) =>
         subcommands: (command.subcommands ?? []).map(serializeSubcommand),
       });
 
-      return [...client.messageCommands.values()].map(serializeCommand);
+      return [...(client.messageCommands as Map<string, { name: string; aliases: string[]; description?: string; options?: { category?: string }; arguments: unknown[]; cooldown?: number; guildOnly?: boolean; ownerOnly?: boolean; userPermissions?: string[]; botPermissions?: string[]; hasExecute: boolean; subcommands?: unknown[] }>).values()].map(serializeCommand);
     })) as SerializedCommand[][];
 
     const commands = [

@@ -76,7 +76,7 @@ function canManageFakePermission(member: { permissions: { has: (perm: string) =>
   if (member.permissions.has("Administrator")) return true;
   if (member.permissions.has("ManageGuild")) return true;
 
-  const permKey = permission as keyof typeof member.permissions.flags;
+  const permKey = permission;
   return member.permissions.has(permKey);
 }
 

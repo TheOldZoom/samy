@@ -47,7 +47,7 @@ export const tempSubcommand = new MessageSubcommand({
       );
     }
 
-    const botCheck = await checkManageable(client, message, role);
+    const botCheck = checkManageable(client, message, role);
     if (!botCheck.ok) {
       return replyKey(client, message, "warning", botCheck.key, botCheck.vars);
     }
@@ -60,21 +60,21 @@ export const tempSubcommand = new MessageSubcommand({
 
     const expiresAt = new Date(Date.now() + durationMs);
     await client.prisma.guild.upsert({
-      where: { id: message.guildId! },
+      where: { id: message.guildId },
       update: {},
-      create: { id: message.guildId! },
+      create: { id: message.guildId },
     });
     await client.prisma.temporaryRole.upsert({
       where: {
         guildId_userId_roleId: {
-          guildId: message.guildId!,
+          guildId: message.guildId,
           userId: member.id,
           roleId: role.id,
         },
       },
       update: { expiresAt },
       create: {
-        guildId: message.guildId!,
+        guildId: message.guildId,
         userId: member.id,
         roleId: role.id,
         expiresAt,
@@ -109,7 +109,7 @@ export const untempSubcommand = new MessageSubcommand({
       .delete({
         where: {
           guildId_userId_roleId: {
-            guildId: message.guildId!,
+            guildId: message.guildId,
             userId: member.id,
             roleId: role.id,
           },
@@ -165,21 +165,21 @@ export const stickyAddSubcommand = new MessageSubcommand({
     }
 
     await client.prisma.guild.upsert({
-      where: { id: message.guildId! },
+      where: { id: message.guildId },
       update: {},
-      create: { id: message.guildId! },
+      create: { id: message.guildId },
     });
     await client.prisma.stickyRole.upsert({
       where: {
         guildId_userId_roleId: {
-          guildId: message.guildId!,
+          guildId: message.guildId,
           userId: member.id,
           roleId: role.id,
         },
       },
       update: {},
       create: {
-        guildId: message.guildId!,
+        guildId: message.guildId,
         userId: member.id,
         roleId: role.id,
       },
@@ -223,7 +223,7 @@ export const unstickySubcommand = new MessageSubcommand({
       .delete({
         where: {
           guildId_userId_roleId: {
-            guildId: message.guildId!,
+            guildId: message.guildId,
             userId: member.id,
             roleId: role.id,
           },

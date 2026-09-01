@@ -69,7 +69,7 @@ export default new MessageCommand({
       return;
     }
 
-    if (!checkPermissions(message.member!, oldChannel, ["ManageChannels"])) {
+    if (!await checkPermissions(message.member!, oldChannel, ["ManageChannels"])) {
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
@@ -137,7 +137,7 @@ export default new MessageCommand({
 
       const member = await guild.members.fetch(interaction.user.id);
 
-      if (!checkPermissions(member, oldChannel, ["ManageChannels"])) {
+      if (!await checkPermissions(member, oldChannel, ["ManageChannels"])) {
         await interaction.reply({
           ephemeral: true,
           flags: MessageFlags.IsComponentsV2,

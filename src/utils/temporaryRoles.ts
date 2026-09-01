@@ -1,6 +1,6 @@
 let intervalStarted = false;
 
-export function startTemporaryRoleCleanup(client: { logger?: { error?: (message: string, data: Record<string, unknown>) => void } }): void {
+export function startTemporaryRoleCleanup(client: TempRoleCleanupClient): void {
   if (intervalStarted) return;
   intervalStarted = true;
 
@@ -12,11 +12,35 @@ export function startTemporaryRoleCleanup(client: { logger?: { error?: (message:
     }
   };
 
-  setInterval(tick, 30_000);
+  setInterval(() => void tick(), 30_000);
   void tick();
 }
 
-export async function runTemporaryRoleCleanup(client: { prisma: { temporaryRole: { findMany: (args: Record<string, unknown>) => Promise<{ guildId: string; userId: string; roleId: string }[]>; delete: (args: Record<string, unknown>) => Promise<unknown> } } }): Promise<void> {
+interface TempRoleCleanupClient {
+  logger?: { error?: (message: string, data: Record<string, unknown>) => void };
+  prisma: {
+    temporaryRole: {
+      findMany: (args: Record<string, unknown>) => Promise<{ guildId: string; userId: string; roleId: string }[]>;
+      delete: (args: Record<string, unknown>) => Promise<unknown>;
+    };
+  };
+  guilds: {
+    cache: {
+      get: (id: string) => {
+        members: {
+          fetch: (userId: string) => Promise<{
+            roles: {
+              cache: { has: (roleId: string) => boolean };
+              remove: (roleId: string, reason: string) => Promise<unknown>;
+            };
+          } | null>;
+        };
+      };
+    };
+  };
+}
+
+export async function runTemporaryRoleCleanup(client: TempRoleCleanupClient): Promise<void> {
   const now = new Date();
   const expired = await client.prisma.temporaryRole.findMany({
     where: { expiresAt: { lte: now } },

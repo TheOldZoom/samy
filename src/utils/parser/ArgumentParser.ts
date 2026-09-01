@@ -104,7 +104,7 @@ export class ArgumentParser {
           (next.toLowerCase() === "true" || next.toLowerCase() === "false");
 
         if (nextIsExplicitBoolean) {
-          rawValues.set(definition.name, next!.toLowerCase());
+          rawValues.set(definition.name, next.toLowerCase());
           i++;
         } else {
           rawValues.set(definition.name, "true");

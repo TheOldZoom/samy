@@ -63,7 +63,7 @@ function normalizeCommand(command: { [key: string]: unknown }) {
 
   function normalize(value: unknown): unknown {
     if (Array.isArray(value)) {
-      return value.map(normalize).sort((a, b) => {
+      return value.map(normalize).sort((a: { name?: string } | undefined, b: { name?: string } | undefined) => {
         if (a?.name && b?.name) {
           return a.name.localeCompare(b.name);
         }
@@ -77,7 +77,7 @@ function normalizeCommand(command: { [key: string]: unknown }) {
         .filter((key) => {
           if (ignoredKeys.has(key)) return false;
 
-          const val = value[key];
+          const val = (value as Record<string, unknown>)[key];
 
           return !(
             val === false ||
@@ -89,8 +89,8 @@ function normalizeCommand(command: { [key: string]: unknown }) {
         })
         .sort()
         .reduce(
-          (obj, key) => {
-            obj[key] = normalize(value[key]);
+          (obj: Record<string, unknown>, key: string) => {
+            obj[key] = normalize((value as Record<string, unknown>)[key]);
             return obj;
           },
           {} as Record<string, unknown>,
@@ -103,9 +103,9 @@ function normalizeCommand(command: { [key: string]: unknown }) {
   return normalize(command);
 }
 
-function getDifferences(oldCommand: { [key: string]: unknown }, newCommand: { [key: string]: unknown }) {
-  const oldNormalized = normalizeCommand(oldCommand);
-  const newNormalized = normalizeCommand(newCommand);
+function getDifferences(oldCommand: { [key: string]: unknown }, newCommand: { [key: string]: unknown }): string[] {
+  const oldNormalized = normalizeCommand(oldCommand) as Record<string, unknown> | undefined;
+  const newNormalized = normalizeCommand(newCommand) as Record<string, unknown> | undefined;
 
   const differences: string[] = [];
 

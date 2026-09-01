@@ -47,7 +47,7 @@ export default class API {
   }
 
   stop() {
-    this.app.stop();
+    void this.app.stop();
 
     this.logger.info("API stopped");
   }

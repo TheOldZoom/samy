@@ -59,7 +59,7 @@ export const rolesSubcommand = new MessageSubcommand({
     await message.guild.members.fetch().catch(() => null);
 
     const roles = [...message.guild.roles.cache.values()]
-      .filter((r) => r.id !== message.guild!.roles.everyone.id)
+      .filter((r) => r.id !== message.guild.roles.everyone.id)
       .sort((a, b) => b.position - a.position);
 
     if (roles.length === 0) {
