@@ -41,7 +41,11 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          errorUI(icons.image + " " + client.i18n.t("commands.serverbanner.fetch_error")),
+          errorUI(
+            icons.image +
+              " " +
+              client.i18n.t("commands.serverbanner.fetch_error"),
+          ),
         ],
       });
     }

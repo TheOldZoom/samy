@@ -58,9 +58,7 @@ export function decompileMessageForBuilder(
     {
       content: message.content,
       embeds: message.embeds.map((embed) => embed.toJSON()),
-      components: message.components.map(
-        (component) => component.toJSON(),
-      ),
+      components: message.components.map((component) => component.toJSON()),
     },
     options,
   );

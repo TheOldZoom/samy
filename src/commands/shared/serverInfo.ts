@@ -22,7 +22,9 @@ export async function ServerInfo(client: Client, guild: Guild) {
 
   const voiceChannels = channels.filter((c) => c.isVoiceBased()).size;
 
-  const categories = channels.filter((c) => c.type === ChannelType.GuildCategory).size;
+  const categories = channels.filter(
+    (c) => c.type === ChannelType.GuildCategory,
+  ).size;
 
   const humanCount = guild.members.cache.filter((m) => !m.user.bot).size;
   const botCount = guild.members.cache.filter((m) => m.user.bot).size;

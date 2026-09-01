@@ -56,7 +56,11 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.globe + " " + client.i18n.t("commands.locale.fetch_error"))],
+        components: [
+          errorUI(
+            icons.globe + " " + client.i18n.t("commands.locale.fetch_error"),
+          ),
+        ],
       });
     }
   },
@@ -92,7 +96,11 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(icons.globe + " " + client.i18n.t("commands.locale.invalid_scope")),
+              errorUI(
+                icons.globe +
+                  " " +
+                  client.i18n.t("commands.locale.invalid_scope"),
+              ),
             ],
           });
 
@@ -102,7 +110,11 @@ export default new MessageCommand({
         if (!input) {
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
-            components: [errorUI(icons.globe + " " + client.i18n.t("commands.locale.provide"))],
+            components: [
+              errorUI(
+                icons.globe + " " + client.i18n.t("commands.locale.provide"),
+              ),
+            ],
           });
 
           return;
@@ -113,7 +125,11 @@ export default new MessageCommand({
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
               components: [
-                errorUI(icons.globe + " " + client.i18n.t("commands.locale.guild_only")),
+                errorUI(
+                  icons.globe +
+                    " " +
+                    client.i18n.t("commands.locale.guild_only"),
+                ),
               ],
             });
 
@@ -126,7 +142,11 @@ export default new MessageCommand({
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
               components: [
-                errorUI(icons.globe + " " + client.i18n.t("commands.locale.missing_permission")),
+                errorUI(
+                  icons.globe +
+                    " " +
+                    client.i18n.t("commands.locale.missing_permission"),
+                ),
               ],
             });
 
@@ -147,9 +167,12 @@ export default new MessageCommand({
                   flags: MessageFlags.IsComponentsV2,
                   components: [
                     new Container().text(
-                      Text(icons.globe + " " + client.i18n.t("commands.locale.set_server", {
-                          locale,
-                        }),
+                      Text(
+                        icons.globe +
+                          " " +
+                          client.i18n.t("commands.locale.set_server", {
+                            locale,
+                          }),
                       ),
                     ),
                   ],
@@ -182,7 +205,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.globe + " " + client.i18n.t("commands.locale.set_user", { locale })),
+                    Text(
+                      icons.globe +
+                        " " +
+                        client.i18n.t("commands.locale.set_user", { locale }),
+                    ),
                   ),
                 ],
               });
@@ -228,7 +255,11 @@ export default new MessageCommand({
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
               components: [
-                errorUI(icons.globe + " " + client.i18n.t("commands.locale.guild_only")),
+                errorUI(
+                  icons.globe +
+                    " " +
+                    client.i18n.t("commands.locale.guild_only"),
+                ),
               ],
             });
 
@@ -241,7 +272,11 @@ export default new MessageCommand({
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
               components: [
-                errorUI(icons.globe + " " + client.i18n.t("commands.locale.missing_permission")),
+                errorUI(
+                  icons.globe +
+                    " " +
+                    client.i18n.t("commands.locale.missing_permission"),
+                ),
               ],
             });
 
@@ -255,7 +290,11 @@ export default new MessageCommand({
               await message.reply({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
-                  errorUI(icons.globe + " " + client.i18n.t("commands.locale.not_set_server")),
+                  errorUI(
+                    icons.globe +
+                      " " +
+                      client.i18n.t("commands.locale.not_set_server"),
+                  ),
                 ],
               });
 
@@ -266,7 +305,11 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(icons.globe + " " + client.i18n.t("commands.locale.removed_server")),
+                  Text(
+                    icons.globe +
+                      " " +
+                      client.i18n.t("commands.locale.removed_server"),
+                  ),
                 ),
               ],
             });
@@ -279,7 +322,11 @@ export default new MessageCommand({
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
               components: [
-                errorUI(icons.globe + " " + client.i18n.t("commands.locale.remove_error")),
+                errorUI(
+                  icons.globe +
+                    " " +
+                    client.i18n.t("commands.locale.remove_error"),
+                ),
               ],
             });
           }
@@ -293,7 +340,11 @@ export default new MessageCommand({
           if (!removed) {
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
-              components: [errorUI(icons.globe + " " + client.i18n.t("commands.locale.not_set"))],
+              components: [
+                errorUI(
+                  icons.globe + " " + client.i18n.t("commands.locale.not_set"),
+                ),
+              ],
             });
 
             return;
@@ -303,7 +354,9 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.globe + " " + client.i18n.t("commands.locale.removed")),
+                Text(
+                  icons.globe + " " + client.i18n.t("commands.locale.removed"),
+                ),
               ),
             ],
           });
@@ -316,7 +369,11 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(icons.globe + " " + client.i18n.t("commands.locale.remove_error")),
+              errorUI(
+                icons.globe +
+                  " " +
+                  client.i18n.t("commands.locale.remove_error"),
+              ),
             ],
           });
         }

@@ -60,7 +60,13 @@ async function runGuardedCommand(
       return;
     }
 
-    if (!await checkPermissions(member, channel, command.options.userPermissions)) {
+    if (
+      !(await checkPermissions(
+        member,
+        channel,
+        command.options.userPermissions,
+      ))
+    ) {
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
         components: [errorUI(client.i18n.t("errors.missing_permissions"))],
@@ -69,7 +75,13 @@ async function runGuardedCommand(
       return;
     }
 
-    if (!await checkPermissions(botMember, channel, command.options.botPermissions)) {
+    if (
+      !(await checkPermissions(
+        botMember,
+        channel,
+        command.options.botPermissions,
+      ))
+    ) {
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
         components: [errorUI(client.i18n.t("errors.bot_missing_permissions"))],
@@ -215,7 +227,7 @@ export default new Event({
                 return;
               }
 
-              if ((command).options.ownerOnly) {
+              if (command.options.ownerOnly) {
                 await interaction.reply({
                   flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
                   components: [errorUI(client.i18n.t("errors.owner_only"))],
@@ -320,7 +332,7 @@ export default new Event({
                 return;
               }
 
-              if ((command).options.ownerOnly) {
+              if (command.options.ownerOnly) {
                 await interaction.reply({
                   flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
                   components: [errorUI(client.i18n.t("errors.owner_only"))],

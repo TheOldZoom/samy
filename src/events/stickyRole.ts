@@ -1,4 +1,41 @@
+import type Client from "@/classes/client";
 import Event from "@/classes/Event";
+
+export async function reconcileStickyRoles(client: Client): Promise<void> {
+  const stickies = await client.prisma.stickyRole.findMany();
+
+  for (const sticky of stickies) {
+    const guild = client.guilds.cache.get(sticky.guildId);
+    if (!guild) continue;
+
+    const botMember = guild.members.me;
+    if (!botMember) continue;
+
+    const role = guild.roles.cache.get(sticky.roleId);
+    if (
+      !role ||
+      role.managed ||
+      role.position >= botMember.roles.highest.position
+    )
+      continue;
+
+    try {
+      const member = await guild.members.fetch(sticky.userId).catch(() => null);
+      if (member && !member.roles.cache.has(sticky.roleId)) {
+        await member.roles.add(
+          sticky.roleId,
+          "Sticky role reapplied on startup",
+        );
+      }
+    } catch (error) {
+      client.logger.warn("Failed to reconcile sticky role on startup", {
+        guild: sticky.guildId,
+        user: sticky.userId,
+        error,
+      });
+    }
+  }
+}
 
 export default new Event({
   name: "guildMemberAdd",

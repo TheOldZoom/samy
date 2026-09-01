@@ -22,7 +22,11 @@ async function executeUntimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.timeout + " " + client.i18n.t("commands.untimeout.guild_only")),
+          Text(
+            icons.timeout +
+              " " +
+              client.i18n.t("commands.untimeout.guild_only"),
+          ),
         ),
       ],
     });
@@ -37,7 +41,11 @@ async function executeUntimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.timeout + " " + client.i18n.t("commands.untimeout.not_in_guild")),
+          Text(
+            icons.timeout +
+              " " +
+              client.i18n.t("commands.untimeout.not_in_guild"),
+          ),
         ),
       ],
     });
@@ -50,7 +58,11 @@ async function executeUntimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.timeout + " " + client.i18n.t("commands.untimeout.not_timed_out")),
+          Text(
+            icons.timeout +
+              " " +
+              client.i18n.t("commands.untimeout.not_timed_out"),
+          ),
         ),
       ],
     });
@@ -63,7 +75,11 @@ async function executeUntimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.timeout + " " + client.i18n.t("commands.untimeout.not_moderatable")),
+          Text(
+            icons.timeout +
+              " " +
+              client.i18n.t("commands.untimeout.not_moderatable"),
+          ),
         ),
       ],
     });
@@ -81,7 +97,11 @@ async function executeUntimeout({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.timeout + " " + client.i18n.t("commands.untimeout.role_hierarchy")),
+          Text(
+            icons.timeout +
+              " " +
+              client.i18n.t("commands.untimeout.role_hierarchy"),
+          ),
         ),
       ],
     });
@@ -95,7 +115,11 @@ async function executeUntimeout({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.timeout + " " + client.i18n.t("commands.untimeout.failed"))),
+        new Container().text(
+          Text(
+            icons.timeout + " " + client.i18n.t("commands.untimeout.failed"),
+          ),
+        ),
       ],
     });
 
@@ -106,10 +130,13 @@ async function executeUntimeout({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(icons.timeout + " " + client.i18n.t("commands.untimeout.success", {
-            user: target.tag,
-            reason,
-          }),
+        Text(
+          icons.timeout +
+            " " +
+            client.i18n.t("commands.untimeout.success", {
+              user: target.tag,
+              reason,
+            }),
         ),
       ),
     ],
@@ -151,7 +178,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.timeout + " " + client.i18n.t("commands.untimeout.user_not_found")),
+            Text(
+              icons.timeout +
+                " " +
+                client.i18n.t("commands.untimeout.user_not_found"),
+            ),
           ),
         ],
       });

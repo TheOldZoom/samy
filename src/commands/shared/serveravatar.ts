@@ -21,7 +21,10 @@ export function ServerAvatar(
   const serverAvatarURL = member?.avatarURL({ size: 1024 });
 
   if (!serverAvatarURL) {
-    return errorUI(icons.image + " " + client.i18n.t("commands.serveravatar.none", { user: target.username }),
+    return errorUI(
+      icons.image +
+        " " +
+        client.i18n.t("commands.serveravatar.none", { user: target.username }),
     );
   }
 

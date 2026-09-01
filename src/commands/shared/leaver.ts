@@ -12,7 +12,10 @@ import { MessageFlags } from "discord.js";
 import type Client from "@/classes/client";
 import { compileCv2Script } from "@/libs/scripting/cv2";
 import { detectScriptKind } from "@/libs/scripting/detectScriptKind";
-import { compileEmbedScript, compileMultiEmbedScripts } from "@/libs/scripting/embed";
+import {
+  compileEmbedScript,
+  compileMultiEmbedScripts,
+} from "@/libs/scripting/embed";
 import { isScriptError } from "@/libs/scripting/common/ScriptError";
 import { scheduleMessageDeletion } from "@/libs/scripting/scheduleMessageDeletion";
 import { replaceVariables } from "@/libs/scripting/variables";
@@ -222,7 +225,8 @@ export async function deliverLeaveMessage(
 
     const deleteMs = compiled.result.deleteMs ?? detected.deleteMs;
 
-    const allComponents: typeof compiled.result.embeds[number]["components"] = [];
+    const allComponents: (typeof compiled.result.embeds)[number]["components"] =
+      [];
     const embeds = compiled.result.embeds.map((e) => {
       allComponents.push(...e.components);
       return e.embed;
@@ -231,9 +235,7 @@ export async function deliverLeaveMessage(
     const sent = await channel.send({
       ...(compiled.result.content ? { content: compiled.result.content } : {}),
       embeds,
-      ...(allComponents.length > 0
-        ? { components: allComponents }
-        : {}),
+      ...(allComponents.length > 0 ? { components: allComponents } : {}),
     });
 
     scheduleMessageDeletion(sent, deleteMs);

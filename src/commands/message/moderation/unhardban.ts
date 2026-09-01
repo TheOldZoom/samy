@@ -38,7 +38,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.unbanmember + " " + client.i18n.t("commands.unhardban.guild_only")),
+            Text(
+              icons.unbanmember +
+                " " +
+                client.i18n.t("commands.unhardban.guild_only"),
+            ),
           ),
         ],
       });
@@ -53,7 +57,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.unbanmember + " " + client.i18n.t("commands.unhardban.user_not_found")),
+            Text(
+              icons.unbanmember +
+                " " +
+                client.i18n.t("commands.unhardban.user_not_found"),
+            ),
           ),
         ],
       });
@@ -103,7 +111,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.unbanmember + " " + client.i18n.t("commands.unhardban.failed")),
+            Text(
+              icons.unbanmember +
+                " " +
+                client.i18n.t("commands.unhardban.failed"),
+            ),
           ),
         ],
       });

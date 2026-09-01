@@ -51,7 +51,9 @@ async function main() {
 }
 
 main().catch((err: unknown) => {
-  logger.error(`Failed to start: ${err instanceof Error ? err.stack : String(err)}`);
+  logger.error(
+    `Failed to start: ${err instanceof Error ? err.stack : String(err)}`,
+  );
   process.exit(1);
 });
 

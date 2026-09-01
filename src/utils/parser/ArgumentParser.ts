@@ -156,8 +156,7 @@ export class ArgumentParser {
 
       const isStringType = definition.type === "string";
       const isListType =
-        definition.type === "userList" ||
-        definition.type === "memberList";
+        definition.type === "userList" || definition.type === "memberList";
 
       if (isLastDefinition && (isStringType || isListType)) {
         rawValues.set(
@@ -184,7 +183,9 @@ export class ArgumentParser {
 
         rawValues.set(
           definition.name,
-          positionalTokens.slice(positionalIndex, positionalIndex + tokensForThis).join(" "),
+          positionalTokens
+            .slice(positionalIndex, positionalIndex + tokensForThis)
+            .join(" "),
         );
         positionalIndex += tokensForThis;
         continue;
@@ -216,7 +217,9 @@ export class ArgumentParser {
           });
         } else if (definition.default !== undefined) {
           resolved.set(definition.name, {
-            type: Array.isArray(definition.type) ? definition.type.join("|") : definition.type,
+            type: Array.isArray(definition.type)
+              ? definition.type.join("|")
+              : definition.type,
             value: definition.default,
           });
         }
@@ -261,7 +264,9 @@ export class ArgumentParser {
       }
 
       resolved.set(definition.name, {
-        type: Array.isArray(definition.type) ? definition.type.join("|") : definition.type,
+        type: Array.isArray(definition.type)
+          ? definition.type.join("|")
+          : definition.type,
         value: resolvedValue.value,
       });
     }

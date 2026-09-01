@@ -905,7 +905,8 @@ function createFakeCollection<T>(entries: [string, T][] = []): Map<string, T> {
       }
       return createFakeCollection<T>([...result] as [string, T][]);
     },
-    map: (fn: (value: T, key: string, map: Map<string, T>) => unknown) => [...map].map(([key, value]) => fn(value, key, map)),
+    map: (fn: (value: T, key: string, map: Map<string, T>) => unknown) =>
+      [...map].map(([key, value]) => fn(value, key, map)),
     find: (fn: (value: T, key: string, map: Map<string, T>) => boolean) => {
       for (const [key, value] of map) {
         if (fn(value, key, map)) return value;
@@ -922,7 +923,8 @@ function emitMemberEvents(client: Client, guild: Guild, author: User) {
     guild,
     nickname: null,
     roles: { cache: createFakeCollection() },
-    displayAvatarURL: (opts?: { extension?: string; size?: number }) => author.displayAvatarURL(opts),
+    displayAvatarURL: (opts?: { extension?: string; size?: number }) =>
+      author.displayAvatarURL(opts),
     partial: false,
   };
 
@@ -1017,7 +1019,8 @@ function emitVoiceEvents(client: Client, guild: Guild, author: User) {
     id: author.id,
     user: author,
     guild,
-    displayAvatarURL: (opts?: { extension?: string; size?: number }) => author.displayAvatarURL(opts),
+    displayAvatarURL: (opts?: { extension?: string; size?: number }) =>
+      author.displayAvatarURL(opts),
   };
 
   const oldState = {

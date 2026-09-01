@@ -20,14 +20,26 @@ import {
   confirmMarkovAction,
 } from "@/commands/shared/markov";
 
-function simpleReply(message: { reply: (options: unknown) => unknown }, text: string) {
+function simpleReply(
+  message: { reply: (options: unknown) => unknown },
+  text: string,
+) {
   return message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [new Container().text(Text(text))],
   });
 }
 
-function i18nReply(message: { client: { i18n: { t: (key: string, vars?: TranslationVariables) => string } }; reply: (options: unknown) => unknown }, key: string, vars?: TranslationVariables) {
+function i18nReply(
+  message: {
+    client: {
+      i18n: { t: (key: string, vars?: TranslationVariables) => string };
+    };
+    reply: (options: unknown) => unknown;
+  },
+  key: string,
+  vars?: TranslationVariables,
+) {
   return simpleReply(message, message.client.i18n.t(key, vars));
 }
 

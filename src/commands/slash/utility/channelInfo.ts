@@ -1,7 +1,4 @@
-import {
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
 import { SlashCommand } from "@/classes/Command";
 import { ChannelInfo } from "@/commands/shared/channelInfo";

@@ -47,7 +47,11 @@ export default new SlashCommand({
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
         components: [
-          errorUI(icons.image + " " + client.i18n.t("commands.guildbanner.fetch_error")),
+          errorUI(
+            icons.image +
+              " " +
+              client.i18n.t("commands.guildbanner.fetch_error"),
+          ),
         ],
       });
     }

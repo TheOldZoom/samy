@@ -37,12 +37,18 @@ export function TimediffResult(
   const ts2 = snowflakeToTimestamp(snowflake2);
 
   if (!ts1) {
-    return errorUI(icons.clock + " " + client.i18n.t("commands.timediff.invalid", { id: snowflake1 }),
+    return errorUI(
+      icons.clock +
+        " " +
+        client.i18n.t("commands.timediff.invalid", { id: snowflake1 }),
     );
   }
 
   if (!ts2) {
-    return errorUI(icons.clock + " " + client.i18n.t("commands.timediff.invalid", { id: snowflake2 }),
+    return errorUI(
+      icons.clock +
+        " " +
+        client.i18n.t("commands.timediff.invalid", { id: snowflake2 }),
     );
   }
 
@@ -50,11 +56,14 @@ export function TimediffResult(
   const diffFormatted = formatDuration(diff);
 
   return new Container().text(
-    Text(icons.clock + " " + client.i18n.t("commands.timediff.result", {
-        ts1: Math.floor(ts1 / 1000),
-        ts2: Math.floor(ts2 / 1000),
-        diff: diffFormatted,
-      }),
+    Text(
+      icons.clock +
+        " " +
+        client.i18n.t("commands.timediff.result", {
+          ts1: Math.floor(ts1 / 1000),
+          ts2: Math.floor(ts2 / 1000),
+          diff: diffFormatted,
+        }),
     ),
   );
 }

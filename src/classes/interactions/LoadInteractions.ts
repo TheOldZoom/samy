@@ -16,7 +16,9 @@ export async function LoadInteractions<T extends { name: string }>(
   for (const file of files) {
     if (!file.endsWith(".ts") && !file.endsWith(".js")) continue;
 
-    const module = await import(join(import.meta.dir, directory, file)) as { default?: T };
+    const module = (await import(join(import.meta.dir, directory, file))) as {
+      default?: T;
+    };
 
     if (!module.default) {
       client.logger.warn(`Skipping ${file}: no default export found`);

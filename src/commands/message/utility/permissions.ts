@@ -39,7 +39,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.permissions.member_not_found")),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.permissions.member_not_found"),
+                ),
               ),
             ],
           });
@@ -86,10 +90,13 @@ export default new MessageCommand({
           allowedMentions: { parse: [] },
           components: [
             new Container().text(
-              Text(icons.Guardian + " " + client.i18n.t("commands.permissions.member_title", {
-                  user: member.toString(),
-                  content: lines.join("\n"),
-                }),
+              Text(
+                icons.Guardian +
+                  " " +
+                  client.i18n.t("commands.permissions.member_title", {
+                    user: member.toString(),
+                    content: lines.join("\n"),
+                  }),
               ),
             ),
           ],
@@ -118,7 +125,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.permissions.role_not_found")),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.permissions.role_not_found"),
+                ),
               ),
             ],
           });
@@ -148,10 +159,13 @@ export default new MessageCommand({
           allowedMentions: { parse: [] },
           components: [
             new Container().text(
-              Text(icons.Guardian + " " + client.i18n.t("commands.permissions.role_title", {
-                  role: role.toString(),
-                  content: lines.join("\n"),
-                }),
+              Text(
+                icons.Guardian +
+                  " " +
+                  client.i18n.t("commands.permissions.role_title", {
+                    role: role.toString(),
+                    content: lines.join("\n"),
+                  }),
               ),
             ),
           ],

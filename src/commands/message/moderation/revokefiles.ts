@@ -36,7 +36,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.channel + " " + client.i18n.t("commands.revokefiles.guild_only")),
+            Text(
+              icons.channel +
+                " " +
+                client.i18n.t("commands.revokefiles.guild_only"),
+            ),
           ),
         ],
       });
@@ -50,7 +54,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.channel + " " + client.i18n.t("commands.revokefiles.channel_not_found")),
+            Text(
+              icons.channel +
+                " " +
+                client.i18n.t("commands.revokefiles.channel_not_found"),
+            ),
           ),
         ],
       });
@@ -60,9 +68,17 @@ export default new MessageCommand({
     const stateInput = (args.getString("state") ?? "toggle").toLowerCase();
 
     let revokeState: boolean | null = null;
-    if (stateInput === "revoke" || stateInput === "on" || stateInput === "disable") {
+    if (
+      stateInput === "revoke" ||
+      stateInput === "on" ||
+      stateInput === "disable"
+    ) {
       revokeState = true;
-    } else if (stateInput === "restore" || stateInput === "off" || stateInput === "enable") {
+    } else if (
+      stateInput === "restore" ||
+      stateInput === "off" ||
+      stateInput === "enable"
+    ) {
       revokeState = false;
     }
 
@@ -100,7 +116,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.channel + " " + client.i18n.t("commands.revokefiles.failed")),
+            Text(
+              icons.channel +
+                " " +
+                client.i18n.t("commands.revokefiles.failed"),
+            ),
           ),
         ],
       });

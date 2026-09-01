@@ -187,10 +187,7 @@ class ArgumentRegistryClass {
   private readonly types = new Map<string, ArgumentTypeDefinition<unknown>>();
 
   register<T>(definition: ArgumentTypeDefinition<T>): void {
-    this.types.set(
-      definition.name.toLowerCase(),
-      definition,
-    );
+    this.types.set(definition.name.toLowerCase(), definition);
   }
 
   get(name: ArgumentTypeName): ArgumentTypeDefinition<unknown> | undefined {
@@ -700,7 +697,8 @@ ArgumentRegistry.register<GuildBasedChannel>({
 
 ArgumentRegistry.register<User[]>({
   name: "userList",
-  description: "A list of Discord users (mentions or IDs, separated by spaces).",
+  description:
+    "A list of Discord users (mentions or IDs, separated by spaces).",
 
   resolve: async (raw, context): Promise<ArgumentResolveResult<User[]>> => {
     const { message } = context;
@@ -742,7 +740,8 @@ ArgumentRegistry.register<User[]>({
 
 ArgumentRegistry.register<GuildMember[]>({
   name: "memberList",
-  description: "A list of guild members (mentions or IDs, separated by spaces).",
+  description:
+    "A list of guild members (mentions or IDs, separated by spaces).",
 
   resolve: async (
     raw,

@@ -41,7 +41,11 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(icons.locked + " " + client.i18n.t("commands.lock.guild_only"))),
+          new Container().text(
+            Text(
+              icons.locked + " " + client.i18n.t("commands.lock.guild_only"),
+            ),
+          ),
         ],
       });
 
@@ -55,7 +59,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.locked + " " + client.i18n.t("commands.lock.channel_not_found")),
+            Text(
+              icons.locked +
+                " " +
+                client.i18n.t("commands.lock.channel_not_found"),
+            ),
           ),
         ],
       });
@@ -68,9 +76,12 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.locked + " " + client.i18n.t("commands.lock.already_locked", {
-                channel: channel.toString(),
-              }),
+            Text(
+              icons.locked +
+                " " +
+                client.i18n.t("commands.lock.already_locked", {
+                  channel: channel.toString(),
+                }),
             ),
           ),
         ],
@@ -107,9 +118,12 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.locked + " " + client.i18n.t("commands.lock.success", {
-                channel: channel.toString(),
-              }),
+            Text(
+              icons.locked +
+                " " +
+                client.i18n.t("commands.lock.success", {
+                  channel: channel.toString(),
+                }),
             ),
           ),
         ],
@@ -118,7 +132,9 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(icons.locked + " " + client.i18n.t("commands.lock.failed"))),
+          new Container().text(
+            Text(icons.locked + " " + client.i18n.t("commands.lock.failed")),
+          ),
         ],
       });
     }

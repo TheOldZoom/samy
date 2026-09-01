@@ -36,7 +36,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.moveall.guild_only")),
+            Text(
+              icons.connect +
+                " " +
+                client.i18n.t("commands.moveall.guild_only"),
+            ),
           ),
         ],
       });
@@ -51,7 +55,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.moveall.from_not_found")),
+            Text(
+              icons.connect +
+                " " +
+                client.i18n.t("commands.moveall.from_not_found"),
+            ),
           ),
         ],
       });
@@ -63,7 +71,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.moveall.to_not_found")),
+            Text(
+              icons.connect +
+                " " +
+                client.i18n.t("commands.moveall.to_not_found"),
+            ),
           ),
         ],
       });
@@ -75,7 +87,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.moveall.same_channel")),
+            Text(
+              icons.connect +
+                " " +
+                client.i18n.t("commands.moveall.same_channel"),
+            ),
           ),
         ],
       });
@@ -112,7 +128,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.moveall.failed")),
+            Text(
+              icons.connect + " " + client.i18n.t("commands.moveall.failed"),
+            ),
           ),
         ],
       });

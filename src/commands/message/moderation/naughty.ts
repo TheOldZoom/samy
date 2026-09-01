@@ -35,7 +35,13 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(icons.channel + " " + client.i18n.t("commands.naughty.guild_only"))),
+          new Container().text(
+            Text(
+              icons.channel +
+                " " +
+                client.i18n.t("commands.naughty.guild_only"),
+            ),
+          ),
         ],
       });
       return;
@@ -48,7 +54,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.channel + " " + client.i18n.t("commands.naughty.channel_not_found")),
+            Text(
+              icons.channel +
+                " " +
+                client.i18n.t("commands.naughty.channel_not_found"),
+            ),
           ),
         ],
       });
@@ -60,7 +70,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.channel + " " + client.i18n.t("commands.naughty.text_only")),
+            Text(
+              icons.channel + " " + client.i18n.t("commands.naughty.text_only"),
+            ),
           ),
         ],
       });
@@ -70,9 +82,17 @@ export default new MessageCommand({
     const stateInput = (args.getString("state") ?? "toggle").toLowerCase();
 
     let nsfwState: boolean | null = null;
-    if (stateInput === "on" || stateInput === "enable" || stateInput === "true") {
+    if (
+      stateInput === "on" ||
+      stateInput === "enable" ||
+      stateInput === "true"
+    ) {
       nsfwState = true;
-    } else if (stateInput === "off" || stateInput === "disable" || stateInput === "false") {
+    } else if (
+      stateInput === "off" ||
+      stateInput === "disable" ||
+      stateInput === "false"
+    ) {
       nsfwState = false;
     }
 
@@ -102,7 +122,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.channel + " " + client.i18n.t("commands.naughty.failed")),
+            Text(
+              icons.channel + " " + client.i18n.t("commands.naughty.failed"),
+            ),
           ),
         ],
       });

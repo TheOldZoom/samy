@@ -2,8 +2,11 @@ import Event from "../classes/Event";
 import { REST, Routes } from "discord.js";
 import type Client from "@/classes/client";
 import { reconcileGuildBans } from "@/utils/guildBan";
+import { reconcileHardBans } from "./hardban";
+import { reconcileStickyRoles } from "./stickyRole";
 import { ensureGuild } from "@/utils/guild";
 import { startTemporaryRoleCleanup } from "@/utils/temporaryRoles";
+import { startMarkovFlush } from "@/utils/markov";
 
 export default new Event({
   name: "clientReady",
@@ -12,9 +15,12 @@ export default new Event({
   async execute(client) {
     await DeployCommands(client);
     await reconcileGuildBans(client);
+    await reconcileHardBans(client);
+    await reconcileStickyRoles(client);
     await registerGuilds(client);
     await cacheStuff(client);
     startTemporaryRoleCleanup(client);
+    startMarkovFlush(client);
     client.logger.info(`Logged in as ${client.user?.tag}`);
   },
 });
@@ -63,13 +69,20 @@ function normalizeCommand(command: { [key: string]: unknown }) {
 
   function normalize(value: unknown): unknown {
     if (Array.isArray(value)) {
-      return value.map(normalize).sort((a: { name?: string } | undefined, b: { name?: string } | undefined) => {
-        if (a?.name && b?.name) {
-          return a.name.localeCompare(b.name);
-        }
+      return value
+        .map(normalize)
+        .sort(
+          (
+            a: { name?: string } | undefined,
+            b: { name?: string } | undefined,
+          ) => {
+            if (a?.name && b?.name) {
+              return a.name.localeCompare(b.name);
+            }
 
-        return JSON.stringify(a).localeCompare(JSON.stringify(b));
-      });
+            return JSON.stringify(a).localeCompare(JSON.stringify(b));
+          },
+        );
     }
 
     if (value && typeof value === "object") {
@@ -103,9 +116,14 @@ function normalizeCommand(command: { [key: string]: unknown }) {
   return normalize(command);
 }
 
-function getDifferences(oldCommand: { [key: string]: unknown }, newCommand: { [key: string]: unknown }): string[] {
-  const oldNormalized = normalizeCommand(oldCommand) as Record<string, unknown> | undefined;
-  const newNormalized = normalizeCommand(newCommand) as Record<string, unknown> | undefined;
+function getDifferences(
+  oldCommand: { [key: string]: unknown },
+  newCommand: { [key: string]: unknown },
+): string[] {
+  const oldNormalized = normalizeCommand(oldCommand) as
+    Record<string, unknown> | undefined;
+  const newNormalized = normalizeCommand(newCommand) as
+    Record<string, unknown> | undefined;
 
   const differences: string[] = [];
 
@@ -140,9 +158,14 @@ export async function DeployCommands(client: Client) {
     ...client.contextCommands.map((command) => command.options.data.toJSON()),
   ];
 
-  const currentCommands = (await rest.get(route)) as { type?: number; name: string; [key: string]: unknown }[];
+  const currentCommands = (await rest.get(route)) as {
+    type?: number;
+    name: string;
+    [key: string]: unknown;
+  }[];
 
-  const commandKey = (command: { type?: number; name: string }) => `${command.type ?? 1}:${command.name}`;
+  const commandKey = (command: { type?: number; name: string }) =>
+    `${command.type ?? 1}:${command.name}`;
 
   const localMap = new Map(
     localCommands.map((command) => [commandKey(command), command]),

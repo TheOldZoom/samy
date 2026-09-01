@@ -57,7 +57,11 @@ export async function renderWarningsList(
 
   if (warnings.length === 0) {
     return new Container().text(
-      Text(icons.warning + " " + t("commands.warnings.none_user", { user: userTag })),
+      Text(
+        icons.warning +
+          " " +
+          t("commands.warnings.none_user", { user: userTag }),
+      ),
     );
   }
 
@@ -89,10 +93,12 @@ export async function renderWarningsList(
   return new Container()
     .text(
       Text(
-        icons.warning + " " + t("commands.warnings.title", {
-          user: userTag,
-          count: String(total),
-        }),
+        icons.warning +
+          " " +
+          t("commands.warnings.title", {
+            user: userTag,
+            count: String(total),
+          }),
       ),
     )
     .separator(Separator())

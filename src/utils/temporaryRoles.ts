@@ -20,7 +20,9 @@ interface TempRoleCleanupClient {
   logger?: { error?: (message: string, data: Record<string, unknown>) => void };
   prisma: {
     temporaryRole: {
-      findMany: (args: Record<string, unknown>) => Promise<{ guildId: string; userId: string; roleId: string }[]>;
+      findMany: (
+        args: Record<string, unknown>,
+      ) => Promise<{ guildId: string; userId: string; roleId: string }[]>;
       delete: (args: Record<string, unknown>) => Promise<unknown>;
     };
   };
@@ -40,7 +42,9 @@ interface TempRoleCleanupClient {
   };
 }
 
-export async function runTemporaryRoleCleanup(client: TempRoleCleanupClient): Promise<void> {
+export async function runTemporaryRoleCleanup(
+  client: TempRoleCleanupClient,
+): Promise<void> {
   const now = new Date();
   const expired = await client.prisma.temporaryRole.findMany({
     where: { expiresAt: { lte: now } },
@@ -53,7 +57,9 @@ export async function runTemporaryRoleCleanup(client: TempRoleCleanupClient): Pr
     const guild = client.guilds.cache.get(entry.guildId);
     if (guild) {
       try {
-        const member = await guild.members.fetch(entry.userId).catch(() => null);
+        const member = await guild.members
+          .fetch(entry.userId)
+          .catch(() => null);
         if (member && member.roles.cache.has(entry.roleId)) {
           await member.roles
             .remove(entry.roleId, "Temporary role expired")

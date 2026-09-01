@@ -48,9 +48,12 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.enable + " " + client.i18n.t("commands.enablecommand.command_not_found", {
-                command: commandName,
-              }),
+            Text(
+              icons.enable +
+                " " +
+                client.i18n.t("commands.enablecommand.command_not_found", {
+                  command: commandName,
+                }),
             ),
           ),
         ],
@@ -76,10 +79,13 @@ export default new MessageCommand({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.enable + " " + client.i18n.t("commands.enablecommand.success", {
-              command: cmd.name,
-              scope: "",
-            }),
+          Text(
+            icons.enable +
+              " " +
+              client.i18n.t("commands.enablecommand.success", {
+                command: cmd.name,
+                scope: "",
+              }),
           ),
         ),
       ],

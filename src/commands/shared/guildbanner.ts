@@ -17,12 +17,18 @@ export function GuildBanner(client: Client, guild: Guild) {
   const bannerURL = guild.bannerURL({ size: 1024 });
 
   if (!bannerURL) {
-    return errorUI(icons.image + " " + client.i18n.t("commands.guildbanner.none"));
+    return errorUI(
+      icons.image + " " + client.i18n.t("commands.guildbanner.none"),
+    );
   }
 
   return new Container()
     .text(
-      Text(icons.image + " " + client.i18n.t("commands.guildbanner.title", { name: guild.name })),
+      Text(
+        icons.image +
+          " " +
+          client.i18n.t("commands.guildbanner.title", { name: guild.name }),
+      ),
     )
     .media(Media(bannerURL))
     .separator(Separator())

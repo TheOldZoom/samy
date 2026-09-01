@@ -1,4 +1,9 @@
-import { ChannelType, MessageFlags, type GuildBasedChannel, type GuildMember } from "discord.js";
+import {
+  ChannelType,
+  MessageFlags,
+  type GuildBasedChannel,
+  type GuildMember,
+} from "discord.js";
 
 import { icons } from "@/utils/icons";
 
@@ -19,7 +24,8 @@ export default new MessageCommand({
       name: "targets",
       aliases: ["t"],
       type: "string",
-      description: "Members and optional voice channel (mentions/IDs, last token can be channel).",
+      description:
+        "Members and optional voice channel (mentions/IDs, last token can be channel).",
       required: true,
     },
   ],
@@ -30,7 +36,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.drag.guild_only")),
+            Text(
+              icons.connect + " " + client.i18n.t("commands.drag.guild_only"),
+            ),
           ),
         ],
       });
@@ -45,7 +53,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.drag.no_members")),
+            Text(
+              icons.connect + " " + client.i18n.t("commands.drag.no_members"),
+            ),
           ),
         ],
       });
@@ -67,7 +77,10 @@ export default new MessageCommand({
 
       if (channelResult.success) {
         const resolvedChannel = channelResult.value as GuildBasedChannel | null;
-        if (resolvedChannel && resolvedChannel.type === ChannelType.GuildVoice) {
+        if (
+          resolvedChannel &&
+          resolvedChannel.type === ChannelType.GuildVoice
+        ) {
           toChannel = resolvedChannel;
           memberParts = parts.slice(0, -1);
         }
@@ -86,7 +99,9 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.connect + " " + client.i18n.t("commands.drag.no_channel")),
+              Text(
+                icons.connect + " " + client.i18n.t("commands.drag.no_channel"),
+              ),
             ),
           ],
         });
@@ -118,7 +133,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.drag.no_members")),
+            Text(
+              icons.connect + " " + client.i18n.t("commands.drag.no_members"),
+            ),
           ),
         ],
       });
@@ -131,7 +148,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.connect + " " + client.i18n.t("commands.drag.no_members")),
+            Text(
+              icons.connect + " " + client.i18n.t("commands.drag.no_members"),
+            ),
           ),
         ],
       });

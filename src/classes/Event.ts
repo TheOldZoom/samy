@@ -56,7 +56,9 @@ export async function LoadEvents(client: Client) {
   const files = await getEventFiles(eventsDirectory);
 
   for (const file of files) {
-    const event = ((await import(file)) as { default: Event<keyof ClientEvents> }).default;
+    const event = (
+      (await import(file)) as { default: Event<keyof ClientEvents> }
+    ).default;
 
     client.logger.info(`${`[EVENT]:`.padEnd(10)} ${event.name}`);
 

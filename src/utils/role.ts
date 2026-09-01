@@ -122,10 +122,7 @@ export function buildRoleChanges(
   ) {
     changes.permissions = updates.permissions;
   }
-  if (
-    updates.position !== undefined &&
-    updates.position !== current.position
-  ) {
+  if (updates.position !== undefined && updates.position !== current.position) {
     changes.position = updates.position;
   }
 

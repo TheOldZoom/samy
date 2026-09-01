@@ -48,7 +48,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.cmd + " " + client.i18n.t("commands.prefix.too_long")),
+                    Text(
+                      icons.cmd +
+                        " " +
+                        client.i18n.t("commands.prefix.too_long"),
+                    ),
                   ),
                 ],
               });
@@ -75,9 +79,12 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(icons.cmd + " " + client.i18n.t("commands.prefix.set_guild", {
-                      prefix,
-                    }),
+                  Text(
+                    icons.cmd +
+                      " " +
+                      client.i18n.t("commands.prefix.set_guild", {
+                        prefix,
+                      }),
                   ),
                 ),
               ],
@@ -110,7 +117,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.cmd + " " + client.i18n.t("commands.prefix.too_long")),
+                    Text(
+                      icons.cmd +
+                        " " +
+                        client.i18n.t("commands.prefix.too_long"),
+                    ),
                   ),
                 ],
               });
@@ -137,9 +148,12 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(icons.cmd + " " + client.i18n.t("commands.prefix.set_user", {
-                      prefix,
-                    }),
+                  Text(
+                    icons.cmd +
+                      " " +
+                      client.i18n.t("commands.prefix.set_user", {
+                        prefix,
+                      }),
                   ),
                 ),
               ],
@@ -175,7 +189,11 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(icons.cmd + " " + client.i18n.t("commands.prefix.removed_guild")),
+                  Text(
+                    icons.cmd +
+                      " " +
+                      client.i18n.t("commands.prefix.removed_guild"),
+                  ),
                 ),
               ],
             });
@@ -202,7 +220,11 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(icons.cmd + " " + client.i18n.t("commands.prefix.removed_user")),
+                  Text(
+                    icons.cmd +
+                      " " +
+                      client.i18n.t("commands.prefix.removed_user"),
+                  ),
                 ),
               ],
             });

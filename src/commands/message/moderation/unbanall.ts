@@ -31,7 +31,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.unbanmember + " " + client.i18n.t("commands.unbanall.guild_only")),
+            Text(
+              icons.unbanmember +
+                " " +
+                client.i18n.t("commands.unbanall.guild_only"),
+            ),
           ),
         ],
       });
@@ -49,7 +53,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.unbanmember + " " + client.i18n.t("commands.unbanall.failed")),
+            Text(
+              icons.unbanmember +
+                " " +
+                client.i18n.t("commands.unbanall.failed"),
+            ),
           ),
         ],
       });
@@ -62,7 +70,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.unbanmember + " " + client.i18n.t("commands.unbanall.none")),
+            Text(
+              icons.unbanmember + " " + client.i18n.t("commands.unbanall.none"),
+            ),
           ),
         ],
       });

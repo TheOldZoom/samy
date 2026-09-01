@@ -66,7 +66,12 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.list + " " + client.i18n.t("commands.cases.not_found", { case: caseNumber }),
+              Text(
+                icons.list +
+                  " " +
+                  client.i18n.t("commands.cases.not_found", {
+                    case: caseNumber,
+                  }),
               ),
             ),
           ],
@@ -89,7 +94,12 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.list + " " + client.i18n.t("commands.cases.not_found", { case: caseNumber }),
+              Text(
+                icons.list +
+                  " " +
+                  client.i18n.t("commands.cases.not_found", {
+                    case: caseNumber,
+                  }),
               ),
             ),
           ],

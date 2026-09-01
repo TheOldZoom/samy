@@ -45,7 +45,13 @@ export default new SlashCommand({
     if (options.length < 2) {
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-        components: [errorUI(icons.spark + " " + client.i18n.t("commands.choose.provide_options"))],
+        components: [
+          errorUI(
+            icons.spark +
+              " " +
+              client.i18n.t("commands.choose.provide_options"),
+          ),
+        ],
       });
       return;
     }

@@ -14,7 +14,11 @@ import errorUI from "@/ui/error";
 
 const CUSTOM_EMOJI = /^<(a)?:(\w+):(\d{15,20})>$/;
 
-export function JumboResult(client: Client, raw: string, _guild?: Guild | null) {
+export function JumboResult(
+  client: Client,
+  raw: string,
+  _guild?: Guild | null,
+) {
   const mentionMatch = raw.match(CUSTOM_EMOJI);
 
   let id: string | undefined;

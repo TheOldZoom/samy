@@ -68,7 +68,9 @@ async function executeTempban({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.ban + " " + client.i18n.t("commands.tempban.not_bannable")),
+            Text(
+              icons.ban + " " + client.i18n.t("commands.tempban.not_bannable"),
+            ),
           ),
         ],
       });
@@ -87,7 +89,11 @@ async function executeTempban({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.ban + " " + client.i18n.t("commands.tempban.role_hierarchy")),
+            Text(
+              icons.ban +
+                " " +
+                client.i18n.t("commands.tempban.role_hierarchy"),
+            ),
           ),
         ],
       });
@@ -213,7 +219,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.ban + " " + client.i18n.t("commands.tempban.user_not_found")),
+            Text(
+              icons.ban +
+                " " +
+                client.i18n.t("commands.tempban.user_not_found"),
+            ),
           ),
         ],
       });
@@ -229,7 +239,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.ban + " " + client.i18n.t("commands.tempban.invalid_duration")),
+            Text(
+              icons.ban +
+                " " +
+                client.i18n.t("commands.tempban.invalid_duration"),
+            ),
           ),
         ],
       });

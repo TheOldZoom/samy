@@ -31,7 +31,9 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(icons.idle + " " + client.i18n.t("commands.afk.limit"))),
+          new Container().text(
+            Text(icons.idle + " " + client.i18n.t("commands.afk.limit")),
+          ),
         ],
       });
       return;
@@ -72,9 +74,12 @@ export default new MessageCommand({
       },
       components: [
         new Container().text(
-          Text(icons.idle + " " + client.i18n.t("commands.afk.set", {
-              reason,
-            }),
+          Text(
+            icons.idle +
+              " " +
+              client.i18n.t("commands.afk.set", {
+                reason,
+              }),
           ),
         ),
       ],

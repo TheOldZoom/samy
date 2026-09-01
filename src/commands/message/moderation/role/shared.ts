@@ -8,7 +8,10 @@ import type { TranslationVariables } from "@/libs/i18n";
 
 export const ROLE_ICON = icons.roles;
 
-export function guildOnlyReply(client: { i18n: { t: (key: string) => string } }, message: Message): void {
+export function guildOnlyReply(
+  client: { i18n: { t: (key: string) => string } },
+  message: Message,
+): void {
   void message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [
@@ -35,7 +38,11 @@ export async function replyKey(
   });
 }
 
-export async function replyText(client: { i18n: { t: (key: string) => string } }, message: Message, text: string): Promise<void> {
+export async function replyText(
+  client: { i18n: { t: (key: string) => string } },
+  message: Message,
+  text: string,
+): Promise<void> {
   await message.reply({
     flags: MessageFlags.IsComponentsV2,
     components: [new Container().text(Text(text))],

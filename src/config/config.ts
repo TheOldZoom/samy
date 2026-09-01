@@ -12,7 +12,11 @@ function list(name: string): string[] {
 
 function browser(name: string): Config["presence"]["browser"] {
   const value = process.env[name] ?? "Discord Desktop";
-  const allowed = ["Discord Desktop", "Discord Android", "Discord iOS"] as const;
+  const allowed = [
+    "Discord Desktop",
+    "Discord Android",
+    "Discord iOS",
+  ] as const;
   if (!allowed.includes(value as (typeof allowed)[number])) {
     throw new Error(
       `Invalid PRESENCE_BROWSER: ${value}. Must be one of: ${allowed.join(", ")}`,

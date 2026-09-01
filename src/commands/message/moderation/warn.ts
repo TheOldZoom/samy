@@ -22,7 +22,9 @@ async function executeWarn({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.warning + " " + client.i18n.t("commands.warn.guild_only"))),
+        new Container().text(
+          Text(icons.warning + " " + client.i18n.t("commands.warn.guild_only")),
+        ),
       ],
     });
 
@@ -35,7 +37,9 @@ async function executeWarn({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.warning + " " + client.i18n.t("commands.warn.self"))),
+        new Container().text(
+          Text(icons.warning + " " + client.i18n.t("commands.warn.self")),
+        ),
       ],
     });
 
@@ -46,7 +50,9 @@ async function executeWarn({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.warning + " " + client.i18n.t("commands.warn.bot"))),
+        new Container().text(
+          Text(icons.warning + " " + client.i18n.t("commands.warn.bot")),
+        ),
       ],
     });
 
@@ -57,7 +63,11 @@ async function executeWarn({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.warning + " " + client.i18n.t("commands.warn.not_in_guild"))),
+        new Container().text(
+          Text(
+            icons.warning + " " + client.i18n.t("commands.warn.not_in_guild"),
+          ),
+        ),
       ],
     });
 
@@ -75,7 +85,9 @@ async function executeWarn({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.warning + " " + client.i18n.t("commands.warn.role_hierarchy")),
+          Text(
+            icons.warning + " " + client.i18n.t("commands.warn.role_hierarchy"),
+          ),
         ),
       ],
     });
@@ -119,10 +131,13 @@ async function executeWarn({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.warning + " " + client.i18n.t("commands.warn.dm", {
-                guild: message.guild.name,
-                reason,
-              }),
+            Text(
+              icons.warning +
+                " " +
+                client.i18n.t("commands.warn.dm", {
+                  guild: message.guild.name,
+                  reason,
+                }),
             ),
           ),
         ],
@@ -135,11 +150,14 @@ async function executeWarn({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.warning + " " + client.i18n.t("commands.warn.success", {
-              user: target.tag,
-              case: String(caseNumber),
-              reason,
-            }),
+          Text(
+            icons.warning +
+              " " +
+              client.i18n.t("commands.warn.success", {
+                user: target.tag,
+                case: String(caseNumber),
+                reason,
+              }),
           ),
         ),
       ],
@@ -148,7 +166,9 @@ async function executeWarn({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.warning + " " + client.i18n.t("commands.warn.failed"))),
+        new Container().text(
+          Text(icons.warning + " " + client.i18n.t("commands.warn.failed")),
+        ),
       ],
     });
   }
@@ -188,7 +208,11 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.warning + " " + client.i18n.t("commands.warn.user_not_found")),
+            Text(
+              icons.warning +
+                " " +
+                client.i18n.t("commands.warn.user_not_found"),
+            ),
           ),
         ],
       });

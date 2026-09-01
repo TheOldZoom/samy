@@ -57,16 +57,19 @@ export async function UserInfo(
 
   return new Container().addSectionComponents((section) => {
     section.addTextDisplayComponents(
-      Text(icons.Person + " " + client.i18n.t("commands.user.details", {
-          tag: target.tag,
-          id: target.id,
-          displayName,
-          created: time(target.createdAt, TimestampStyles.LongDate),
-          joined,
-          boosting,
-          footer,
-          timezone,
-        }),
+      Text(
+        icons.Person +
+          " " +
+          client.i18n.t("commands.user.details", {
+            tag: target.tag,
+            id: target.id,
+            displayName,
+            created: time(target.createdAt, TimestampStyles.LongDate),
+            joined,
+            boosting,
+            footer,
+            timezone,
+          }),
       ),
     );
 
