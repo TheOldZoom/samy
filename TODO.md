@@ -157,6 +157,8 @@ A roadmap for Samy's development.
 - [x] Revoke attach files/embed permissions per channel (`revokefiles`)
 - [x] Move all members between voice channels (`moveall`)
 - [x] Drag member(s) into a voice channel (`drag`)
+- [ ] Channel-specific member mute (`cmute`/`uncmute`)
+- [ ] Voice suppress / unsuppress (`suppress`/`unsuppress`)
 - [ ] Thread management (rename, lock/unlock, add/remove member, watch for archival)
 
 ## Role Management
