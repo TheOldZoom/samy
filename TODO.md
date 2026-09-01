@@ -161,19 +161,19 @@ A roadmap for Samy's development.
 
 ## Role Management
 
-- [ ] Add role
-- [ ] Remove role
-- [ ] Create role (with color/gradient)
-- [ ] Edit role
-- [ ] Delete role
-- [ ] Temporary roles
-- [ ] Bulk role add/remove for all humans or all bots
-- [ ] Bulk role add/remove for members already holding a specific role
-- [ ] Toggle role mentionable / hoisted
-- [ ] Set role icon
-- [ ] Set top role color
-- [ ] Sticky roles (reapply role on rejoin)
-- [ ] Dump all members of a role to a file (`dump`)
+- [x] Add role
+- [x] Remove role
+- [x] Create role (with color/gradient)
+- [x] Edit role
+- [x] Delete role
+- [x] Temporary roles
+- [x] Bulk role add/remove for all humans or all bots
+- [x] Bulk role add/remove for members already holding a specific role
+- [x] Toggle role mentionable / hoisted
+- [x] Set role icon
+- [x] Set top role color
+- [x] Sticky roles (reapply role on rejoin)
+- [x] Dump all members of a role to a file (`dump`)
 
 ## Purge
 
