@@ -122,9 +122,9 @@ A roadmap for Samy's development.
 - [x] Timeout
 - [x] Untimeout
 
-- [ ] Temp ban (`tempban`)
-- [ ] Hard ban (permanent re-ban on rejoin) (`hardban`)
-- [ ] Mass unban (`unbanall`)
+- [x] Temp ban (`tempban`)
+- [x] Hard ban (permanent re-ban on rejoin) (`hardban`)
+- [x] Mass unban (`unbanall`)
 - [ ] Jail system (role-based mute alternative to timeout) (`jail`/`unjail`, jail role/channel setup)
 - [ ] Image mute / reaction mute (`imute`/`iunmute`, `rmute`/`runmute`)
 - [ ] Strip staff roles from a member (`stripstaff`)

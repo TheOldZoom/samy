@@ -83,6 +83,43 @@
     "dm": "You have been banned from **{guild}**.\n\n**Reason:** {reason}",
     "dm_temp": "You have been temporarily banned from **{guild}** for **{duration}**.\n\n**Reason:** {reason}"
   },
+  "tempban": {
+    "guild_only": "This command can only be used in a server.",
+    "self": "You can't ban yourself.",
+    "bot": "I can't ban myself.",
+    "not_bannable": "I don't have permission to ban that user.",
+    "role_hierarchy": "You can't ban someone with an equal or higher role than you.",
+    "failed": "I couldn't ban that user.",
+    "user_not_found": "Please provide a user to ban.",
+    "invalid_duration": "Invalid duration. Try something like `10m`, `1h`, or `7d`.",
+    "success": "**{user}** has been banned for **{duration}**.\n-# {reason}",
+    "dm": "You have been temporarily banned from **{guild}** for **{duration}**.\n\n**Reason:** {reason}"
+  },
+  "hardban": {
+    "guild_only": "This command can only be used in a server.",
+    "self": "You can't ban yourself.",
+    "bot": "I can't ban myself.",
+    "not_bannable": "I don't have permission to ban that user.",
+    "role_hierarchy": "You can't ban someone with an equal or higher role than you.",
+    "failed": "I couldn't ban that user.",
+    "user_not_found": "Please provide a user to ban.",
+    "already_hardbanned": "**{user}** is already hard banned.",
+    "success": "**{user}** has been hard banned. They will be re-banned if they rejoin.\n-# {reason}",
+    "dm": "You have been permanently banned from **{guild}**.\n\n**Reason:** {reason}"
+  },
+  "unbanall": {
+    "guild_only": "This command can only be used in a server.",
+    "failed": "I couldn't fetch the ban list.",
+    "none": "There are no banned users to unban.",
+    "success": "Successfully unbanned **{success}** users.\nFailed: **{failed}**\n-# {reason}"
+  },
+  "unhardban": {
+    "guild_only": "This command can only be used in a server.",
+    "user_not_found": "I couldn't find that user.",
+    "not_hardbanned": "**{user}** is not hard banned.",
+    "failed": "I couldn't remove the hard ban.",
+    "success": "**{user}**'s hard ban has been removed.\n-# {reason}"
+  },
   "unban": {
     "guild_only": "This command can only be used in a server.",
     "user_not_found": "I couldn't find that user.",
