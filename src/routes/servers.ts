@@ -24,10 +24,10 @@ export default (manager: ShardingManager) =>
 
       servers = perShard.flat().sort((a, b) => b.memberCount - a.memberCount);
 
-      const installs = (await manager.broadcastEval(
+      const installs = await manager.broadcastEval(
         async (client) =>
           (await client.application?.fetch())?.approximateUserInstallCount ?? 0,
-      )) as number[];
+      );
 
       userInstallCount =
         installs.find((n) => typeof n === "number" && n > 0) ?? 0;

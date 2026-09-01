@@ -14,14 +14,14 @@ import { containerRenderer } from "./handlers/container";
 import { deleteRenderer } from "./handlers/delete";
 
 const renderers = new Map<string, Cv2NodeRenderer>([
-  [textRenderer.kind, textRenderer as Cv2NodeRenderer],
-  [separatorRenderer.kind, separatorRenderer as Cv2NodeRenderer],
-  [thumbnailRenderer.kind, thumbnailRenderer as Cv2NodeRenderer],
-  [mediaRenderer.kind, mediaRenderer as Cv2NodeRenderer],
-  [buttonRenderer.kind, buttonRenderer as Cv2NodeRenderer],
-  [sectionRenderer.kind, sectionRenderer as Cv2NodeRenderer],
-  [containerRenderer.kind, containerRenderer as Cv2NodeRenderer],
-  [deleteRenderer.kind, deleteRenderer as Cv2NodeRenderer],
+  [textRenderer.kind, textRenderer],
+  [separatorRenderer.kind, separatorRenderer],
+  [thumbnailRenderer.kind, thumbnailRenderer],
+  [mediaRenderer.kind, mediaRenderer],
+  [buttonRenderer.kind, buttonRenderer],
+  [sectionRenderer.kind, sectionRenderer],
+  [containerRenderer.kind, containerRenderer],
+  [deleteRenderer.kind, deleteRenderer],
 ]);
 
 export function renderCv2Child(

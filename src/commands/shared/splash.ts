@@ -21,7 +21,13 @@ export function Splash(client: Client, guild: Guild) {
   }
 
   return new Container()
-    .text(Text(icons.image + " " + client.i18n.t("commands.splash.title", { name: guild.name })))
+    .text(
+      Text(
+        icons.image +
+          " " +
+          client.i18n.t("commands.splash.title", { name: guild.name }),
+      ),
+    )
     .media(Media(splashURL))
     .separator(Separator())
     .actionRow(

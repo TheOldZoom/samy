@@ -28,7 +28,9 @@ async function runLockdown(
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.locked + " " + client.i18n.t("commands.lockdown.guild_only")),
+          Text(
+            icons.locked + " " + client.i18n.t("commands.lockdown.guild_only"),
+          ),
         ),
       ],
     });
@@ -51,9 +53,12 @@ async function runLockdown(
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.locked + " " + client.i18n.t("commands.lockdown.no_channels", {
-              command: `${client.prefix}lockdown`,
-            }),
+          Text(
+            icons.locked +
+              " " +
+              client.i18n.t("commands.lockdown.no_channels", {
+                command: `${client.prefix}lockdown`,
+              }),
           ),
         ),
       ],
@@ -142,10 +147,13 @@ async function runLockdown(
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.locked + " " + client.i18n.t("commands.lockdown.failed", {
-              count: String(channels.length),
-              noun: channels.length === 1 ? "channel" : "channels",
-            }),
+          Text(
+            icons.locked +
+              " " +
+              client.i18n.t("commands.lockdown.failed", {
+                count: String(channels.length),
+                noun: channels.length === 1 ? "channel" : "channels",
+              }),
           ),
         ),
       ],
@@ -159,10 +167,13 @@ async function runLockdown(
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.locked + " " + client.i18n.t("commands.lockdown.unlocking", {
-              count: String(successes),
-              noun: successes === 1 ? "channel" : "channels",
-            }),
+          Text(
+            icons.locked +
+              " " +
+              client.i18n.t("commands.lockdown.unlocking", {
+                count: String(successes),
+                noun: successes === 1 ? "channel" : "channels",
+              }),
           ),
         ),
       ],
@@ -176,12 +187,15 @@ async function runLockdown(
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.locked + " " + client.i18n.t("commands.lockdown.locking_roles", {
-              count: String(successes),
-              noun: successes === 1 ? "channel" : "channels",
-              roles: String(roleIds.length),
-              rolesNoun: roleIds.length === 1 ? "role" : "roles",
-            }),
+          Text(
+            icons.locked +
+              " " +
+              client.i18n.t("commands.lockdown.locking_roles", {
+                count: String(successes),
+                noun: successes === 1 ? "channel" : "channels",
+                roles: String(roleIds.length),
+                rolesNoun: roleIds.length === 1 ? "role" : "roles",
+              }),
           ),
         ),
       ],
@@ -194,10 +208,13 @@ async function runLockdown(
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(icons.locked + " " + client.i18n.t("commands.lockdown.locking", {
-            count: String(successes),
-            noun: successes === 1 ? "channel" : "channels",
-          }),
+        Text(
+          icons.locked +
+            " " +
+            client.i18n.t("commands.lockdown.locking", {
+              count: String(successes),
+              noun: successes === 1 ? "channel" : "channels",
+            }),
         ),
       ),
     ],
@@ -310,9 +327,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t(
-                        "commands.lockdown.channel.add.channel_not_found",
-                      ),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.channel.add.channel_not_found",
+                        ),
                     ),
                   ),
                 ],
@@ -342,12 +362,15 @@ export default new MessageCommand({
                   flags: MessageFlags.IsComponentsV2,
                   components: [
                     new Container().text(
-                      Text(icons.locked + " " + client.i18n.t(
-                          "commands.lockdown.channel.add.already_added",
-                          {
-                            channel: channel.toString(),
-                          },
-                        ),
+                      Text(
+                        icons.locked +
+                          " " +
+                          client.i18n.t(
+                            "commands.lockdown.channel.add.already_added",
+                            {
+                              channel: channel.toString(),
+                            },
+                          ),
                       ),
                     ),
                   ],
@@ -367,9 +390,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.channel.add.success", {
-                        channel: channel.toString(),
-                      }),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.channel.add.success", {
+                          channel: channel.toString(),
+                        }),
                     ),
                   ),
                 ],
@@ -379,7 +405,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.channel.add.failed")),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.channel.add.failed"),
+                    ),
                   ),
                 ],
               });
@@ -400,7 +430,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.guild_only")),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.guild_only"),
+                    ),
                   ),
                 ],
               });
@@ -418,7 +452,11 @@ export default new MessageCommand({
 
               if (channels.length === 0) {
                 container.text(
-                  Text(icons.locked + " " + client.i18n.t("commands.lockdown.channel.list.none")),
+                  Text(
+                    icons.locked +
+                      " " +
+                      client.i18n.t("commands.lockdown.channel.list.none"),
+                  ),
                 );
               } else {
                 const lines: string[] = [];
@@ -428,11 +466,14 @@ export default new MessageCommand({
                 }
 
                 container.text(
-                  Text(icons.locked + " " + client.i18n.t("commands.lockdown.channel.list.title", {
-                      count: String(channels.length),
-                      noun: channels.length === 1 ? "channel" : "channels",
-                      channels: lines.join("\n"),
-                    }),
+                  Text(
+                    icons.locked +
+                      " " +
+                      client.i18n.t("commands.lockdown.channel.list.title", {
+                        count: String(channels.length),
+                        noun: channels.length === 1 ? "channel" : "channels",
+                        channels: lines.join("\n"),
+                      }),
                   ),
                 );
               }
@@ -446,9 +487,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t(
-                        "commands.lockdown.channel.list.fetch_error",
-                      ),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.channel.list.fetch_error",
+                        ),
                     ),
                   ),
                 ],
@@ -481,9 +525,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t(
-                        "commands.lockdown.channel.remove.channel_not_found",
-                      ),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.channel.remove.channel_not_found",
+                        ),
                     ),
                   ),
                 ],
@@ -507,12 +554,15 @@ export default new MessageCommand({
                   flags: MessageFlags.IsComponentsV2,
                   components: [
                     new Container().text(
-                      Text(icons.locked + " " + client.i18n.t(
-                          "commands.lockdown.channel.remove.not_found",
-                          {
-                            channel: channel.toString(),
-                          },
-                        ),
+                      Text(
+                        icons.locked +
+                          " " +
+                          client.i18n.t(
+                            "commands.lockdown.channel.remove.not_found",
+                            {
+                              channel: channel.toString(),
+                            },
+                          ),
                       ),
                     ),
                   ],
@@ -534,12 +584,15 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t(
-                        "commands.lockdown.channel.remove.success",
-                        {
-                          channel: channel.toString(),
-                        },
-                      ),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.channel.remove.success",
+                          {
+                            channel: channel.toString(),
+                          },
+                        ),
                     ),
                   ),
                 ],
@@ -549,7 +602,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.channel.remove.failed"),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.channel.remove.failed",
+                        ),
                     ),
                   ),
                 ],
@@ -591,9 +649,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t(
-                        "commands.lockdown.role.add.role_not_found",
-                      ),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.role.add.role_not_found",
+                        ),
                     ),
                   ),
                 ],
@@ -623,12 +684,15 @@ export default new MessageCommand({
                   flags: MessageFlags.IsComponentsV2,
                   components: [
                     new Container().text(
-                      Text(icons.locked + " " + client.i18n.t(
-                          "commands.lockdown.role.add.already_added",
-                          {
-                            role: role.toString(),
-                          },
-                        ),
+                      Text(
+                        icons.locked +
+                          " " +
+                          client.i18n.t(
+                            "commands.lockdown.role.add.already_added",
+                            {
+                              role: role.toString(),
+                            },
+                          ),
                       ),
                     ),
                   ],
@@ -648,9 +712,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.add.success", {
-                        role: role.toString(),
-                      }),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.role.add.success", {
+                          role: role.toString(),
+                        }),
                     ),
                   ),
                 ],
@@ -660,7 +727,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.add.failed")),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.role.add.failed"),
+                    ),
                   ),
                 ],
               });
@@ -681,7 +752,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.guild_only")),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.guild_only"),
+                    ),
                   ),
                 ],
               });
@@ -699,7 +774,11 @@ export default new MessageCommand({
 
               if (roles.length === 0) {
                 container.text(
-                  Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.list.none")),
+                  Text(
+                    icons.locked +
+                      " " +
+                      client.i18n.t("commands.lockdown.role.list.none"),
+                  ),
                 );
               } else {
                 const lines: string[] = [];
@@ -709,11 +788,14 @@ export default new MessageCommand({
                 }
 
                 container.text(
-                  Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.list.title", {
-                      count: String(roles.length),
-                      noun: roles.length === 1 ? "role" : "roles",
-                      roles: lines.join("\n"),
-                    }),
+                  Text(
+                    icons.locked +
+                      " " +
+                      client.i18n.t("commands.lockdown.role.list.title", {
+                        count: String(roles.length),
+                        noun: roles.length === 1 ? "role" : "roles",
+                        roles: lines.join("\n"),
+                      }),
                   ),
                 );
               }
@@ -727,7 +809,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.list.fetch_error"),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.role.list.fetch_error",
+                        ),
                     ),
                   ),
                 ],
@@ -760,9 +847,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t(
-                        "commands.lockdown.role.remove.role_not_found",
-                      ),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t(
+                          "commands.lockdown.role.remove.role_not_found",
+                        ),
                     ),
                   ),
                 ],
@@ -786,12 +876,15 @@ export default new MessageCommand({
                   flags: MessageFlags.IsComponentsV2,
                   components: [
                     new Container().text(
-                      Text(icons.locked + " " + client.i18n.t(
-                          "commands.lockdown.role.remove.not_found",
-                          {
-                            role: role.toString(),
-                          },
-                        ),
+                      Text(
+                        icons.locked +
+                          " " +
+                          client.i18n.t(
+                            "commands.lockdown.role.remove.not_found",
+                            {
+                              role: role.toString(),
+                            },
+                          ),
                       ),
                     ),
                   ],
@@ -813,9 +906,12 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.remove.success", {
-                        role: role.toString(),
-                      }),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.role.remove.success", {
+                          role: role.toString(),
+                        }),
                     ),
                   ),
                 ],
@@ -825,7 +921,11 @@ export default new MessageCommand({
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                   new Container().text(
-                    Text(icons.locked + " " + client.i18n.t("commands.lockdown.role.remove.failed")),
+                    Text(
+                      icons.locked +
+                        " " +
+                        client.i18n.t("commands.lockdown.role.remove.failed"),
+                    ),
                   ),
                 ],
               });

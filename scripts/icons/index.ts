@@ -62,12 +62,15 @@ try {
   );
 
   if (match) {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
     icons = Function(`"use strict"; return (${match[1]})`)() as Record<
       string,
       string
     >;
   }
-} catch {}
+} catch {
+  // ignore
+}
 
 console.log("Checking existing application emojis...");
 

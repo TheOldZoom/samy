@@ -13,7 +13,10 @@ import {
   detectScriptKind,
   mergeMessageContent,
 } from "@/libs/scripting/detectScriptKind";
-import { compileEmbedScript, compileMultiEmbedScripts } from "@/libs/scripting/embed";
+import {
+  compileEmbedScript,
+  compileMultiEmbedScripts,
+} from "@/libs/scripting/embed";
 import { isScriptError } from "@/libs/scripting/common/ScriptError";
 import { scheduleMessageDeletion } from "@/libs/scripting/scheduleMessageDeletion";
 import { replaceVariables } from "@/libs/scripting/variables";
@@ -110,7 +113,11 @@ export default new SlashCommand({
             parse: [],
           },
           components: [
-            errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_embed_example")),
+            errorUI(
+              icons.code +
+                " " +
+                client.i18n.t("commands.builder.missing_embed_example"),
+            ),
           ],
         });
 
@@ -139,7 +146,8 @@ export default new SlashCommand({
 
         const deleteMs = compiled.result.deleteMs ?? detected.deleteMs;
 
-        const allComponents: typeof compiled.result.embeds[number]["components"] = [];
+        const allComponents: (typeof compiled.result.embeds)[number]["components"] =
+          [];
         const embeds = compiled.result.embeds.map((e) => {
           allComponents.push(...e.components);
           return e.embed;
@@ -207,7 +215,11 @@ export default new SlashCommand({
           parse: [],
         },
         components: [
-          errorUI(icons.code + " " + client.i18n.t("commands.builder.missing_cv2_example")),
+          errorUI(
+            icons.code +
+              " " +
+              client.i18n.t("commands.builder.missing_cv2_example"),
+          ),
         ],
       });
 

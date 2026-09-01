@@ -10,6 +10,7 @@
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
     "allowImportingTsExtensions": true,
+    "allowJs": true,
     "noEmit": true,
 
     "strict": true,
@@ -26,5 +27,11 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "eslint.config.js",
+    "prisma.config.ts"
+  ]
 }

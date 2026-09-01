@@ -1,9 +1,8 @@
-import { Message, MessageFlags } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { icons } from "@/utils/icons";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
-import type Client from "@/classes/client";
 import {
   addFakePermission,
   getFakePermissions,
@@ -66,18 +65,33 @@ const VALID_PERMISSIONS = new Set([
   "BypassSlowmode",
 ]);
 
-function canManageRole(member: any, role: any): boolean {
+function canManageRole(
+  member: {
+    id: string;
+    permissions: { has: (perm: string) => boolean };
+    roles: { highest: { position: number } };
+  },
+  role: { id: string; position: number },
+): boolean {
   if (member.id === role.id) return false;
   if (member.permissions.has("Administrator")) return true;
   if (!member.permissions.has("ManageRoles")) return false;
   return member.roles.highest.position > role.position;
 }
 
-function canManageFakePermission(member: any, permission: string): boolean {
+function canManageFakePermission(
+  member: {
+    permissions: {
+      has: (perm: string) => boolean;
+      flags: Record<string, unknown>;
+    };
+  },
+  permission: string,
+): boolean {
   if (member.permissions.has("Administrator")) return true;
   if (member.permissions.has("ManageGuild")) return true;
 
-  const permKey = permission as keyof typeof member.permissions.flags;
+  const permKey = permission;
   return member.permissions.has(permKey);
 }
 
@@ -120,7 +134,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.usage_add")),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.fakepermissions.usage_add"),
+                ),
               ),
             ],
           });
@@ -193,10 +211,13 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.added", {
-                    permission,
-                    role: role.name,
-                  }),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.fakepermissions.added", {
+                      permission,
+                      role: role.name,
+                    }),
                 ),
               ),
             ],
@@ -242,7 +263,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.usage_remove")),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.fakepermissions.usage_remove"),
+                ),
               ),
             ],
           });
@@ -323,10 +348,13 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.removed", {
-                  permission,
-                  role: role.name,
-                }),
+              Text(
+                icons.Guardian +
+                  " " +
+                  client.i18n.t("commands.fakepermissions.removed", {
+                    permission,
+                    role: role.name,
+                  }),
               ),
             ),
           ],
@@ -364,9 +392,12 @@ export default new MessageCommand({
               flags: MessageFlags.IsComponentsV2,
               components: [
                 new Container().text(
-                  Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.none", {
-                      role: `**${role.name}**`,
-                    }),
+                  Text(
+                    icons.Guardian +
+                      " " +
+                      client.i18n.t("commands.fakepermissions.none", {
+                        role: `**${role.name}**`,
+                      }),
                   ),
                 ),
               ],
@@ -383,10 +414,13 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.list_title", {
-                    target: `**${role.name}**`,
-                    permissions: lines,
-                  }),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.fakepermissions.list_title", {
+                      target: `**${role.name}**`,
+                      permissions: lines,
+                    }),
                 ),
               ),
             ],
@@ -405,7 +439,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.Guardian + " " + client.i18n.t("commands.fakepermissions.none")),
+                Text(
+                  icons.Guardian +
+                    " " +
+                    client.i18n.t("commands.fakepermissions.none"),
+                ),
               ),
             ],
           });

@@ -26,9 +26,12 @@ export async function Banner(
     fetchedUser.bannerURL({ size: 1024 });
 
   if (!bannerURL) {
-    return errorUI(icons.image + " " + client.i18n.t("commands.banner.no_banner", {
-        user: target.username,
-      }),
+    return errorUI(
+      icons.image +
+        " " +
+        client.i18n.t("commands.banner.no_banner", {
+          user: target.username,
+        }),
     );
   }
 

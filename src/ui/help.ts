@@ -115,7 +115,7 @@ export function resolveSubcommand(
   }
 
   return {
-    sub: current as MessageSubcommand,
+    sub: current,
     canonicalPath,
   };
 }
@@ -213,10 +213,12 @@ export function buildCategoryView(
     )
     .text(
       Text(
-        icons.info + " " + t("commands.help.category_description", {
-          count: commands.length,
-          noun: commands.length === 1 ? "command" : "commands",
-        }),
+        icons.info +
+          " " +
+          t("commands.help.category_description", {
+            count: commands.length,
+            noun: commands.length === 1 ? "command" : "commands",
+          }),
       ),
     )
     .separator(Separator())

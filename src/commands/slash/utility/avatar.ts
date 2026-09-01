@@ -40,7 +40,7 @@ export default new SlashCommand({
     await interaction.deferReply();
 
     try {
-      const container = await Avatar(client, target, member);
+      const container = Avatar(client, target, member);
 
       await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,
@@ -54,7 +54,11 @@ export default new SlashCommand({
 
       await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.image + " " + client.i18n.t("commands.avatar.fetch_error"))],
+        components: [
+          errorUI(
+            icons.image + " " + client.i18n.t("commands.avatar.fetch_error"),
+          ),
+        ],
       });
     }
   },

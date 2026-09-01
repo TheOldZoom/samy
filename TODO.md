@@ -122,9 +122,9 @@ A roadmap for Samy's development.
 - [x] Timeout
 - [x] Untimeout
 
-- [ ] Temp ban (`tempban`)
-- [ ] Hard ban (permanent re-ban on rejoin) (`hardban`)
-- [ ] Mass unban (`unbanall`)
+- [x] Temp ban (`tempban`)
+- [x] Hard ban (permanent re-ban on rejoin) (`hardban`)
+- [x] Mass unban (`unbanall`)
 - [ ] Jail system (role-based mute alternative to timeout) (`jail`/`unjail`, jail role/channel setup)
 - [ ] Image mute / reaction mute (`imute`/`iunmute`, `rmute`/`runmute`)
 - [ ] Strip staff roles from a member (`stripstaff`)
@@ -152,28 +152,28 @@ A roadmap for Samy's development.
 - [x] Lockdown all channels at once (`lockdown all` / `unlock all`)
 - [x] Lockdown ignore list (channels excluded from lock/unlock all)
 - [x] Configurable default lockdown role
-- [ ] Hide/unhide a channel from a role or member
-- [ ] Toggle NSFW temporarily on a channel (`naughty`)
-- [ ] Revoke attach files/embed permissions per channel (`revokefiles`)
-- [ ] Move all members between voice channels (`moveall`)
-- [ ] Drag member(s) into a voice channel (`drag`)
+- [x] Hide/unhide a channel from a role or member
+- [x] Toggle NSFW temporarily on a channel (`naughty`)
+- [x] Revoke attach files/embed permissions per channel (`revokefiles`)
+- [x] Move all members between voice channels (`moveall`)
+- [x] Drag member(s) into a voice channel (`drag`)
 - [ ] Thread management (rename, lock/unlock, add/remove member, watch for archival)
 
 ## Role Management
 
-- [ ] Add role
-- [ ] Remove role
-- [ ] Create role (with color/gradient)
-- [ ] Edit role
-- [ ] Delete role
-- [ ] Temporary roles
-- [ ] Bulk role add/remove for all humans or all bots
-- [ ] Bulk role add/remove for members already holding a specific role
-- [ ] Toggle role mentionable / hoisted
-- [ ] Set role icon
-- [ ] Set top role color
-- [ ] Sticky roles (reapply role on rejoin)
-- [ ] Dump all members of a role to a file (`dump`)
+- [x] Add role
+- [x] Remove role
+- [x] Create role (with color/gradient)
+- [x] Edit role
+- [x] Delete role
+- [x] Temporary roles
+- [x] Bulk role add/remove for all humans or all bots
+- [x] Bulk role add/remove for members already holding a specific role
+- [x] Toggle role mentionable / hoisted
+- [x] Set role icon
+- [x] Set top role color
+- [x] Sticky roles (reapply role on rejoin)
+- [x] Dump all members of a role to a file (`dump`)
 
 ## Purge
 

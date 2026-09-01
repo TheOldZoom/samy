@@ -22,7 +22,10 @@ export async function ServerBanner(
   const serverBannerURL = fetchedMember?.bannerURL({ size: 1024 });
 
   if (!serverBannerURL) {
-    return errorUI(icons.image + " " + client.i18n.t("commands.serverbanner.none", { user: target.username }),
+    return errorUI(
+      icons.image +
+        " " +
+        client.i18n.t("commands.serverbanner.none", { user: target.username }),
     );
   }
 

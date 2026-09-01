@@ -45,9 +45,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
 
             components: [
-              errorUI(icons.info + " " + client.i18n.t("commands.help.not_found", {
-                  command: raw,
-                }),
+              errorUI(
+                icons.info +
+                  " " +
+                  client.i18n.t("commands.help.not_found", {
+                    command: raw,
+                  }),
               ),
             ],
           });
@@ -66,9 +69,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
 
             components: [
-              errorUI(icons.info + " " + client.i18n.t("commands.help.not_found", {
-                  command: raw,
-                }),
+              errorUI(
+                icons.info +
+                  " " +
+                  client.i18n.t("commands.help.not_found", {
+                    command: raw,
+                  }),
               ),
             ],
           });
@@ -106,9 +112,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
 
             components: [
-              errorUI(icons.info + " " + client.i18n.t("commands.help.not_found", {
-                  command: raw,
-                }),
+              errorUI(
+                icons.info +
+                  " " +
+                  client.i18n.t("commands.help.not_found", {
+                    command: raw,
+                  }),
               ),
             ],
           });
@@ -153,7 +162,11 @@ export default new MessageCommand({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
 
-        components: [errorUI(icons.info + " " + client.i18n.t("commands.help.fetch_error"))],
+        components: [
+          errorUI(
+            icons.info + " " + client.i18n.t("commands.help.fetch_error"),
+          ),
+        ],
       });
     }
   },

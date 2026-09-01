@@ -1,9 +1,4 @@
-import {
-  ApplicationIntegrationType,
-  InteractionContextType,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
 import { SlashCommand } from "@/classes/Command";
 import { MemberCount } from "@/commands/shared/memberCount";

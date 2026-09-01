@@ -16,12 +16,15 @@ export function RandomHexResult(client: Client) {
 
   return new Container()
     .text(
-      Text(icons.colornitro + " " + client.i18n.t("commands.randomhex.result", {
-          hex,
-          r,
-          g,
-          b,
-        }),
+      Text(
+        icons.colornitro +
+          " " +
+          client.i18n.t("commands.randomhex.result", {
+            hex,
+            r,
+            g,
+            b,
+          }),
       ),
     )
     .media(Media(`https://singlecolorimage.com/get/${hexNoHash}/128x128`));

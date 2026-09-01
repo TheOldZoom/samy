@@ -1,8 +1,6 @@
-import { MessageFlags, ChannelType } from "discord.js";
+import { MessageFlags, ChannelType, type Guild, type User } from "discord.js";
 import { LogCategory } from "@prisma/client";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
-import { buildLogEntry } from "@/ui/logs";
-import { sendLog } from "@/utils/logs/dispatch";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
 import type { Message } from "discord.js";
@@ -598,8 +596,6 @@ export default new MessageCommand({
         }
 
         const category = args.getString("category");
-        const description = args.getString("description");
-        const footer = args.getString("footer");
 
         if (!category) {
           await reply(
@@ -631,7 +627,7 @@ export default new MessageCommand({
         if (!message.guild) return;
 
         for (const cat of categories) {
-          await emitTestLogs(client, message.guild, cat, message.author);
+          emitTestLogs(client, message.guild, cat, message.author);
         }
 
         await reply(
@@ -742,12 +738,12 @@ export default new MessageCommand({
   ],
 });
 
-async function emitTestLogs(
+function emitTestLogs(
   client: Client,
-  guild: any,
+  guild: Guild,
   category: LogCategoryKey,
-  author: any,
-) {
+  author: User,
+): void {
   switch (category) {
     case "channels":
       emitChannelEvents(client, guild, author);
@@ -776,7 +772,7 @@ async function emitTestLogs(
   }
 }
 
-function emitChannelEvents(client: Client, guild: any, author: any) {
+function emitChannelEvents(client: Client, guild: Guild, _author: User) {
   const channel = {
     guild,
     id: guild.id,
@@ -787,10 +783,10 @@ function emitChannelEvents(client: Client, guild: any, author: any) {
     toString: () => `<#${guild.id}>`,
   };
 
-  (client as any).emit("channelCreate", channel);
-  (client as any).emit("channelDelete", channel);
+  client.emit("channelCreate", channel);
+  client.emit("channelDelete", channel);
 
-  (client as any).emit("channelUpdate", channel, {
+  client.emit("channelUpdate", channel, {
     ...channel,
     name: "test-channel-2",
   });
@@ -807,14 +803,14 @@ function emitChannelEvents(client: Client, guild: any, author: any) {
     toString: () => `<#${guild.id}>`,
   };
 
-  (client as any).emit("threadCreate", thread);
-  (client as any).emit("threadDelete", thread);
-  (client as any).emit("threadUpdate", thread, {
+  client.emit("threadCreate", thread);
+  client.emit("threadDelete", thread);
+  client.emit("threadUpdate", thread, {
     ...thread,
     name: "test-thread-2",
   });
 
-  (client as any).emit("webhookUpdate", {
+  client.emit("webhookUpdate", {
     guild,
     id: guild.id,
     parentId: null,
@@ -830,20 +826,20 @@ function emitChannelEvents(client: Client, guild: any, author: any) {
     inviterId: null,
   };
 
-  (client as any).emit("inviteCreate", invite);
-  (client as any).emit("inviteDelete", invite);
+  client.emit("inviteCreate", invite);
+  client.emit("inviteDelete", invite);
 }
 
-function emitGuildEvents(client: Client, guild: any, author: any) {
-  (client as any).emit("guildCreate", guild);
-  (client as any).emit("guildDelete", guild);
-  (client as any).emit("guildUpdate", guild, {
+function emitGuildEvents(client: Client, guild: Guild, _author: User) {
+  client.emit("guildCreate", guild);
+  client.emit("guildDelete", guild);
+  client.emit("guildUpdate", guild, {
     ...guild,
     name: `${guild.name}-2`,
   });
 }
 
-function emitImageEvents(client: Client, guild: any, author: any) {
+function emitImageEvents(client: Client, guild: Guild, author: User) {
   const emoji = {
     guild,
     id: `emoji-${Date.now()}`,
@@ -852,9 +848,9 @@ function emitImageEvents(client: Client, guild: any, author: any) {
     toString: () => `:${`test-emoji`}:`,
   };
 
-  (client as any).emit("emojiCreate", emoji);
-  (client as any).emit("emojiDelete", emoji);
-  (client as any).emit("emojiUpdate", emoji, {
+  client.emit("emojiCreate", emoji);
+  client.emit("emojiDelete", emoji);
+  client.emit("emojiUpdate", emoji, {
     ...emoji,
     name: "test-emoji-2",
   });
@@ -868,9 +864,9 @@ function emitImageEvents(client: Client, guild: any, author: any) {
     tags: null,
   };
 
-  (client as any).emit("stickerCreate", sticker);
-  (client as any).emit("stickerDelete", sticker);
-  (client as any).emit("stickerUpdate", sticker, {
+  client.emit("stickerCreate", sticker);
+  client.emit("stickerDelete", sticker);
+  client.emit("stickerUpdate", sticker, {
     ...sticker,
     name: "test-sticker-2",
   });
@@ -886,8 +882,8 @@ function emitImageEvents(client: Client, guild: any, author: any) {
     partial: false,
   };
 
-  (client as any).emit("messageReactionAdd", reaction, author);
-  (client as any).emit("messageReactionRemove", reaction, author);
+  client.emit("messageReactionAdd", reaction, author);
+  client.emit("messageReactionRemove", reaction, author);
 
   const message = {
     guild,
@@ -896,42 +892,44 @@ function emitImageEvents(client: Client, guild: any, author: any) {
     partial: false,
   };
 
-  (client as any).emit("messageReactionRemoveAll", message);
+  client.emit("messageReactionRemoveAll", message);
 }
 
-function createFakeCollection<T>(entries: [any, T][] = []): any {
+function createFakeCollection<T>(entries: [string, T][] = []): Map<string, T> {
   const map = new Map(entries);
   return Object.assign(map, {
-    filter: (fn: any) => {
+    filter: (fn: (value: T, key: string, map: Map<string, T>) => boolean) => {
       const result = new Map();
       for (const [key, value] of map) {
         if (fn(value, key, map)) result.set(key, value);
       }
-      return createFakeCollection([...result]);
+      return createFakeCollection<T>([...result] as [string, T][]);
     },
-    map: (fn: any) => [...map].map(([key, value]) => fn(value, key, map)),
-    find: (fn: any) => {
+    map: (fn: (value: T, key: string, map: Map<string, T>) => unknown) =>
+      [...map].map(([key, value]) => fn(value, key, map)),
+    find: (fn: (value: T, key: string, map: Map<string, T>) => boolean) => {
       for (const [key, value] of map) {
         if (fn(value, key, map)) return value;
       }
       return undefined;
     },
-  }) as any;
+  });
 }
 
-function emitMemberEvents(client: Client, guild: any, author: any) {
+function emitMemberEvents(client: Client, guild: Guild, author: User) {
   const member = {
     id: author.id,
     user: author,
     guild,
     nickname: null,
     roles: { cache: createFakeCollection() },
-    displayAvatarURL: (opts?: any) => author.displayAvatarURL(opts),
+    displayAvatarURL: (opts?: { extension?: string; size?: number }) =>
+      author.displayAvatarURL(opts),
     partial: false,
   };
 
-  (client as any).emit("guildMemberAdd", member);
-  (client as any).emit("guildMemberRemove", member);
+  client.emit("guildMemberAdd", member);
+  client.emit("guildMemberRemove", member);
 
   const member2 = {
     ...member,
@@ -957,10 +955,10 @@ function emitMemberEvents(client: Client, guild: any, author: any) {
     },
   };
 
-  (client as any).emit("guildMemberUpdate", member, member2);
+  client.emit("guildMemberUpdate", member, member2);
 }
 
-function emitMessageEvents(client: Client, guild: any, author: any) {
+function emitMessageEvents(client: Client, guild: Guild, author: User) {
   const message = {
     id: `msg-${Date.now()}`,
     guild,
@@ -971,22 +969,22 @@ function emitMessageEvents(client: Client, guild: any, author: any) {
     partial: false,
   };
 
-  (client as any).emit("messageDelete", message);
+  client.emit("messageDelete", message);
 
   const messages = new Map([
     [message.id, message],
     [`msg-${Date.now() + 1}`, { ...message, id: `msg-${Date.now() + 1}` }],
   ]);
 
-  (client as any).emit("messageDeleteBulk", messages, { guild, id: guild.id });
+  client.emit("messageDeleteBulk", messages, { guild, id: guild.id });
 
-  (client as any).emit("messageUpdate", message, {
+  client.emit("messageUpdate", message, {
     ...message,
     content: "updated message",
   });
 }
 
-function emitModerationEvents(client: Client, guild: any, author: any) {
+function emitModerationEvents(client: Client, guild: Guild, author: User) {
   const ban = {
     guild,
     userId: author.id,
@@ -995,11 +993,11 @@ function emitModerationEvents(client: Client, guild: any, author: any) {
     partial: false,
   };
 
-  (client as any).emit("guildBanAdd", ban);
-  (client as any).emit("guildBanRemove", ban);
+  client.emit("guildBanAdd", ban);
+  client.emit("guildBanRemove", ban);
 }
 
-function emitRoleEvents(client: Client, guild: any, _author: any) {
+function emitRoleEvents(client: Client, guild: Guild, _author: User) {
   const role = {
     guild,
     id: `role-${Date.now()}`,
@@ -1011,17 +1009,18 @@ function emitRoleEvents(client: Client, guild: any, _author: any) {
     toString: () => `<@&${guild.id}>`,
   };
 
-  (client as any).emit("roleCreate", role);
-  (client as any).emit("roleDelete", role);
-  (client as any).emit("roleUpdate", role, { ...role, name: "test-role-2" });
+  client.emit("roleCreate", role);
+  client.emit("roleDelete", role);
+  client.emit("roleUpdate", role, { ...role, name: "test-role-2" });
 }
 
-function emitVoiceEvents(client: Client, guild: any, author: any) {
+function emitVoiceEvents(client: Client, guild: Guild, author: User) {
   const member = {
     id: author.id,
     user: author,
     guild,
-    displayAvatarURL: (opts?: any) => author.displayAvatarURL(opts),
+    displayAvatarURL: (opts?: { extension?: string; size?: number }) =>
+      author.displayAvatarURL(opts),
   };
 
   const oldState = {
@@ -1041,7 +1040,7 @@ function emitVoiceEvents(client: Client, guild: any, author: any) {
     channel: { id: `voice-${Date.now()}`, toString: () => `<#${guild.id}>` },
   };
 
-  (client as any).emit("voiceStateUpdate", oldState, newState);
+  client.emit("voiceStateUpdate", oldState, newState);
 
   const stageInstance = {
     guild,
@@ -1051,8 +1050,8 @@ function emitVoiceEvents(client: Client, guild: any, author: any) {
     channelId: guild.id,
   };
 
-  (client as any).emit("stageInstanceCreate", stageInstance);
-  (client as any).emit("stageInstanceDelete", stageInstance);
+  client.emit("stageInstanceCreate", stageInstance);
+  client.emit("stageInstanceDelete", stageInstance);
 }
 
 async function runList(client: Client, message: Message) {

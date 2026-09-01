@@ -39,22 +39,33 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.managed")),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.managed"),
+                ),
               ),
             ],
           });
           return;
         }
 
-        const member = message.guild.members.cache.get(message.author.id)
-          ?? await message.guild.members.fetch(message.author.id).catch(() => null);
+        const member =
+          message.guild.members.cache.get(message.author.id) ??
+          (await message.guild.members
+            .fetch(message.author.id)
+            .catch(() => null));
 
         if (member && role.position >= member.roles.highest.position) {
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.user_hierarchy")),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.user_hierarchy"),
+                ),
               ),
             ],
           });
@@ -67,7 +78,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.hierarchy")),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.hierarchy"),
+                ),
               ),
             ],
           });
@@ -88,9 +103,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.already_exists", {
-                    role: role.toString(),
-                  }),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.already_exists", {
+                      role: role.toString(),
+                    }),
                 ),
               ),
             ],
@@ -115,9 +133,12 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.added", {
-                  role: role.toString(),
-                }),
+              Text(
+                icons.addreactions +
+                  " " +
+                  client.i18n.t("commands.autorole.added", {
+                    role: role.toString(),
+                  }),
               ),
             ),
           ],
@@ -159,9 +180,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.not_found", {
-                    role: role.toString(),
-                  }),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.not_found", {
+                      role: role.toString(),
+                    }),
                 ),
               ),
             ],
@@ -182,9 +206,12 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.removed", {
-                  role: role.toString(),
-                }),
+              Text(
+                icons.addreactions +
+                  " " +
+                  client.i18n.t("commands.autorole.removed", {
+                    role: role.toString(),
+                  }),
               ),
             ),
           ],
@@ -210,7 +237,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.none")),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.none"),
+                ),
               ),
             ],
           });
@@ -223,10 +254,13 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.list", {
-                  count: autoroles.length,
-                  roles,
-                }),
+              Text(
+                icons.addreactions +
+                  " " +
+                  client.i18n.t("commands.autorole.list", {
+                    count: autoroles.length,
+                    roles,
+                  }),
               ),
             ),
           ],
@@ -251,7 +285,11 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.addreactions + " " + client.i18n.t("commands.autorole.none")),
+                Text(
+                  icons.addreactions +
+                    " " +
+                    client.i18n.t("commands.autorole.none"),
+                ),
               ),
             ],
           });
@@ -262,9 +300,12 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.addreactions + " " + client.i18n.t("commands.autorole.cleared", {
-                  count: result.count,
-                }),
+              Text(
+                icons.addreactions +
+                  " " +
+                  client.i18n.t("commands.autorole.cleared", {
+                    count: result.count,
+                  }),
               ),
             ),
           ],

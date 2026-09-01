@@ -7,7 +7,6 @@ import {
 
 import { SlashCommand } from "@/classes/Command";
 import { CharInfoResult } from "@/commands/shared/charinfo";
-import errorUI from "@/ui/error";
 
 export default new SlashCommand({
   data: new SlashCommandBuilder()

@@ -7,7 +7,9 @@ export function CharInfoResult(client: Client, input: string) {
   const char = input[0];
 
   if (!char) {
-    return errorUI(icons.info + " " + client.i18n.t("commands.charinfo.provide"));
+    return errorUI(
+      icons.info + " " + client.i18n.t("commands.charinfo.provide"),
+    );
   }
 
   const codePoint = char.codePointAt(0)!;
@@ -20,12 +22,15 @@ export function CharInfoResult(client: Client, input: string) {
     .join(" ");
 
   return new Container().text(
-    Text(icons.info + " " + client.i18n.t("commands.charinfo.result", {
-        char,
-        hex,
-        decimal: codePoint.toString(),
-        utf8: utf8 || "—",
-      }),
+    Text(
+      icons.info +
+        " " +
+        client.i18n.t("commands.charinfo.result", {
+          char,
+          hex,
+          decimal: codePoint.toString(),
+          utf8: utf8 || "—",
+        }),
     ),
   );
 }

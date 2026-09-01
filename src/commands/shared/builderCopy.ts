@@ -3,8 +3,6 @@ import {
   ContainerBuilder,
   MessageFlags,
   TextDisplayBuilder,
-  type APIEmbed,
-  type APIMessageTopLevelComponent,
   type Client,
   type Message,
 } from "discord.js";
@@ -59,10 +57,8 @@ export function decompileMessageForBuilder(
   return decompileMessageToScript(
     {
       content: message.content,
-      embeds: message.embeds.map((embed) => embed.toJSON() as APIEmbed),
-      components: message.components.map(
-        (component) => component.toJSON() as APIMessageTopLevelComponent,
-      ),
+      embeds: message.embeds.map((embed) => embed.toJSON()),
+      components: message.components.map((component) => component.toJSON()),
     },
     options,
   );

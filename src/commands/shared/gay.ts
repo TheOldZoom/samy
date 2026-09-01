@@ -18,10 +18,13 @@ export function GayResult(client: Client, user: User) {
   const percentage = getGay(user.id);
 
   return new Container().addTextDisplayComponents(
-    Text(icons.gay + " " + client.i18n.t("commands.gay.result", {
-        user: user.username,
-        percentage,
-      }),
+    Text(
+      icons.gay +
+        " " +
+        client.i18n.t("commands.gay.result", {
+          user: user.username,
+          percentage,
+        }),
     ),
   );
 }

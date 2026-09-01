@@ -25,7 +25,9 @@ async function executeBan({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.ban.guild_only"))),
+        new Container().text(
+          Text(icons.ban + " " + client.i18n.t("commands.ban.guild_only")),
+        ),
       ],
     });
 
@@ -38,7 +40,9 @@ async function executeBan({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.ban.self"))),
+        new Container().text(
+          Text(icons.ban + " " + client.i18n.t("commands.ban.self")),
+        ),
       ],
     });
 
@@ -49,7 +53,9 @@ async function executeBan({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.ban.bot"))),
+        new Container().text(
+          Text(icons.ban + " " + client.i18n.t("commands.ban.bot")),
+        ),
       ],
     });
 
@@ -81,7 +87,9 @@ async function executeBan({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.ban + " " + client.i18n.t("commands.ban.role_hierarchy")),
+            Text(
+              icons.ban + " " + client.i18n.t("commands.ban.role_hierarchy"),
+            ),
           ),
         ],
       });
@@ -116,7 +124,9 @@ async function executeBan({
           ),
         ],
       });
-    } catch {}
+    } catch {
+      // ignore
+    }
     await message.guild.members.ban(target, {
       reason: auditReason,
     });
@@ -124,7 +134,9 @@ async function executeBan({
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.ban + " " + client.i18n.t("commands.ban.failed"))),
+        new Container().text(
+          Text(icons.ban + " " + client.i18n.t("commands.ban.failed")),
+        ),
       ],
     });
 
@@ -144,7 +156,9 @@ async function executeBan({
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
         components: [
-          new Container().text(Text(icons.ban + " " + client.i18n.t("commands.ban.failed"))),
+          new Container().text(
+            Text(icons.ban + " " + client.i18n.t("commands.ban.failed")),
+          ),
         ],
       });
 
@@ -208,7 +222,9 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.ban + " " + client.i18n.t("commands.ban.user_not_found")),
+            Text(
+              icons.ban + " " + client.i18n.t("commands.ban.user_not_found"),
+            ),
           ),
         ],
       });

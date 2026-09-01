@@ -10,7 +10,7 @@ import {
   Text,
 } from "@/ui/components";
 
-export async function Avatar(
+export function Avatar(
   client: Client,
   target: User,
   member?: GuildMember | null,

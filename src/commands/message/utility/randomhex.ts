@@ -26,7 +26,13 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.colornitro + " " + client.i18n.t("commands.randomhex.fetch_error"))],
+        components: [
+          errorUI(
+            icons.colornitro +
+              " " +
+              client.i18n.t("commands.randomhex.fetch_error"),
+          ),
+        ],
       });
     }
   },

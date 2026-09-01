@@ -11,7 +11,11 @@ import {
 } from "./renderer/EmbedRenderer";
 
 export type { EmbedScript, EmbedNode, AnyEmbedNode } from "./ast/EmbedNode";
-export { EmbedParser, parseEmbedScript, parseMultiEmbedScripts } from "./parser/EmbedParser";
+export {
+  EmbedParser,
+  parseEmbedScript,
+  parseMultiEmbedScripts,
+} from "./parser/EmbedParser";
 export {
   EmbedValidator,
   validateEmbedScript,

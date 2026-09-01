@@ -46,7 +46,11 @@ export default new SlashCommand({
 
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-        components: [errorUI(icons.image + " " + client.i18n.t("commands.splash.fetch_error"))],
+        components: [
+          errorUI(
+            icons.image + " " + client.i18n.t("commands.splash.fetch_error"),
+          ),
+        ],
       });
     }
   },

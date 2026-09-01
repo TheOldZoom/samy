@@ -39,7 +39,11 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(icons.music + " " + client.i18n.t("commands.lastfm.user_no_link")),
+              errorUI(
+                icons.music +
+                  " " +
+                  client.i18n.t("commands.lastfm.user_no_link"),
+              ),
             ],
           });
 
@@ -56,7 +60,9 @@ export default new MessageCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.music + " " + client.i18n.t("commands.lastfm.no_tracks")),
+              Text(
+                icons.music + " " + client.i18n.t("commands.lastfm.no_tracks"),
+              ),
             ),
           ],
         });
@@ -80,7 +86,11 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.music + " " + client.i18n.t("commands.lastfm.fetch_error"))],
+        components: [
+          errorUI(
+            icons.music + " " + client.i18n.t("commands.lastfm.fetch_error"),
+          ),
+        ],
       });
     }
   },
@@ -107,7 +117,11 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(icons.music + " " + client.i18n.t("commands.lastfm.provide_username")),
+              errorUI(
+                icons.music +
+                  " " +
+                  client.i18n.t("commands.lastfm.provide_username"),
+              ),
             ],
           });
 
@@ -121,9 +135,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.music + " " + client.i18n.t("commands.lastfm.linked", {
-                    username: profile.name,
-                  }),
+                Text(
+                  icons.music +
+                    " " +
+                    client.i18n.t("commands.lastfm.linked", {
+                      username: profile.name,
+                    }),
                 ),
               ),
             ],
@@ -137,7 +154,11 @@ export default new MessageCommand({
 
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
-            components: [errorUI(icons.music + " " + client.i18n.t("commands.lastfm.link_error"))],
+            components: [
+              errorUI(
+                icons.music + " " + client.i18n.t("commands.lastfm.link_error"),
+              ),
+            ],
           });
         }
       },
@@ -154,7 +175,11 @@ export default new MessageCommand({
           if (!user) {
             await message.reply({
               flags: MessageFlags.IsComponentsV2,
-              components: [errorUI(icons.music + " " + client.i18n.t("commands.lastfm.no_link"))],
+              components: [
+                errorUI(
+                  icons.music + " " + client.i18n.t("commands.lastfm.no_link"),
+                ),
+              ],
             });
 
             return;
@@ -166,9 +191,12 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.music + " " + client.i18n.t("commands.lastfm.unlinked", {
-                    username: user.username,
-                  }),
+                Text(
+                  icons.music +
+                    " " +
+                    client.i18n.t("commands.lastfm.unlinked", {
+                      username: user.username,
+                    }),
                 ),
               ),
             ],
@@ -182,7 +210,11 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-              errorUI(icons.music + " " + client.i18n.t("commands.lastfm.unlink_error")),
+              errorUI(
+                icons.music +
+                  " " +
+                  client.i18n.t("commands.lastfm.unlink_error"),
+              ),
             ],
           });
         }

@@ -17,7 +17,12 @@ export default new MessageCommand({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.ping + " " + client.i18n.t("commands.ping.latency", { latency: client.ws.ping }),
+          Text(
+            icons.ping +
+              " " +
+              client.i18n.t("commands.ping.latency", {
+                latency: client.ws.ping,
+              }),
           ),
         ),
       ],
@@ -26,7 +31,11 @@ export default new MessageCommand({
     const latency = sent.createdTimestamp - message.createdTimestamp;
 
     const page = new Container().text(
-      Text(icons.ping + " " + client.i18n.t("commands.ping.latency", { latency: client.ws.ping })),
+      Text(
+        icons.ping +
+          " " +
+          client.i18n.t("commands.ping.latency", { latency: client.ws.ping }),
+      ),
       Text(icons.ping + " " + client.i18n.t("commands.ping.edit", { latency })),
     );
 

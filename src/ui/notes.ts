@@ -89,10 +89,12 @@ export async function renderNotesList(
   return new Container()
     .text(
       Text(
-        icons.book + " " + t("commands.notes.title", {
-          user: userTag,
-          count: String(total),
-        }),
+        icons.book +
+          " " +
+          t("commands.notes.title", {
+            user: userTag,
+            count: String(total),
+          }),
       ),
     )
     .separator(Separator())

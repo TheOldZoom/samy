@@ -16,7 +16,7 @@ export default new ButtonHandler({
     if (!warningId) return;
 
     const page = Number(params[1] ?? 0);
-    const targetId = params[2];
+    const _targetId = params[2];
 
     const warning = await client.prisma.warning.findFirst({
       where: { id: warningId, guildId: guild.id },

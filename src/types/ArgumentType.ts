@@ -1,5 +1,3 @@
-import type { Channel, GuildMember, Role, User } from "discord.js";
-
 import type Client from "@/classes/client";
 import type { Message } from "discord.js";
 
@@ -12,7 +10,9 @@ export type ArgumentTypeName =
   | "member"
   | "role"
   | "channel"
-  | "channelLike";
+  | "channelLike"
+  | "userList"
+  | "memberList";
 
 export interface ArgumentResolverContext {
   client: Client;

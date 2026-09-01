@@ -83,6 +83,43 @@
     "dm": "You have been banned from **{guild}**.\n\n**Reason:** {reason}",
     "dm_temp": "You have been temporarily banned from **{guild}** for **{duration}**.\n\n**Reason:** {reason}"
   },
+  "tempban": {
+    "guild_only": "This command can only be used in a server.",
+    "self": "You can't ban yourself.",
+    "bot": "I can't ban myself.",
+    "not_bannable": "I don't have permission to ban that user.",
+    "role_hierarchy": "You can't ban someone with an equal or higher role than you.",
+    "failed": "I couldn't ban that user.",
+    "user_not_found": "Please provide a user to ban.",
+    "invalid_duration": "Invalid duration. Try something like `10m`, `1h`, or `7d`.",
+    "success": "**{user}** has been banned for **{duration}**.\n-# {reason}",
+    "dm": "You have been temporarily banned from **{guild}** for **{duration}**.\n\n**Reason:** {reason}"
+  },
+  "hardban": {
+    "guild_only": "This command can only be used in a server.",
+    "self": "You can't ban yourself.",
+    "bot": "I can't ban myself.",
+    "not_bannable": "I don't have permission to ban that user.",
+    "role_hierarchy": "You can't ban someone with an equal or higher role than you.",
+    "failed": "I couldn't ban that user.",
+    "user_not_found": "Please provide a user to ban.",
+    "already_hardbanned": "**{user}** is already hard banned.",
+    "success": "**{user}** has been hard banned. They will be re-banned if they rejoin.\n-# {reason}",
+    "dm": "You have been permanently banned from **{guild}**.\n\n**Reason:** {reason}"
+  },
+  "unbanall": {
+    "guild_only": "This command can only be used in a server.",
+    "failed": "I couldn't fetch the ban list.",
+    "none": "There are no banned users to unban.",
+    "success": "Successfully unbanned **{success}** users.\nFailed: **{failed}**\n-# {reason}"
+  },
+  "unhardban": {
+    "guild_only": "This command can only be used in a server.",
+    "user_not_found": "I couldn't find that user.",
+    "not_hardbanned": "**{user}** is not hard banned.",
+    "failed": "I couldn't remove the hard ban.",
+    "success": "**{user}**'s hard ban has been removed.\n-# {reason}"
+  },
   "unban": {
     "guild_only": "This command can only be used in a server.",
     "user_not_found": "I couldn't find that user.",
@@ -662,5 +699,100 @@
     "channel_remove_not_found": "**{channel}** is not in the Markov learning whitelist.",
     "channel_list_none": "No channels are whitelisted for Markov learning. Markov will not learn from messages until you add channels with `markov channel add <channel>`.",
     "channel_list_title": "Markov learning whitelist ({count}):\n{channels}"
+  },
+  "hide": {
+    "guild_only": "This command can only be used in a server.",
+    "channel_not_found": "I couldn't find that channel.",
+    "target_not_found": "I couldn't find that role or member.",
+    "hidden": "**{channel}** has been hidden from **{target}**.",
+    "unhidden": "**{channel}** has been unhidden from **{target}**.",
+    "failed": "I couldn't update the channel permissions."
+  },
+  "naughty": {
+    "guild_only": "This command can only be used in a server.",
+    "channel_not_found": "I couldn't find that channel.",
+    "text_only": "NSFW can only be toggled on text channels.",
+    "enabled": "NSFW has been enabled in **{channel}**.",
+    "disabled": "NSFW has been disabled in **{channel}**.",
+    "failed": "I couldn't toggle NSFW."
+  },
+  "revokefiles": {
+    "guild_only": "This command can only be used in a server.",
+    "channel_not_found": "I couldn't find that channel.",
+    "revoked": "Attach files and embed permissions have been revoked in **{channel}**.",
+    "restored": "Attach files and embed permissions have been restored in **{channel}**.",
+    "failed": "I couldn't update the permissions."
+  },
+  "moveall": {
+    "guild_only": "This command can only be used in a server.",
+    "from_not_found": "I couldn't find the source voice channel.",
+    "to_not_found": "I couldn't find the target voice channel.",
+    "same_channel": "The source and target channels cannot be the same.",
+    "success": "Moved **{count}** members from **{from}** to **{to}**.",
+    "failed": "I couldn't move the members."
+  },
+  "drag": {
+    "guild_only": "This command can only be used in a server.",
+    "no_channel": "Join a voice channel or specify a target channel.",
+    "not_voice": "The target must be a voice channel.",
+    "no_members": "No valid members provided.",
+    "success": "Dragged **{count}** members to **{channel}**.\nFailed: {failed}",
+    "failed": "I couldn't drag the members."
+  },
+  "role": {
+    "guild_only": "This command can only be used in a server.",
+    "usage": {
+      "add": "Usage: `role add <member> <roles...>`",
+      "remove": "Usage: `role remove <member> <roles...>`",
+      "toggle": "Usage: `role toggle <member> <role>`",
+      "create": "Usage: `role create <name> [--color #hex] [--hoist true|false] [--mentionable true|false] [--icon <emoji|url>]`",
+      "delete": "Usage: `role delete <role>`",
+      "edit": "Usage: `role edit <role> [--name <name>] [--color <hex|gradient>] [--icon <emoji|url>] [--hoist true|false] [--mentionable true|false]`",
+      "color": "Usage: `role color <role> <#hex>`",
+      "name": "Usage: `role name <role> <name>`",
+      "icon": "Usage: `role icon <role> <emoji|url>`",
+      "hoist": "Usage: `role hoist <role> [true|false]`",
+      "mentionable": "Usage: `role mentionable <role> [true|false]`"
+    },
+    "no_roles": "No valid roles were provided. {errors}",
+    "invalid_color": "**{input}** is not a valid hex color (use `#RRGGBB` or `#RRGGBB,#RRGGBB` for a gradient).",
+    "invalid_icon": "I couldn't set that icon. Make sure it is an emoji or a valid image URL.",
+    "invalid_duration": "Invalid duration. Examples: `30m`, `1h`, `2d`.",
+    "invalid_type": "Type must be one of `humans`, `bots`, or `members`.",
+    "cannot_manage": "I can't manage that role. It may be managed by an integration or be the @everyone role.",
+    "hierarchy": "That role is at or above your highest role.",
+    "bot_hierarchy": "{reason}",
+    "copy_same": "Source and target roles must be different.",
+    "no_top_role": "That member doesn't have a top role to color.",
+    "added": "Added roles to {member}.",
+    "removed": "Removed roles from {member}.",
+    "toggled_on": "Added {role} to {member}.",
+    "toggled_off": "Removed {role} from {member}.",
+    "created": "Created {role}.",
+    "deleted": "Deleted role **{role}**.",
+    "edited": "Updated {role}.",
+    "failed": "I couldn't complete that operation.",
+    "color_set": "Set the color of {role} to **{color}**.",
+    "name_set": "Renamed {role}.",
+    "icon_set": "Updated icon of {role}.",
+    "hoisted": "{role} is now hoisted.",
+    "unhoisted": "{role} is no longer hoisted.",
+    "mentionable_set": "{role} is now mentionable.",
+    "unmentionable_set": "{role} is no longer mentionable.",
+    "topped": "Moved {role} to the top.",
+    "topcolor_set": "Set the color of {role} (top role of {member}) to **{color}**.",
+    "copied": "Copied properties of {source} to {target}.",
+    "all_list": "Top roles by members:\n{roles}",
+    "all_empty": "There are no roles to display.",
+    "all_added": "Added {role} to **{added}** {type}.",
+    "all_removed": "Removed {role} from **{removed}** {type}.",
+    "mass_added": "Added {role} to **{added}** members of {target}.",
+    "mass_removed": "Removed {role} from **{removed}** members of {target}.",
+    "temp_added": "Gave {role} to {member} for **{duration}**.",
+    "temp_removed": "Cancelled the temporary role {role} for {member}.",
+    "sticky_added": "{role} is now sticky on {member} (will be reapplied on rejoin).",
+    "sticky_removed": "Removed sticky status for {role} on {member}.",
+    "roles_list": "All roles ({count}):\n{roles}",
+    "dumped": "Dumped **{count}** members of {role}."
   }
 }

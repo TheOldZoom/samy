@@ -98,11 +98,14 @@ export default new SlashCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.bday + " " + client.i18n.t("commands.birthday.saved", {
-                  date: result.formattedDate,
-                  next,
-                  age,
-                }),
+              Text(
+                icons.bday +
+                  " " +
+                  client.i18n.t("commands.birthday.saved", {
+                    date: result.formattedDate,
+                    next,
+                    age,
+                  }),
               ),
             ),
           ],
@@ -132,7 +135,11 @@ export default new SlashCommand({
         if (!removed) {
           await interaction.editReply({
             flags: MessageFlags.IsComponentsV2,
-            components: [errorUI(icons.bday + " " + client.i18n.t("commands.birthday.not_set"))],
+            components: [
+              errorUI(
+                icons.bday + " " + client.i18n.t("commands.birthday.not_set"),
+              ),
+            ],
           });
 
           return;
@@ -142,7 +149,9 @@ export default new SlashCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.bday + " " + client.i18n.t("commands.birthday.removed")),
+              Text(
+                icons.bday + " " + client.i18n.t("commands.birthday.removed"),
+              ),
             ),
           ],
         });
@@ -155,7 +164,11 @@ export default new SlashCommand({
         await interaction.editReply({
           flags: MessageFlags.IsComponentsV2,
           components: [
-            errorUI(icons.bday + " " + client.i18n.t("commands.birthday.remove_error")),
+            errorUI(
+              icons.bday +
+                " " +
+                client.i18n.t("commands.birthday.remove_error"),
+            ),
           ],
         });
       }
@@ -210,12 +223,15 @@ export default new SlashCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.bday + " " + client.i18n.t("commands.birthday.details", {
-                  owner: self ? "Your" : `**${targetUser.username}'s**`,
-                  date: bday.formattedDate,
-                  next,
-                  age,
-                }),
+              Text(
+                icons.bday +
+                  " " +
+                  client.i18n.t("commands.birthday.details", {
+                    owner: self ? "Your" : `**${targetUser.username}'s**`,
+                    date: bday.formattedDate,
+                    next,
+                    age,
+                  }),
               ),
             ),
           ],
@@ -228,7 +244,11 @@ export default new SlashCommand({
 
         await interaction.editReply({
           flags: MessageFlags.IsComponentsV2,
-          components: [errorUI(icons.bday + " " + client.i18n.t("commands.birthday.fetch_error"))],
+          components: [
+            errorUI(
+              icons.bday + " " + client.i18n.t("commands.birthday.fetch_error"),
+            ),
+          ],
         });
       }
 
@@ -239,7 +259,11 @@ export default new SlashCommand({
       if (!interaction.guild) {
         await interaction.reply({
           flags: MessageFlags.IsComponentsV2,
-          components: [errorUI(icons.bday + " " + client.i18n.t("commands.birthday.guild_only"))],
+          components: [
+            errorUI(
+              icons.bday + " " + client.i18n.t("commands.birthday.guild_only"),
+            ),
+          ],
         });
 
         return;
@@ -259,7 +283,11 @@ export default new SlashCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(icons.bday + " " + client.i18n.t("commands.birthday.none_upcoming")),
+                Text(
+                  icons.bday +
+                    " " +
+                    client.i18n.t("commands.birthday.none_upcoming"),
+                ),
               ),
             ],
           });
@@ -285,9 +313,12 @@ export default new SlashCommand({
           flags: MessageFlags.IsComponentsV2,
           components: [
             new Container().text(
-              Text(icons.bday + " " + client.i18n.t("commands.birthday.upcoming", {
-                  birthdays: lines.join("\n"),
-                }),
+              Text(
+                icons.bday +
+                  " " +
+                  client.i18n.t("commands.birthday.upcoming", {
+                    birthdays: lines.join("\n"),
+                  }),
               ),
             ),
           ],
@@ -301,7 +332,11 @@ export default new SlashCommand({
         await interaction.editReply({
           flags: MessageFlags.IsComponentsV2,
           components: [
-            errorUI(icons.bday + " " + client.i18n.t("commands.birthday.upcoming_error")),
+            errorUI(
+              icons.bday +
+                " " +
+                client.i18n.t("commands.birthday.upcoming_error"),
+            ),
           ],
         });
       }

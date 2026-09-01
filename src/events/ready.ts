@@ -2,7 +2,11 @@ import Event from "../classes/Event";
 import { REST, Routes } from "discord.js";
 import type Client from "@/classes/client";
 import { reconcileGuildBans } from "@/utils/guildBan";
+import { reconcileHardBans } from "./hardban";
+import { reconcileStickyRoles } from "./stickyRole";
 import { ensureGuild } from "@/utils/guild";
+import { startTemporaryRoleCleanup } from "@/utils/temporaryRoles";
+import { startMarkovFlush } from "@/utils/markov";
 
 export default new Event({
   name: "clientReady",
@@ -11,8 +15,12 @@ export default new Event({
   async execute(client) {
     await DeployCommands(client);
     await reconcileGuildBans(client);
+    await reconcileHardBans(client);
+    await reconcileStickyRoles(client);
     await registerGuilds(client);
     await cacheStuff(client);
+    startTemporaryRoleCleanup(client);
+    startMarkovFlush(client);
     client.logger.info(`Logged in as ${client.user?.tag}`);
   },
 });
@@ -47,7 +55,7 @@ async function cacheStuff(client: Client) {
   }
 }
 
-function normalizeCommand(command: any) {
+function normalizeCommand(command: { [key: string]: unknown }) {
   const ignoredKeys = new Set([
     "id",
     "application_id",
@@ -59,15 +67,22 @@ function normalizeCommand(command: any) {
     "nsfw",
   ]);
 
-  function normalize(value: any): any {
+  function normalize(value: unknown): unknown {
     if (Array.isArray(value)) {
-      return value.map(normalize).sort((a, b) => {
-        if (a?.name && b?.name) {
-          return a.name.localeCompare(b.name);
-        }
+      return value
+        .map(normalize)
+        .sort(
+          (
+            a: { name?: string } | undefined,
+            b: { name?: string } | undefined,
+          ) => {
+            if (a?.name && b?.name) {
+              return a.name.localeCompare(b.name);
+            }
 
-        return JSON.stringify(a).localeCompare(JSON.stringify(b));
-      });
+            return JSON.stringify(a).localeCompare(JSON.stringify(b));
+          },
+        );
     }
 
     if (value && typeof value === "object") {
@@ -75,7 +90,7 @@ function normalizeCommand(command: any) {
         .filter((key) => {
           if (ignoredKeys.has(key)) return false;
 
-          const val = value[key];
+          const val = (value as Record<string, unknown>)[key];
 
           return !(
             val === false ||
@@ -87,11 +102,11 @@ function normalizeCommand(command: any) {
         })
         .sort()
         .reduce(
-          (obj, key) => {
-            obj[key] = normalize(value[key]);
+          (obj: Record<string, unknown>, key: string) => {
+            obj[key] = normalize((value as Record<string, unknown>)[key]);
             return obj;
           },
-          {} as Record<string, any>,
+          {} as Record<string, unknown>,
         );
     }
 
@@ -101,9 +116,14 @@ function normalizeCommand(command: any) {
   return normalize(command);
 }
 
-function getDifferences(oldCommand: any, newCommand: any) {
-  const oldNormalized = normalizeCommand(oldCommand);
-  const newNormalized = normalizeCommand(newCommand);
+function getDifferences(
+  oldCommand: { [key: string]: unknown },
+  newCommand: { [key: string]: unknown },
+): string[] {
+  const oldNormalized = normalizeCommand(oldCommand) as
+    Record<string, unknown> | undefined;
+  const newNormalized = normalizeCommand(newCommand) as
+    Record<string, unknown> | undefined;
 
   const differences: string[] = [];
 
@@ -138,9 +158,14 @@ export async function DeployCommands(client: Client) {
     ...client.contextCommands.map((command) => command.options.data.toJSON()),
   ];
 
-  const currentCommands = (await rest.get(route)) as any[];
+  const currentCommands = (await rest.get(route)) as {
+    type?: number;
+    name: string;
+    [key: string]: unknown;
+  }[];
 
-  const commandKey = (command: any) => `${command.type ?? 1}:${command.name}`;
+  const commandKey = (command: { type?: number; name: string }) =>
+    `${command.type ?? 1}:${command.name}`;
 
   const localMap = new Map(
     localCommands.map((command) => [commandKey(command), command]),
@@ -150,9 +175,9 @@ export async function DeployCommands(client: Client) {
     currentCommands.map((command) => [commandKey(command), command]),
   );
 
-  const added: any[] = [];
-  const updated: any[] = [];
-  const removed: any[] = [];
+  const added: { type?: number; name: string; [key: string]: unknown }[] = [];
+  const updated: { type?: number; name: string; [key: string]: unknown }[] = [];
+  const removed: { type?: number; name: string; [key: string]: unknown }[] = [];
 
   for (const [key, command] of localMap) {
     const existing = currentMap.get(key);

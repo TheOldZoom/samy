@@ -36,7 +36,11 @@ export default new MessageCommand({
     if (!id1 || !id2) {
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.clock + " " + client.i18n.t("commands.timediff.provide"))],
+        components: [
+          errorUI(
+            icons.clock + " " + client.i18n.t("commands.timediff.provide"),
+          ),
+        ],
       });
       return;
     }

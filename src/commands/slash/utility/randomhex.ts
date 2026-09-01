@@ -38,7 +38,13 @@ export default new SlashCommand({
 
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-        components: [errorUI(icons.colornitro + " " + client.i18n.t("commands.randomhex.fetch_error"))],
+        components: [
+          errorUI(
+            icons.colornitro +
+              " " +
+              client.i18n.t("commands.randomhex.fetch_error"),
+          ),
+        ],
       });
     }
   },

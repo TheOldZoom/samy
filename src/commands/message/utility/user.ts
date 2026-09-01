@@ -39,7 +39,11 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.Person + " " + client.i18n.t("commands.user.fetch_error"))],
+        components: [
+          errorUI(
+            icons.Person + " " + client.i18n.t("commands.user.fetch_error"),
+          ),
+        ],
       });
     }
   },

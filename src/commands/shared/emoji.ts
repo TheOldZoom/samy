@@ -17,11 +17,9 @@ export function EmojiInfo(client: Client, raw: string, guild?: Guild | null) {
 
   let id: string | undefined;
   let animated = false;
-  let name: string | undefined;
 
   if (mentionMatch) {
     animated = Boolean(mentionMatch[1]);
-    name = mentionMatch[2];
     id = mentionMatch[3];
   } else if (/^\d{15,20}$/.test(raw)) {
     id = raw;

@@ -27,7 +27,7 @@ import type {
   FakePermission,
 } from "@prisma/client";
 
-//@ts-ignore
+// @ts-expect-error - Discord.js types don't allow assigning to identifyProperties
 Discord.DefaultWebSocketManagerOptions.identifyProperties.browser =
   config.presence.browser;
 

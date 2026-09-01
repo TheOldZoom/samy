@@ -48,7 +48,11 @@ export default new SlashCommand({
 
       await interaction.reply({
         flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
-        components: [errorUI(icons.image + " " + client.i18n.t("commands.jumbo.fetch_error"))],
+        components: [
+          errorUI(
+            icons.image + " " + client.i18n.t("commands.jumbo.fetch_error"),
+          ),
+        ],
       });
     }
   },

@@ -31,7 +31,11 @@ async function executePurge({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.delete + " " + client.i18n.t("commands.purge.text_channel_only")),
+          Text(
+            icons.delete +
+              " " +
+              client.i18n.t("commands.purge.text_channel_only"),
+          ),
         ),
       ],
     });
@@ -97,7 +101,9 @@ async function executePurge({
     const response = await message.channel.send({
       flags: MessageFlags.IsComponentsV2,
       components: [
-        new Container().text(Text(icons.delete + " " + client.i18n.t("commands.purge.none"))),
+        new Container().text(
+          Text(icons.delete + " " + client.i18n.t("commands.purge.none")),
+        ),
       ],
     });
 
@@ -122,10 +128,13 @@ async function executePurge({
     flags: MessageFlags.IsComponentsV2,
     components: [
       new Container().text(
-        Text(icons.delete + " " + client.i18n.t("commands.purge.deleted", {
-            count: deletedCount,
-            noun: deletedCount === 1 ? "message" : "messages",
-          }),
+        Text(
+          icons.delete +
+            " " +
+            client.i18n.t("commands.purge.deleted", {
+              count: deletedCount,
+              noun: deletedCount === 1 ? "message" : "messages",
+            }),
         ),
       ),
     ],

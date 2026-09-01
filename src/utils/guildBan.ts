@@ -76,7 +76,9 @@ async function processGuildBan(
             ),
           ],
         });
-      } catch {}
+      } catch {
+        // ignore
+      }
     }
 
     await prisma.guildBan.delete({

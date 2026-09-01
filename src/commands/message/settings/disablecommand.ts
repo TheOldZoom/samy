@@ -1,9 +1,8 @@
-import { Message, MessageFlags } from "discord.js";
+import { MessageFlags } from "discord.js";
 
 import { icons } from "@/utils/icons";
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
-import type Client from "@/classes/client";
 import { setCommandEnabledForGuild } from "@/utils/settings";
 
 export default new MessageCommand({
@@ -49,9 +48,12 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(icons.disable + " " + client.i18n.t("commands.disablecommand.command_not_found", {
-                command: commandName,
-              }),
+            Text(
+              icons.disable +
+                " " +
+                client.i18n.t("commands.disablecommand.command_not_found", {
+                  command: commandName,
+                }),
             ),
           ),
         ],
@@ -77,10 +79,13 @@ export default new MessageCommand({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.disable + " " + client.i18n.t("commands.disablecommand.success", {
-              command: cmd.name,
-              scope: "",
-            }),
+          Text(
+            icons.disable +
+              " " +
+              client.i18n.t("commands.disablecommand.success", {
+                command: cmd.name,
+                scope: "",
+              }),
           ),
         ),
       ],

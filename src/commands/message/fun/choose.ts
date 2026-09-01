@@ -27,7 +27,13 @@ export default new MessageCommand({
     if (!raw) {
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.spark + " " + client.i18n.t("commands.choose.provide_options"))],
+        components: [
+          errorUI(
+            icons.spark +
+              " " +
+              client.i18n.t("commands.choose.provide_options"),
+          ),
+        ],
       });
       return;
     }

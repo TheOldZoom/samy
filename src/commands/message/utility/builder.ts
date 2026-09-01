@@ -13,7 +13,10 @@ import {
   detectScriptKind,
   mergeMessageContent,
 } from "@/libs/scripting/detectScriptKind";
-import { compileEmbedScript, compileMultiEmbedScripts } from "@/libs/scripting/embed";
+import {
+  compileEmbedScript,
+  compileMultiEmbedScripts,
+} from "@/libs/scripting/embed";
 import { extractRawScript } from "@/libs/scripting/extractRawScript";
 import { isScriptError } from "@/libs/scripting/common/ScriptError";
 import { scheduleMessageDeletion } from "@/libs/scripting/scheduleMessageDeletion";
@@ -241,7 +244,8 @@ export default new MessageCommand({
 
         const deleteMs = compiled.result.deleteMs ?? detected.deleteMs;
 
-        const allComponents: typeof compiled.result.embeds[number]["components"] = [];
+        const allComponents: (typeof compiled.result.embeds)[number]["components"] =
+          [];
         const embeds = compiled.result.embeds.map((e) => {
           allComponents.push(...e.components);
           return e.embed;

@@ -33,9 +33,12 @@ export default new SlashCommand({
       flags: MessageFlags.IsComponentsV2,
       components: [
         new Container().text(
-          Text(icons.ping + " " + client.i18n.t("commands.ping.latency", {
-              latency: client.ws.ping,
-            }),
+          Text(
+            icons.ping +
+              " " +
+              client.i18n.t("commands.ping.latency", {
+                latency: client.ws.ping,
+              }),
           ),
         ),
       ],
@@ -49,15 +52,21 @@ export default new SlashCommand({
 
     const page = new Container()
       .text(
-        Text(icons.ping + " " + client.i18n.t("commands.ping.latency", {
-            latency: client.ws.ping,
-          }),
+        Text(
+          icons.ping +
+            " " +
+            client.i18n.t("commands.ping.latency", {
+              latency: client.ws.ping,
+            }),
         ),
       )
       .text(
-        Text(icons.ping + " " + client.i18n.t("commands.ping.edit", {
-            latency,
-          }),
+        Text(
+          icons.ping +
+            " " +
+            client.i18n.t("commands.ping.edit", {
+              latency,
+            }),
         ),
       );
 

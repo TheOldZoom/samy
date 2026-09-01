@@ -61,4 +61,16 @@ export class ParsedArguments {
   getChannelLike(name: string): GuildBasedChannel | undefined {
     return this.get<GuildBasedChannel>(name);
   }
+
+  getUserList(name: string): User[] | undefined {
+    return this.get<User[]>(name);
+  }
+
+  getMemberList(name: string): GuildMember[] | undefined {
+    return this.get<GuildMember[]>(name);
+  }
+
+  getResolvedType(name: string): string | undefined {
+    return this.values.get(name)?.type;
+  }
 }

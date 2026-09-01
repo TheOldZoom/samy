@@ -25,7 +25,7 @@ export default new MessageCommand({
     const member = message.guild?.members.cache.get(target.id);
 
     try {
-      const container = await Avatar(client, target, member);
+      const container = Avatar(client, target, member);
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
@@ -39,7 +39,11 @@ export default new MessageCommand({
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [errorUI(icons.image + " " + client.i18n.t("commands.avatar.fetch_error"))],
+        components: [
+          errorUI(
+            icons.image + " " + client.i18n.t("commands.avatar.fetch_error"),
+          ),
+        ],
       });
     }
   },

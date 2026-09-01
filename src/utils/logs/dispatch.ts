@@ -138,7 +138,10 @@ export async function sendLog(
 
     if (
       botMember &&
-      !checkPermissions(botMember, channel, ["ViewChannel", "SendMessages"])
+      !(await checkPermissions(botMember, channel, [
+        "ViewChannel",
+        "SendMessages",
+      ]))
     ) {
       return;
     }
