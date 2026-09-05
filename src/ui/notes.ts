@@ -110,10 +110,13 @@ export async function renderNotesList(
     )
     .actionRow(
       ActionRow(
-        Buttons.secondary(
-          icons.leftarrow,
-          `notes::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
-        ).setDisabled(pageIndex === 0),
+        Button({
+          emoji: icons.leftarrow,
+          label: " ",
+          customId: `notes::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
+          style: ButtonStyle.Secondary,
+          disabled: pageIndex === 0,
+        }),
         Button({
           label: t("commands.notes.page_indicator", {
             current: pageIndex + 1,
@@ -123,10 +126,13 @@ export async function renderNotesList(
           style: ButtonStyle.Secondary,
           disabled: true,
         }),
-        Buttons.secondary(
-          icons.rightarrow,
-          `notes::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
-        ).setDisabled(pageIndex >= totalPages - 1),
+        Button({
+          emoji: icons.rightarrow,
+          label: " ",
+          customId: `notes::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
+          style: ButtonStyle.Secondary,
+          disabled: pageIndex >= totalPages - 1,
+        }),
       ),
     );
 }

@@ -170,17 +170,23 @@ export function buildOverview(client: Client, userId: string, page = 0) {
 
   container.actionRow(
     ActionRow(
-      Buttons.secondary(
-        icons.leftarrow,
-        `help::home::${current - 1}::${userId}`,
-      ).setDisabled(current === 0),
+      Button({
+        emoji: icons.leftarrow,
+        label: " ",
+        customId: `help::home::${current - 1}::${userId}`,
+        style: ButtonStyle.Secondary,
+        disabled: current === 0,
+      }),
 
       pageIndicator(client, userId, current, totalPages),
 
-      Buttons.secondary(
-        icons.rightarrow,
-        `help::home::${current + 1}::${userId}`,
-      ).setDisabled(current >= totalPages - 1),
+      Button({
+        emoji: icons.rightarrow,
+        label: " ",
+        customId: `help::home::${current + 1}::${userId}`,
+        style: ButtonStyle.Secondary,
+        disabled: current >= totalPages - 1,
+      }),
     ),
   );
 
@@ -252,17 +258,23 @@ export function buildCategoryView(
 
   container.actionRow(
     ActionRow(
-      Buttons.secondary(
-        icons.leftarrow,
-        `help::category::${category}::${current - 1}::${userId}`,
-      ).setDisabled(current === 0),
+      Button({
+        emoji: icons.leftarrow,
+        label: " ",
+        customId: `help::category::${category}::${current - 1}::${userId}`,
+        style: ButtonStyle.Secondary,
+        disabled: current === 0,
+      }),
 
       pageIndicator(client, userId, current, totalPages),
 
-      Buttons.secondary(
-        icons.rightarrow,
-        `help::category::${category}::${current + 1}::${userId}`,
-      ).setDisabled(current >= totalPages - 1),
+      Button({
+        emoji: icons.rightarrow,
+        label: " ",
+        customId: `help::category::${category}::${current + 1}::${userId}`,
+        style: ButtonStyle.Secondary,
+        disabled: current >= totalPages - 1,
+      }),
     ),
   );
 
@@ -365,17 +377,23 @@ export function buildCommandView(
     if (totalPages > 1) {
       container.actionRow(
         ActionRow(
-          Buttons.secondary(
-            icons.leftarrow,
-            `help::command::${category}::${command.name}::${categoryPage}::${current - 1}::${userId}`,
-          ).setDisabled(current === 0),
+          Button({
+            emoji: icons.leftarrow,
+            label: " ",
+            customId: `help::command::${category}::${command.name}::${categoryPage}::${current - 1}::${userId}`,
+            style: ButtonStyle.Secondary,
+            disabled: current === 0,
+          }),
 
           pageIndicator(client, userId, current, totalPages),
 
-          Buttons.secondary(
-            icons.rightarrow,
-            `help::command::${category}::${command.name}::${categoryPage}::${current + 1}::${userId}`,
-          ).setDisabled(current >= totalPages - 1),
+          Button({
+            emoji: icons.rightarrow,
+            label: " ",
+            customId: `help::command::${category}::${command.name}::${categoryPage}::${current + 1}::${userId}`,
+            style: ButtonStyle.Secondary,
+            disabled: current >= totalPages - 1,
+          }),
         ),
       );
     }
@@ -500,17 +518,23 @@ export function buildSubcommandView(
     if (totalPages > 1) {
       container.actionRow(
         ActionRow(
-          Buttons.secondary(
-            icons.leftarrow,
-            `help::subcommand::${category}::${command.name}::${pathKey}::${categoryPage}::${current - 1}::${userId}`,
-          ).setDisabled(current === 0),
+          Button({
+            emoji: icons.leftarrow,
+            label: " ",
+            customId: `help::subcommand::${category}::${command.name}::${pathKey}::${categoryPage}::${current - 1}::${userId}`,
+            style: ButtonStyle.Secondary,
+            disabled: current === 0,
+          }),
 
           pageIndicator(client, userId, current, totalPages),
 
-          Buttons.secondary(
-            icons.rightarrow,
-            `help::subcommand::${category}::${command.name}::${pathKey}::${categoryPage}::${current + 1}::${userId}`,
-          ).setDisabled(current >= totalPages - 1),
+          Button({
+            emoji: icons.rightarrow,
+            label: " ",
+            customId: `help::subcommand::${category}::${command.name}::${pathKey}::${categoryPage}::${current + 1}::${userId}`,
+            style: ButtonStyle.Secondary,
+            disabled: current >= totalPages - 1,
+          }),
         ),
       );
     }

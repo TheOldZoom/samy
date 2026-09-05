@@ -114,10 +114,13 @@ export async function renderWarningsList(
     )
     .actionRow(
       ActionRow(
-        Buttons.secondary(
-          icons.leftarrow,
-          `warnings::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
-        ).setDisabled(pageIndex === 0),
+        Button({
+          emoji: icons.leftarrow,
+          label: " ",
+          customId: `warnings::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
+          style: ButtonStyle.Secondary,
+          disabled: pageIndex === 0,
+        }),
         Button({
           label: t("commands.warnings.page_indicator", {
             current: pageIndex + 1,
@@ -127,10 +130,13 @@ export async function renderWarningsList(
           style: ButtonStyle.Secondary,
           disabled: true,
         }),
-        Buttons.secondary(
-          icons.rightarrow,
-          `warnings::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
-        ).setDisabled(pageIndex >= totalPages - 1),
+        Button({
+          emoji: icons.rightarrow,
+          label: " ",
+          customId: `warnings::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
+          style: ButtonStyle.Secondary,
+          disabled: pageIndex >= totalPages - 1,
+        }),
       ),
     );
 }
