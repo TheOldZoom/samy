@@ -56,7 +56,6 @@ A roadmap for Samy's development.
 
 - [x] Server-specific avatar/banner (`serveravatar`, `serverbanner`)
 - [ ] Username/nickname history (`names`/`namehistory`)
-- [ ] Last seen tracker (`seen`)
 
 ## Server
 
@@ -69,7 +68,6 @@ A roadmap for Samy's development.
 - [x] Bot list
 
 - [x] Server icon / banner / splash viewer (`guildicon`, `guildbanner`, `splash`)
-- [ ] Guild name change history (`gnames`)
 - [ ] List all roles / all emotes in server
 - [ ] List members in a role (`members`/`inrole`)
 - [ ] Recent active invites list (`invites`)
@@ -78,7 +76,6 @@ A roadmap for Samy's development.
 - [ ] Set guild icon / banner / splash background (`seticon`, `setbanner`, `setsplashbackground`)
 - [ ] Booster custom color roles (create/rename/remove/random/dominant-color, icon, base role, award role on boost, sharing with other members, per-server limit, blacklist words, cleanup unused)
 - [ ] Server settings hub: staff roles, mute/image-mute/reaction-mute roles, jail role & channel, mod-log & join-log channels, auto-nickname on join, Google safety level toggle
-- [ ] Birthday admin config: lock/unlock system, restrict celebration to certain roles, set birthday role/channel, view full config
 
 ## Tools
 
@@ -98,7 +95,6 @@ A roadmap for Samy's development.
 - [x] Character/symbol info (`charinfo`)
 - [x] Random hex / dominant color from image (`randomhex`, `hex`/`dominant`)
 - [ ] Copy an embed from a message link into builder syntax (`embed copy`)
-- [ ] Pagination system for multi-page embeds (`pagination`)
 - [ ] Sticky messages per channel (`stickymessage`)
 - [ ] Timed nuke / scheduled channel recreation (`nuke add/remove/list/view`)
 - [ ] Firstmessage / pin / unpin / pin archival system
@@ -108,7 +104,6 @@ A roadmap for Samy's development.
 - [x] Random choice helper (`choose`)
 - [ ] Brainly answer lookup (`brainly`)
 - [ ] Convert video to audio file (`makemp3`)
-- [ ] Stored embed library: list, create, edit, delete, preview named embeds
 
 ---
 
