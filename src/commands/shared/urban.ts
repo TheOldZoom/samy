@@ -15,14 +15,15 @@ export interface UrbanDefinition {
 }
 
 export function UrbanResult(def: UrbanDefinition) {
-  const definition = def.definition.replace(
-    /\[(.*?)\]/g,
-    "[$1](https://urbandictionary.com/define.php?term=$1)",
-  );
-  const example = def.example.replace(
-    /\[(.*?)\]/g,
-    "[$1](https://urbandictionary.com/define.php?term=$1)",
-  );
+  const linkifyUrban = (text: string) =>
+    text.replace(
+      /\[([^\]]+)\]/g,
+      (_, word) =>
+        `[${word}](https://urbandictionary.com/define.php?term=${encodeURIComponent(word)})`,
+    );
+
+  const definition = linkifyUrban(def.definition);
+  const example = linkifyUrban(def.example);
 
   return new Container()
     .text(Text(`## ${def.word}`))
