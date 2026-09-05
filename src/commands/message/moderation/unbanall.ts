@@ -106,9 +106,7 @@ export default new MessageCommand({
           userId: { in: userIds },
         },
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     try {
       await client.prisma.hardBan.deleteMany({
@@ -117,9 +115,7 @@ export default new MessageCommand({
           userId: { in: userIds },
         },
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     await message.reply({
       flags: MessageFlags.IsComponentsV2,

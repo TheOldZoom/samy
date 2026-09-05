@@ -142,9 +142,7 @@ async function executeWarn({
           ),
         ],
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     await message.reply({
       flags: MessageFlags.IsComponentsV2,

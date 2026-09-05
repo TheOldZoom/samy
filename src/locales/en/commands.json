@@ -159,7 +159,7 @@
     "entry": "**#{id}** · <t:{timestamp}:R> · {moderator}\n-# {reason}",
     "page_indicator": "Page {current}/{total}",
     "select_placeholder": "Select a warning to view",
-    "back": "◀ Back",
+    "back": "<:leftarrow:1544068565114556426> Back",
     "detail_remove": "🗑 Remove",
     "no_reason": "No reason provided.",
     "not_found": "Warning not found.",
@@ -187,7 +187,7 @@
     "entry": "**#{case}** {type} · {user} · <t:{timestamp}:R>",
     "page_indicator": "Page {current}/{total}",
     "select_placeholder": "Select a case to view",
-    "back": "◀ Back",
+    "back": "<:leftarrow:1544068565114556426> Back",
     "no_reason": "No reason provided."
   },
   "notes": {
@@ -197,7 +197,7 @@
     "title": "Notes for **{user}** ({count} total)",
     "page_indicator": "Page {current}/{total}",
     "select_placeholder": "Select a note to view",
-    "back": "◀ Back",
+    "back": "<:leftarrow:1544068565114556426> Back",
     "detail_remove": "🗑 Remove",
     "no_content": "No content provided.",
     "not_found": "Note not found.",
@@ -281,6 +281,11 @@
     "invalid_script": "I couldn't parse that message script.\n-# {error}",
     "missing_embed": "Provide an embed script after `{embed}`.\nExample: `,say Hello {embed}$v{title: Hi}`",
     "missing_cv2": "Provide a CV2 script after `{cv2}`.\nExample: `,say {cv2}$v{container}$v{text: Hi}`"
+  },
+  "urban": {
+    "provide_query": "Please provide a word or phrase to search for.",
+    "no_results": "No results found for **{query}**.",
+    "fetch_error": "I couldn't fetch that definition right now."
   },
   "welcome": {
     "added": "Successfully added a welcome message for {channel}.",

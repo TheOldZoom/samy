@@ -21,14 +21,14 @@ export async function LoadInteractions<T extends { name: string }>(
     };
 
     if (!module.default) {
-      client.logger.warn(`Skipping ${file}: no default export found`);
+      client.logger.debug(`Skipping ${file}: no default export found`);
       continue;
     }
 
     const handler = module.default;
 
     if (!handler.name) {
-      client.logger.warn(`Skipping ${file}: missing handler name`);
+      client.logger.debug(`Skipping ${file}: missing handler name`);
       continue;
     }
 

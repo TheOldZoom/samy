@@ -111,7 +111,7 @@ export async function renderNotesList(
     .actionRow(
       ActionRow(
         Buttons.secondary(
-          "◀",
+          icons.leftarrow,
           `notes::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
         ).setDisabled(pageIndex === 0),
         Button({
@@ -124,7 +124,7 @@ export async function renderNotesList(
           disabled: true,
         }),
         Buttons.secondary(
-          "▶",
+          icons.rightarrow,
           `notes::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
         ).setDisabled(pageIndex >= totalPages - 1),
       ),

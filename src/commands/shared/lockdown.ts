@@ -155,9 +155,7 @@ export async function announceChannelState(
         ),
       ],
     });
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
 
 export function isChannelLocked(

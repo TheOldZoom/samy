@@ -21,14 +21,14 @@ export async function LoadCommands<T extends { name: string }>(
     };
 
     if (!module.default) {
-      client.logger.warn(`Skipping ${file}: no default export found`);
+      client.logger.debug(`Skipping ${file}: no default export found`);
       continue;
     }
 
     const command = module.default;
 
     if (!command.name) {
-      client.logger.warn(`Skipping ${file}: missing command name`);
+      client.logger.debug(`Skipping ${file}: missing command name`);
       continue;
     }
 

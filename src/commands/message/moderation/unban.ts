@@ -103,9 +103,7 @@ async function executeUnban({
           },
         },
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
   }
 
   try {
@@ -124,9 +122,7 @@ async function executeUnban({
         ),
       ],
     });
-  } catch {
-    // ignore
-  }
+  } catch {}
 
   await message.reply({
     flags: MessageFlags.IsComponentsV2,

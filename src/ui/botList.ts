@@ -84,12 +84,12 @@ export function buildBotListView(
     container.actionRow(
       ActionRow(
         Buttons.secondary(
-          "◀",
+          icons.leftarrow,
           `botlist::page::${current - 1}::${userId}`,
         ).setDisabled(current === 0),
         pageIndicator(client, userId, current, totalPages),
         Buttons.secondary(
-          "▶",
+          icons.rightarrow,
           `botlist::page::${current + 1}::${userId}`,
         ).setDisabled(current >= totalPages - 1),
       ),

@@ -115,7 +115,7 @@ export async function renderWarningsList(
     .actionRow(
       ActionRow(
         Buttons.secondary(
-          "◀",
+          icons.leftarrow,
           `warnings::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
         ).setDisabled(pageIndex === 0),
         Button({
@@ -128,7 +128,7 @@ export async function renderWarningsList(
           disabled: true,
         }),
         Buttons.secondary(
-          "▶",
+          icons.rightarrow,
           `warnings::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
         ).setDisabled(pageIndex >= totalPages - 1),
       ),
