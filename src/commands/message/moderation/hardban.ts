@@ -144,9 +144,7 @@ async function executeHardban({
           ),
         ],
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     await message.guild.members.ban(target, {
       reason: auditReason,
@@ -174,9 +172,7 @@ async function executeHardban({
         reason,
       },
     });
-  } catch {
-    // ignore - ban already succeeded
-  }
+  } catch {}
 
   await message.reply({
     flags: MessageFlags.IsComponentsV2,

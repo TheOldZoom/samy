@@ -65,9 +65,7 @@ export async function runTemporaryRoleCleanup(
             .remove(entry.roleId, "Temporary role expired")
             .catch(() => null);
         }
-      } catch {
-        // ignore
-      }
+      } catch {}
     }
 
     await client.prisma.temporaryRole.delete({

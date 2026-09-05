@@ -124,9 +124,7 @@ export const untempSubcommand = new MessageSubcommand({
           `Cancel temp role by ${message.author.tag}`,
         );
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     await replyKey(client, message, "Correct", "commands.role.temp_removed", {
       member: member.toString(),

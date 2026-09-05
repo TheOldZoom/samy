@@ -120,9 +120,7 @@ async function executeTempban({
           ),
         ],
       });
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     await message.guild.members.ban(target, {
       reason: auditReason,

@@ -354,7 +354,7 @@ A roadmap for Samy's development.
 # Future
 
 - [x] Command documentation generator
-- [ ] Contribution guide
+- [x] Contribution guide
 
 - [ ] Premium
 - [ ] Custom bot instances

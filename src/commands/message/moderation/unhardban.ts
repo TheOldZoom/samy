@@ -130,9 +130,7 @@ export default new MessageCommand({
         target.id,
         `${message.author.tag}: ${reason}`,
       );
-    } catch {
-      // ignore - user may not be currently banned
-    }
+    } catch {}
 
     await message.reply({
       flags: MessageFlags.IsComponentsV2,
