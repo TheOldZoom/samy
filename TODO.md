@@ -285,7 +285,7 @@ A roadmap for Samy's development.
 
 - [ ] Weather
 - [ ] Dictionary
-- [ ] Urban Dictionary
+- [x] Urban Dictionary
 - [ ] WikiHow
 
 - [ ] Song recognition

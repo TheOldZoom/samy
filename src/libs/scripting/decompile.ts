@@ -17,11 +17,6 @@ export interface MessageScriptInput {
 }
 
 export interface DecompileOptions {
-  /**
-   * Show actual newlines instead of the literal \\n sequence.
-   *
-   * Defaults to false.
-   */
   clean?: boolean;
 }
 
