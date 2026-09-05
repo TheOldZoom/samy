@@ -1,12 +1,5 @@
 import { ButtonStyle } from "discord.js";
-import {
-  Container,
-  Separator,
-  Text,
-  ActionRow,
-  Buttons,
-  Button,
-} from "@/ui/components";
+import { Container, Separator, Text, ActionRow, Button } from "@/ui/components";
 
 import { icons } from "@/utils/icons";
 
@@ -61,20 +54,26 @@ export function buildUrbanView(
   if (totalPages > 1) {
     container.actionRow(
       ActionRow(
-        Buttons.secondary(
-          icons.leftarrow,
-          `urban::page::${current - 1}::${encodeURIComponent(query)}::${userId}`,
-        ).setDisabled(current === 0),
+        Button({
+          emoji: icons.leftarrow,
+          label: " ",
+          customId: `urban::page::${current - 1}::${encodeURIComponent(query)}::${userId}`,
+          style: ButtonStyle.Secondary,
+          disabled: current === 0,
+        }),
         Button({
           label: `Page ${current + 1}/${totalPages}`,
           customId: `urban::noop::${userId}`,
           style: ButtonStyle.Secondary,
           disabled: true,
         }),
-        Buttons.secondary(
-          icons.rightarrow,
-          `urban::page::${current + 1}::${encodeURIComponent(query)}::${userId}`,
-        ).setDisabled(current >= totalPages - 1),
+        Button({
+          emoji: icons.rightarrow,
+          label: " ",
+          customId: `urban::page::${current + 1}::${encodeURIComponent(query)}::${userId}`,
+          style: ButtonStyle.Secondary,
+          disabled: current >= totalPages - 1,
+        }),
       ),
     );
   }

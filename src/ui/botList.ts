@@ -3,14 +3,7 @@ import { ButtonStyle, type Guild } from "discord.js";
 import { icons } from "@/utils/icons";
 
 import type Client from "@/classes/client";
-import {
-  ActionRow,
-  Button,
-  Buttons,
-  Container,
-  Separator,
-  Text,
-} from "@/ui/components";
+import { ActionRow, Button, Container, Separator, Text } from "@/ui/components";
 
 const PAGE_SIZE = 5;
 
@@ -83,15 +76,21 @@ export function buildBotListView(
   if (totalPages > 1) {
     container.actionRow(
       ActionRow(
-        Buttons.secondary(
-          icons.leftarrow,
-          `botlist::page::${current - 1}::${userId}`,
-        ).setDisabled(current === 0),
+        Button({
+          emoji: icons.leftarrow,
+          label: " ",
+          customId: `botlist::page::${current - 1}::${userId}`,
+          style: ButtonStyle.Secondary,
+          disabled: current === 0,
+        }),
         pageIndicator(client, userId, current, totalPages),
-        Buttons.secondary(
-          icons.rightarrow,
-          `botlist::page::${current + 1}::${userId}`,
-        ).setDisabled(current >= totalPages - 1),
+        Button({
+          emoji: icons.rightarrow,
+          label: " ",
+          customId: `botlist::page::${current + 1}::${userId}`,
+          style: ButtonStyle.Secondary,
+          disabled: current >= totalPages - 1,
+        }),
       ),
     );
   }
