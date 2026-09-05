@@ -1,6 +1,6 @@
 import { MessageCommand } from "@/classes/Command";
 import type { UrbanDefinition } from "@/commands/shared/urban";
-import { UrbanResult } from "@/commands/shared/urban";
+import { buildUrbanView } from "@/commands/shared/urban";
 import errorUI from "@/ui/error";
 import { MessageFlags } from "discord.js";
 
@@ -59,11 +59,11 @@ export default new MessageCommand({
         return;
       }
 
-      const top = data.list[0]!;
+      const container = buildUrbanView(data.list, 0, query, message.author.id);
 
       await message.reply({
         flags: MessageFlags.IsComponentsV2,
-        components: [UrbanResult(client, top)],
+        components: [container],
       });
     } catch (error) {
       client.logger.error("Failed to fetch Urban Dictionary definition", {

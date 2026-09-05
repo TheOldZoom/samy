@@ -7,7 +7,7 @@ import {
 
 import { SlashCommand } from "@/classes/Command";
 import type { UrbanDefinition } from "@/commands/shared/urban";
-import { UrbanResult } from "@/commands/shared/urban";
+import { buildUrbanView } from "@/commands/shared/urban";
 import errorUI from "@/ui/error";
 
 export default new SlashCommand({
@@ -59,11 +59,16 @@ export default new SlashCommand({
         return;
       }
 
-      const top = data.list[0]!;
+      const container = buildUrbanView(
+        data.list,
+        0,
+        query,
+        interaction.user.id,
+      );
 
       await interaction.editReply({
         flags: MessageFlags.IsComponentsV2,
-        components: [UrbanResult(client, top)],
+        components: [container],
       });
     } catch (error) {
       client.logger.error("Failed to fetch Urban Dictionary definition", {

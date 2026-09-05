@@ -110,7 +110,7 @@ export async function renderCasesList(
     .actionRow(
       ActionRow(
         Buttons.secondary(
-          "◀",
+          icons.leftarrow,
           `cases::page::${pageIndex - 1}::${targetParam}::${invokerId}`,
         ).setDisabled(pageIndex === 0),
         Button({
@@ -123,7 +123,7 @@ export async function renderCasesList(
           disabled: true,
         }),
         Buttons.secondary(
-          "▶",
+          icons.rightarrow,
           `cases::page::${pageIndex + 1}::${targetParam}::${invokerId}`,
         ).setDisabled(pageIndex >= totalPages - 1),
       ),

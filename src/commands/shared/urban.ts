@@ -1,5 +1,12 @@
-import { Container, Section, Separator, Text } from "@/ui/components";
-import type Client from "@/classes/client";
+import { ButtonStyle } from "discord.js";
+import {
+  Container,
+  Separator,
+  Text,
+  ActionRow,
+  Buttons,
+  Button,
+} from "@/ui/components";
 
 import { icons } from "@/utils/icons";
 
@@ -14,7 +21,7 @@ export interface UrbanDefinition {
   example: string;
 }
 
-export function UrbanResult(client: Client, def: UrbanDefinition) {
+export function UrbanResult(def: UrbanDefinition) {
   const definition = def.definition.replace(
     /\[(.*?)\]/g,
     "[$1](https://urbandictionary.com/define.php?term=$1)",
@@ -25,12 +32,8 @@ export function UrbanResult(client: Client, def: UrbanDefinition) {
   );
 
   return new Container()
-    .section(
-      Section({
-        title: def.word,
-        description: definition,
-      }),
-    )
+    .text(Text(`## ${def.word}`))
+    .text(Text(definition))
     .separator(Separator())
     .text(
       Text(`${icons.book} **Example:**\n${example || "No example provided."}`),
@@ -38,7 +41,43 @@ export function UrbanResult(client: Client, def: UrbanDefinition) {
     .separator(Separator())
     .text(
       Text(
-        `**Author:** ${def.author}\n**Votes:** ${icons.upvote} ${def.thumbs_up} ${icons.downvote} ${def.thumbs_down}\n**Defined on:** <t:${Math.floor(new Date(def.written_on).getTime() / 1000)}:d>`,
+        `-# **Author:** ${def.author} • **Votes:** ${icons.upvote} ${def.thumbs_up} ${icons.downvote} ${def.thumbs_down} • **Defined on:** <t:${Math.floor(new Date(def.written_on).getTime() / 1000)}:d>`,
       ),
     );
+}
+
+export function buildUrbanView(
+  definitions: UrbanDefinition[],
+  page: number,
+  query: string,
+  userId: string,
+) {
+  const totalPages = definitions.length;
+  const current = Math.min(Math.max(page, 0), totalPages - 1);
+  const def = definitions[current]!;
+
+  const container = UrbanResult(def);
+
+  if (totalPages > 1) {
+    container.actionRow(
+      ActionRow(
+        Buttons.secondary(
+          icons.leftarrow,
+          `urban::page::${current - 1}::${encodeURIComponent(query)}::${userId}`,
+        ).setDisabled(current === 0),
+        Button({
+          label: `Page ${current + 1}/${totalPages}`,
+          customId: `urban::noop::${userId}`,
+          style: ButtonStyle.Secondary,
+          disabled: true,
+        }),
+        Buttons.secondary(
+          icons.rightarrow,
+          `urban::page::${current + 1}::${encodeURIComponent(query)}::${userId}`,
+        ).setDisabled(current >= totalPages - 1),
+      ),
+    );
+  }
+
+  return container;
 }
