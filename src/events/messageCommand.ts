@@ -612,6 +612,7 @@ async function prepareCommandExecution(
   guild: Guild,
   channel: GuildTextBasedChannel,
   command: MessageCommand,
+  args: string[],
   matchedPrefix: string | undefined,
 ): Promise<PreparationResult> {
   let current: MessageCommand | MessageSubcommand = command;
@@ -645,11 +646,6 @@ async function prepareCommandExecution(
 
     return { allowed: false };
   }
-
-  const args = message.content
-    .slice(matchedPrefix?.length ?? 0)
-    .trim()
-    .split(/\s+/);
 
   const start = performance.now();
 
@@ -1066,6 +1062,7 @@ export default new Event({
           guild,
           channel,
           command,
+          resolvedArgs,
           matchedPrefix,
         );
 
