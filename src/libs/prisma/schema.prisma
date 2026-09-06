@@ -70,6 +70,7 @@ model Guild {
   stickyRoles            StickyRole[]
   temporaryRoles         TemporaryRole[]
   hardBans               HardBan[]
+  botEventSettings       BotEventSetting[]
 }
 
 model GuildBan {
@@ -516,4 +517,19 @@ model TemporaryRole {
   @@index([expiresAt])
   @@index([guildId])
   @@index([guildId, userId])
+}
+
+model BotEventSetting {
+  id        String   @id @default(cuid())
+
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  channelId String?
+  event     String
+  enabled   Boolean  @default(true)
+
+  @@unique([guildId, channelId, event])
+  @@index([guildId])
+  @@index([event])
 }
