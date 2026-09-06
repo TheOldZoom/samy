@@ -70,6 +70,7 @@ model Guild {
   stickyRoles            StickyRole[]
   temporaryRoles         TemporaryRole[]
   hardBans               HardBan[]
+  botEventSettings       BotEventSetting[]
 }
 
 model GuildBan {
@@ -162,6 +163,20 @@ model Afk {
 
   @@unique([userId, guildId])
   @@index([guildId])
+}
+
+model AfkMention {
+  id         String   @id @default(cuid())
+
+  guildId    String
+  userId     String
+
+  mentionerId String
+  messageId  String
+  channelId  String
+  createdAt  DateTime @default(now())
+
+  @@index([guildId, userId])
 }
 
 model Warning {
@@ -502,4 +517,19 @@ model TemporaryRole {
   @@index([expiresAt])
   @@index([guildId])
   @@index([guildId, userId])
+}
+
+model BotEventSetting {
+  id        String   @id @default(cuid())
+
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  channelId String?
+  event     String
+  enabled   Boolean  @default(true)
+
+  @@unique([guildId, channelId, event])
+  @@index([guildId])
+  @@index([event])
 }

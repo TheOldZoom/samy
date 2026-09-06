@@ -7,6 +7,7 @@ import { reconcileStickyRoles } from "./stickyRole";
 import { ensureGuild } from "@/utils/guild";
 import { startTemporaryRoleCleanup } from "@/utils/temporaryRoles";
 import { startMarkovFlush } from "@/utils/markov";
+import { startAfkCleanup } from "@/utils/afkCleanup";
 
 export default new Event({
   name: "clientReady",
@@ -21,6 +22,7 @@ export default new Event({
     await cacheStuff(client);
     startTemporaryRoleCleanup(client);
     startMarkovFlush(client);
+    startAfkCleanup(client);
     client.logger.info(`Logged in as ${client.user?.tag}`);
   },
 });
@@ -32,17 +34,6 @@ async function registerGuilds(client: Client) {
 }
 
 async function cacheStuff(client: Client) {
-  const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
-  const cutoff = new Date(Date.now() - ONE_MONTH_MS);
-
-  await client.prisma.afk.deleteMany({
-    where: {
-      createdAt: {
-        lt: cutoff,
-      },
-    },
-  });
-
   const afkUsers = await client.prisma.afk.findMany();
 
   for (const afk of afkUsers) {
