@@ -16,9 +16,7 @@ export function startAfkCleanup(client: AfkCleanupClient): void {
   void tick();
 }
 
-export async function runAfkCleanup(
-  client: AfkCleanupClient,
-): Promise<void> {
+export async function runAfkCleanup(client: AfkCleanupClient): Promise<void> {
   const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const expiredAfks = await client.prisma.afk.findMany({
     where: { createdAt: { lt: cutoff } },
@@ -53,7 +51,11 @@ async function sendAfkMentionDm(
   client: AfkCleanupClient,
   userId: string,
   guildId: string,
-  mentions: Array<{ mentionerId: string; channelId: string; messageId: string }>,
+  mentions: Array<{
+    mentionerId: string;
+    channelId: string;
+    messageId: string;
+  }>,
 ): Promise<void> {
   const user = await client.users.fetch(userId).catch(() => null);
 
@@ -84,9 +86,7 @@ async function sendAfkMentionDm(
       try {
         await user.send({
           flags: MessageFlags.IsComponentsV2,
-          components: [
-            new Container().text(Text(dmLines.join("\n"))),
-          ],
+          components: [new Container().text(Text(dmLines.join("\n")))],
         });
       } catch {
         // ignore dm failures
@@ -99,13 +99,15 @@ interface AfkCleanupClient {
   logger?: { error?: (message: string, data: Record<string, unknown>) => void };
   prisma: {
     afk: {
-      findMany: (args: Record<string, unknown>) => Promise<
-        Array<{ userId: string; guildId: string }>
-      >;
+      findMany: (
+        args: Record<string, unknown>,
+      ) => Promise<Array<{ userId: string; guildId: string }>>;
       deleteMany: (args: Record<string, unknown>) => Promise<unknown>;
     };
     afkMention: {
-      findMany: (args: Record<string, unknown>) => Promise<
+      findMany: (
+        args: Record<string, unknown>,
+      ) => Promise<
         Array<{ mentionerId: string; channelId: string; messageId: string }>
       >;
       deleteMany: (args: Record<string, unknown>) => Promise<unknown>;
@@ -115,7 +117,12 @@ interface AfkCleanupClient {
     delete: (key: string) => void;
   };
   users: {
-    fetch: (userId: string) => Promise<{ id: string; send: (options: unknown) => Promise<unknown> } | null>;
+    fetch: (
+      userId: string,
+    ) => Promise<{
+      id: string;
+      send: (options: unknown) => Promise<unknown>;
+    } | null>;
   };
   i18n: {
     t: (key: string, data?: Record<string, unknown>) => string;

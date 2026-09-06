@@ -226,9 +226,7 @@ export default new MessageCommand({
         await message.reply({
           flags: MessageFlags.IsComponentsV2,
           components: [
-            new Container().text(
-              Text("Disabled events:\n" + lines.join("\n")),
-            ),
+            new Container().text(Text("Disabled events:\n" + lines.join("\n"))),
           ],
         });
       },
