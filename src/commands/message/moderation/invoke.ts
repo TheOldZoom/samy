@@ -58,10 +58,13 @@ export default new MessageCommand({
           components: [
             new Container().text(
               Text(
-                `${icons.settings} ${client.i18n.t("commands.invoke.list_title", {
-                  lines: lines.join("\n"),
-                  footer: client.i18n.t("commands.invoke.list_footer_use"),
-                })}`,
+                `${icons.settings} ${client.i18n.t(
+                  "commands.invoke.list_title",
+                  {
+                    lines: lines.join("\n"),
+                    footer: client.i18n.t("commands.invoke.list_footer_use"),
+                  },
+                )}`,
               ),
             ),
           ],
@@ -102,10 +105,15 @@ export default new MessageCommand({
             components: [
               new Container().text(
                 Text(
-                  `${icons.warning} ${client.i18n.t("commands.invoke.invalid_action", {
-                    action: action ?? "",
-                    actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(", "),
-                  })}`,
+                  `${icons.warning} ${client.i18n.t(
+                    "commands.invoke.invalid_action",
+                    {
+                      action: action ?? "",
+                      actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(
+                        ", ",
+                      ),
+                    },
+                  )}`,
                 ),
               ),
             ],
@@ -122,9 +130,12 @@ export default new MessageCommand({
             components: [
               new Container().text(
                 Text(
-                  `${icons.warning} ${client.i18n.t("commands.invoke.validation_error", {
-                    error: validation.error ?? "Unknown error",
-                  })}`,
+                  `${icons.warning} ${client.i18n.t(
+                    "commands.invoke.validation_error",
+                    {
+                      error: validation.error ?? "Unknown error",
+                    },
+                  )}`,
                 ),
               ),
             ],
@@ -139,9 +150,12 @@ export default new MessageCommand({
           components: [
             new Container().text(
               Text(
-                `${icons.Correct} ${client.i18n.t("commands.invoke.set_message_success", {
-                  action,
-                })}`,
+                `${icons.Correct} ${client.i18n.t(
+                  "commands.invoke.set_message_success",
+                  {
+                    action,
+                  },
+                )}`,
               ),
             ),
           ],
@@ -182,10 +196,15 @@ export default new MessageCommand({
             components: [
               new Container().text(
                 Text(
-                  `${icons.warning} ${client.i18n.t("commands.invoke.invalid_action", {
-                    action: action ?? "",
-                    actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(", "),
-                  })}`,
+                  `${icons.warning} ${client.i18n.t(
+                    "commands.invoke.invalid_action",
+                    {
+                      action: action ?? "",
+                      actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(
+                        ", ",
+                      ),
+                    },
+                  )}`,
                 ),
               ),
             ],
@@ -202,9 +221,12 @@ export default new MessageCommand({
             components: [
               new Container().text(
                 Text(
-                  `${icons.warning} ${client.i18n.t("commands.invoke.validation_error", {
-                    error: validation.error ?? "Unknown error",
-                  })}`,
+                  `${icons.warning} ${client.i18n.t(
+                    "commands.invoke.validation_error",
+                    {
+                      error: validation.error ?? "Unknown error",
+                    },
+                  )}`,
                 ),
               ),
             ],
@@ -219,9 +241,12 @@ export default new MessageCommand({
           components: [
             new Container().text(
               Text(
-                `${icons.Correct} ${client.i18n.t("commands.invoke.set_dm_success", {
-                  action,
-                })}`,
+                `${icons.Correct} ${client.i18n.t(
+                  "commands.invoke.set_dm_success",
+                  {
+                    action,
+                  },
+                )}`,
               ),
             ),
           ],
@@ -253,10 +278,15 @@ export default new MessageCommand({
             components: [
               new Container().text(
                 Text(
-                  `${icons.warning} ${client.i18n.t("commands.invoke.invalid_action", {
-                    action: action ?? "",
-                    actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(", "),
-                  })}`,
+                  `${icons.warning} ${client.i18n.t(
+                    "commands.invoke.invalid_action",
+                    {
+                      action: action ?? "",
+                      actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(
+                        ", ",
+                      ),
+                    },
+                  )}`,
                 ),
               ),
             ],
@@ -275,7 +305,9 @@ export default new MessageCommand({
           client.i18n.t("commands.invoke.view_channel_label"),
           msgContent
             ? `\`\`\`\n${msgContent}\n\`\`\``
-            : client.i18n.t("commands.invoke.view_default", { type: "response" }),
+            : client.i18n.t("commands.invoke.view_default", {
+                type: "response",
+              }),
           "",
           client.i18n.t("commands.invoke.view_dm_label"),
           dmContent
@@ -324,10 +356,15 @@ export default new MessageCommand({
             components: [
               new Container().text(
                 Text(
-                  `${icons.warning} ${client.i18n.t("commands.invoke.invalid_action", {
-                    action: action ?? "",
-                    actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(", "),
-                  })}`,
+                  `${icons.warning} ${client.i18n.t(
+                    "commands.invoke.invalid_action",
+                    {
+                      action: action ?? "",
+                      actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(
+                        ", ",
+                      ),
+                    },
+                  )}`,
                 ),
               ),
             ],
@@ -356,13 +393,19 @@ export default new MessageCommand({
             new Container().text(
               Text(
                 deleted > 0
-                  ? `${icons.Correct} ${client.i18n.t("commands.invoke.reset_success", {
-                      action,
-                      type: typeInput,
-                    })}`
-                  : `${icons.info} ${client.i18n.t("commands.invoke.reset_none", {
-                      action,
-                    })}`,
+                  ? `${icons.Correct} ${client.i18n.t(
+                      "commands.invoke.reset_success",
+                      {
+                        action,
+                        type: typeInput,
+                      },
+                    )}`
+                  : `${icons.info} ${client.i18n.t(
+                      "commands.invoke.reset_none",
+                      {
+                        action,
+                      },
+                    )}`,
               ),
             ),
           ],
@@ -442,10 +485,13 @@ export default new MessageCommand({
         components: [
           new Container().text(
             Text(
-              `${icons.warning} ${client.i18n.t("commands.invoke.unknown_action", {
-                action,
-                actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(", "),
-              })}`,
+              `${icons.warning} ${client.i18n.t(
+                "commands.invoke.unknown_action",
+                {
+                  action,
+                  actions: INVOKE_COMMANDS.map((c) => `\`${c}\``).join(", "),
+                },
+              )}`,
             ),
           ),
         ],
@@ -497,10 +543,13 @@ export default new MessageCommand({
           new Container().text(
             Text(
               deleted > 0
-                ? `${icons.Correct} ${client.i18n.t("commands.invoke.reset_success", {
-                    action,
-                    type,
-                  })}`
+                ? `${icons.Correct} ${client.i18n.t(
+                    "commands.invoke.reset_success",
+                    {
+                      action,
+                      type,
+                    },
+                  )}`
                 : `${icons.info} ${client.i18n.t("commands.invoke.reset_none", {
                     action,
                   })}`,
@@ -533,9 +582,12 @@ export default new MessageCommand({
           components: [
             new Container().text(
               Text(
-                 `${icons.warning} ${client.i18n.t("commands.invoke.validation_error", {
-                  error: validation.error ?? "Unknown error",
-                })}`,
+                `${icons.warning} ${client.i18n.t(
+                  "commands.invoke.validation_error",
+                  {
+                    error: validation.error ?? "Unknown error",
+                  },
+                )}`,
               ),
             ),
           ],
@@ -561,9 +613,7 @@ export default new MessageCommand({
         flags: MessageFlags.IsComponentsV2,
         components: [
           new Container().text(
-            Text(
-              `${icons.Correct} ${client.i18n.t(successKey, { action })}`,
-            ),
+            Text(`${icons.Correct} ${client.i18n.t(successKey, { action })}`),
           ),
         ],
       });
@@ -575,9 +625,12 @@ export default new MessageCommand({
       components: [
         new Container().text(
           Text(
-            `${icons.warning} ${client.i18n.t("commands.invoke.invalid_subaction", {
-              type,
-            })}`,
+            `${icons.warning} ${client.i18n.t(
+              "commands.invoke.invalid_subaction",
+              {
+                type,
+              },
+            )}`,
           ),
         ),
       ],

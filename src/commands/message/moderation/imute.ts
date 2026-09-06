@@ -49,13 +49,16 @@ export default new MessageCommand({
         await message.reply({
           flags: MessageFlags.IsComponentsV2,
           components: [
-          new Container().text(
-            Text(
-              `${icons.Correct} ${client.i18n.t("commands.imute.setup_success", {
-                role: muteRole.id,
-              })}`,
+            new Container().text(
+              Text(
+                `${icons.Correct} ${client.i18n.t(
+                  "commands.imute.setup_success",
+                  {
+                    role: muteRole.id,
+                  },
+                )}`,
+              ),
             ),
-          ),
           ],
         });
       },
@@ -82,9 +85,11 @@ export default new MessageCommand({
           await message.reply({
             flags: MessageFlags.IsComponentsV2,
             components: [
-          new Container().text(
-            Text(`${icons.warning} ${client.i18n.t("commands.imute.invalid_role")}`),
-          ),
+              new Container().text(
+                Text(
+                  `${icons.warning} ${client.i18n.t("commands.imute.invalid_role")}`,
+                ),
+              ),
             ],
           });
           return;
@@ -95,13 +100,16 @@ export default new MessageCommand({
         await message.reply({
           flags: MessageFlags.IsComponentsV2,
           components: [
-          new Container().text(
-            Text(
-              `${icons.Correct} ${client.i18n.t("commands.imute.role_success", {
-                role: role.id,
-              })}`,
+            new Container().text(
+              Text(
+                `${icons.Correct} ${client.i18n.t(
+                  "commands.imute.role_success",
+                  {
+                    role: role.id,
+                  },
+                )}`,
+              ),
             ),
-          ),
           ],
         });
       },

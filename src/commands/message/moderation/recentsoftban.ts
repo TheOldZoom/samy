@@ -64,9 +64,12 @@ export default new MessageCommand({
         components: [
           new Container().text(
             Text(
-              `${icons.warning} ${client.i18n.t("commands.recentsoftban.invalid_duration", {
-                max: msToHuman(MAX_RECENTBAN_AGE_MS),
-              })}`,
+              `${icons.warning} ${client.i18n.t(
+                "commands.recentsoftban.invalid_duration",
+                {
+                  max: msToHuman(MAX_RECENTBAN_AGE_MS),
+                },
+              )}`,
             ),
           ),
         ],
@@ -80,9 +83,12 @@ export default new MessageCommand({
         components: [
           new Container().text(
             Text(
-              `${icons.warning} ${client.i18n.t("commands.recentsoftban.invalid_threshold", {
-                threshold: thresholdInput,
-              })}`,
+              `${icons.warning} ${client.i18n.t(
+                "commands.recentsoftban.invalid_threshold",
+                {
+                  threshold: thresholdInput,
+                },
+              )}`,
             ),
           ),
         ],
@@ -142,9 +148,12 @@ export default new MessageCommand({
         components: [
           new Container().text(
             Text(
-              `${icons.info} ${client.i18n.t("commands.recentsoftban.no_candidates", {
-                threshold: thresholdInput,
-              })}`,
+              `${icons.info} ${client.i18n.t(
+                "commands.recentsoftban.no_candidates",
+                {
+                  threshold: thresholdInput,
+                },
+              )}`,
             ),
           ),
         ],
@@ -157,9 +166,12 @@ export default new MessageCommand({
       components: [
         new Container().text(
           Text(
-            `${icons.loading} ${client.i18n.t("commands.recentsoftban.banning", {
-              count: candidates.length,
-            })}`,
+            `${icons.loading} ${client.i18n.t(
+              "commands.recentsoftban.banning",
+              {
+                count: candidates.length,
+              },
+            )}`,
           ),
         ),
       ],
@@ -217,12 +229,15 @@ export default new MessageCommand({
           })
         : "";
 
-    const summaryText = `${icons.ban} ${client.i18n.t("commands.recentsoftban.complete", {
-      success: successCount,
-      description,
-      failed: failedLine,
-      reason,
-    })}`;
+    const summaryText = `${icons.ban} ${client.i18n.t(
+      "commands.recentsoftban.complete",
+      {
+        success: successCount,
+        description,
+        failed: failedLine,
+        reason,
+      },
+    )}`;
 
     if (statusMsg.editable) {
       await statusMsg.edit({

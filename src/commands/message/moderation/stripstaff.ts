@@ -44,7 +44,9 @@ export default new MessageCommand({
             flags: MessageFlags.IsComponentsV2,
             components: [
               new Container().text(
-                Text(`${icons.warning} ${client.i18n.t("commands.stripstaff.invalid_role")}`),
+                Text(
+                  `${icons.warning} ${client.i18n.t("commands.stripstaff.invalid_role")}`,
+                ),
               ),
             ],
           });
