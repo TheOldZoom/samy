@@ -89,7 +89,6 @@ A roadmap for Samy's development.
 - [x] AFK mentions log (see who pinged you while AFK)
 - [ ] Reminders (`remind add/list/remove`)
 - [ ] Highlight / keyword notification system (`highlight add/remove/list/ignore`)
-- [ ] Quick poll / timed poll (`poll`, `quickpoll`)
 - [ ] Message quoting (`quote`)
 - [ ] Screenshot a website (`screenshot`)
 - [x] Character/symbol info (`charinfo`)
@@ -102,7 +101,6 @@ A roadmap for Samy's development.
 - [x] Emoji management suite: add/remove/rename emote, bulk add/remove, remove duplicates, usage stats, jumbo/enlarge (`jumbo`/`enlarge`)
 - [ ] Sticker management suite: add/remove/rename sticker, cleanup names, tag with server vanity
 - [x] Random choice helper (`choose`)
-- [ ] Brainly answer lookup (`brainly`)
 - [ ] Convert video to audio file (`makemp3`)
 
 ---
@@ -120,11 +118,11 @@ A roadmap for Samy's development.
 - [x] Temp ban (`tempban`)
 - [x] Hard ban (permanent re-ban on rejoin) (`hardban`)
 - [x] Mass unban (`unbanall`)
-- [ ] Jail system (role-based mute alternative to timeout) (`jail`/`unjail`, jail role/channel setup)
-- [ ] Image mute / reaction mute (`imute`/`iunmute`, `rmute`/`runmute`)
-- [ ] Strip staff roles from a member (`stripstaff`)
-- [ ] Chunk-ban recently joined members (`recentban`)
-- [ ] Custom punishment DM / response messages per action (`invoke`)
+- [x] Jail system (role-based mute alternative to timeout) (`jail`/`unjail`, jail role/channel setup)
+- [x] Image mute / reaction mute (`imute`/`iunmute`, `rmute`/`runmute`)
+- [x] Strip staff roles from a member (`stripstaff`)
+- [x] Chunk-ban recently joined members (`recentban`)
+- [x] Custom punishment DM / response messages per action (`invoke`)
 
 ## Warnings
 

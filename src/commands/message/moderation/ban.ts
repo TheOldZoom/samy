@@ -7,6 +7,8 @@ import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
 import { extractDuration, msToHuman } from "@/utils/duration";
 import { createGuildBan } from "@/utils/guildBan";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeBan({
   message,
@@ -103,28 +105,50 @@ async function executeBan({
       ? `${message.author.tag} (temp-ban ${msToHuman(durationMs)}): ${reason}`
       : `${message.author.tag}: ${reason}`;
 
+  const action = durationMs !== null ? "tempban" : "ban";
+  const durationStr = durationMs !== null ? msToHuman(durationMs) : undefined;
+
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: action,
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+    duration: durationMs,
+    expiresAt: durationMs !== null ? new Date(Date.now() + durationMs) : null,
+  });
+
   try {
-    try {
-      await target.send({
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-          new Container().text(
-            Text(
-              durationMs !== null
-                ? client.i18n.t("commands.ban.dm_temp", {
-                    guild: message.guild.name,
-                    duration: msToHuman(durationMs),
-                    reason,
-                  })
-                : client.i18n.t("commands.ban.dm", {
-                    guild: message.guild.name,
-                    reason,
-                  }),
+    await deliverPunishmentDm({
+      guild: message.guild,
+      target,
+      action,
+      moderator: message.author,
+      reason,
+      duration: durationStr,
+      caseNumber,
+      fallback: async () => {
+        await target.send({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text(
+                durationMs !== null
+                  ? client.i18n.t("commands.ban.dm_temp", {
+                      guild: message.guild!.name,
+                      duration: durationStr!,
+                      reason,
+                    })
+                  : client.i18n.t("commands.ban.dm", {
+                      guild: message.guild!.name,
+                      reason,
+                    }),
+              ),
             ),
-          ),
-        ],
-      });
-    } catch {}
+          ],
+        });
+      },
+    });
     await message.guild.members.ban(target, {
       reason: auditReason,
     });
@@ -164,24 +188,35 @@ async function executeBan({
     }
   }
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          durationMs !== null
-            ? client.i18n.t("commands.ban.success_temp", {
-                user: target.tag,
-                duration: msToHuman(durationMs),
-                reason,
-              })
-            : client.i18n.t("commands.ban.success", {
-                user: target.tag,
-                reason,
-              }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action,
+    moderator: message.author,
+    reason,
+    duration: durationStr,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              durationMs !== null
+                ? client.i18n.t("commands.ban.success_temp", {
+                    user: target.tag,
+                    duration: durationStr!,
+                    reason,
+                  })
+                : client.i18n.t("commands.ban.success", {
+                    user: target.tag,
+                    reason,
+                  }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 

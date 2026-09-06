@@ -20,7 +20,7 @@ export function replaceVariables(
 ): string {
   const { user, guild } = options;
 
-  const member = options.member ?? guild?.members.cache.get(user.id) ?? null;
+  const member = options.member ?? guild?.members?.cache?.get(user.id) ?? null;
 
   const tag =
     user.discriminator && user.discriminator !== "0"

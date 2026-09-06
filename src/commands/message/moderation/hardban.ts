@@ -6,6 +6,8 @@ import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
 import { ensureGuild } from "@/utils/guild";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeHardban({
   message,
@@ -129,22 +131,38 @@ async function executeHardban({
 
   const auditReason = `${message.author.tag} (hard-ban): ${reason}`;
 
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: "hardban",
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+  });
+
   try {
-    try {
-      await target.send({
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-          new Container().text(
-            Text(
-              client.i18n.t("commands.hardban.dm", {
-                guild: message.guild.name,
-                reason,
-              }),
+    await deliverPunishmentDm({
+      guild: message.guild,
+      target,
+      action: "hardban",
+      moderator: message.author,
+      reason,
+      caseNumber,
+      fallback: async () => {
+        await target.send({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text(
+                client.i18n.t("commands.hardban.dm", {
+                  guild: message.guild!.name,
+                  reason,
+                }),
+              ),
             ),
-          ),
-        ],
-      });
-    } catch {}
+          ],
+        });
+      },
+    });
 
     await message.guild.members.ban(target, {
       reason: auditReason,
@@ -172,20 +190,30 @@ async function executeHardban({
         reason,
       },
     });
-  } catch {}
+  } catch (_e) {}
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          client.i18n.t("commands.hardban.success", {
-            user: target.tag,
-            reason,
-          }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action: "hardban",
+    moderator: message.author,
+    reason,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              client.i18n.t("commands.hardban.success", {
+                user: target.tag,
+                reason,
+              }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 

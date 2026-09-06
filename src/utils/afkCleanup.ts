@@ -88,9 +88,7 @@ async function sendAfkMentionDm(
           flags: MessageFlags.IsComponentsV2,
           components: [new Container().text(Text(dmLines.join("\n")))],
         });
-      } catch {
-        // ignore dm failures
-      }
+      } catch {}
     },
   );
 }
@@ -117,9 +115,7 @@ interface AfkCleanupClient {
     delete: (key: string) => void;
   };
   users: {
-    fetch: (
-      userId: string,
-    ) => Promise<{
+    fetch: (userId: string) => Promise<{
       id: string;
       send: (options: unknown) => Promise<unknown>;
     } | null>;

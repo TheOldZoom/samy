@@ -6,6 +6,8 @@ import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
 import { msToHuman, parseDuration } from "@/utils/duration";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 const MAX_TIMEOUT_MS = 28 * 24 * 60 * 60 * 1000;
 
@@ -123,6 +125,27 @@ async function executeTimeout({
   }
 
   const cappedDurationMs = Math.min(durationMs, MAX_TIMEOUT_MS);
+  const durationStr = msToHuman(cappedDurationMs);
+
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: "timeout",
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+    duration: cappedDurationMs,
+    expiresAt: new Date(Date.now() + cappedDurationMs),
+  });
+
+  await deliverPunishmentDm({
+    guild: message.guild,
+    target,
+    action: "timeout",
+    moderator: message.author,
+    reason,
+    duration: durationStr,
+    caseNumber,
+  });
 
   try {
     await member.timeout(cappedDurationMs, `${message.author.tag}: ${reason}`);
@@ -139,21 +162,32 @@ async function executeTimeout({
     return;
   }
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          icons.timeout +
-            " " +
-            client.i18n.t("commands.timeout.success", {
-              user: target.tag,
-              duration: msToHuman(cappedDurationMs),
-              reason,
-            }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action: "timeout",
+    moderator: message.author,
+    reason,
+    duration: durationStr,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              icons.timeout +
+                " " +
+                client.i18n.t("commands.timeout.success", {
+                  user: target.tag,
+                  duration: durationStr,
+                  reason,
+                }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 

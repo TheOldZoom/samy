@@ -7,6 +7,8 @@ import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
 import { parseDuration, msToHuman } from "@/utils/duration";
 import { createGuildBan } from "@/utils/guildBan";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeTempban({
   message,
@@ -102,25 +104,45 @@ async function executeTempban({
     }
   }
 
-  const auditReason = `${message.author.tag} (temp-ban ${msToHuman(durationMs)}): ${reason}`;
+  const durationStr = msToHuman(durationMs);
+  const auditReason = `${message.author.tag} (temp-ban ${durationStr}): ${reason}`;
+
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: "tempban",
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+    duration: durationMs,
+    expiresAt: new Date(Date.now() + durationMs),
+  });
 
   try {
-    try {
-      await target.send({
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-          new Container().text(
-            Text(
-              client.i18n.t("commands.tempban.dm", {
-                guild: message.guild.name,
-                duration: msToHuman(durationMs),
-                reason,
-              }),
+    await deliverPunishmentDm({
+      guild: message.guild,
+      target,
+      action: "tempban",
+      moderator: message.author,
+      reason,
+      duration: durationStr,
+      caseNumber,
+      fallback: async () => {
+        await target.send({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text(
+                client.i18n.t("commands.tempban.dm", {
+                  guild: message.guild!.name,
+                  duration: durationStr,
+                  reason,
+                }),
+              ),
             ),
-          ),
-        ],
-      });
-    } catch {}
+          ],
+        });
+      },
+    });
 
     await message.guild.members.ban(target, {
       reason: auditReason,
@@ -159,19 +181,30 @@ async function executeTempban({
     return;
   }
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          client.i18n.t("commands.tempban.success", {
-            user: target.tag,
-            duration: msToHuman(durationMs),
-            reason,
-          }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action: "tempban",
+    moderator: message.author,
+    reason,
+    duration: durationStr,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              client.i18n.t("commands.tempban.success", {
+                user: target.tag,
+                duration: durationStr,
+                reason,
+              }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 
