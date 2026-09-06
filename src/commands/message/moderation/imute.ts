@@ -280,7 +280,7 @@ export default new MessageCommand({
 
     if (durationMs !== null) {
       const expiresAt = new Date(Date.now() + durationMs);
-      const muteRecord = await prisma.temporaryMute.upsert({
+      await prisma.temporaryMute.upsert({
         where: {
           guildId_userId_type: {
             guildId: message.guild.id,

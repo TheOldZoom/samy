@@ -3,10 +3,8 @@ import prisma from "@/libs/prisma";
 import type Client from "@/classes/client";
 import { ensureGuild } from "@/utils/guild";
 import { createModerationCase } from "@/utils/moderationCase";
-import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { deliverPunishmentDm } from "@/utils/invoke";
 import { Container, Text } from "@/ui/components";
-import { icons } from "@/utils/icons";
-import { msToHuman } from "@/utils/duration";
 
 const MAX_TIMER_MS = 2_147_000_000;
 const muteTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -216,7 +214,8 @@ async function processMuteExpiry(
   }
 
   const botUser =
-    client.user ?? (await client.users.fetch(client.user?.id ?? ""));
+    client.user ??
+    (await client.users.fetch((client.user?.id ?? "") as string));
   await removeMute({
     client,
     guild,

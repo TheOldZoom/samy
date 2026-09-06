@@ -190,7 +190,9 @@ async function executeHardban({
         reason,
       },
     });
-  } catch (_e) {}
+  } catch {
+    // ignore database errors
+  }
 
   await sendPunishmentResponse({
     message,

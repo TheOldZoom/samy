@@ -18,7 +18,7 @@ export function UrbanResult(def: UrbanDefinition) {
   const linkifyUrban = (text: string) =>
     text.replace(
       /\[([^\]]+)\]/g,
-      (_, word) =>
+      (_, word: string) =>
         `[${word}](https://urbandictionary.com/define.php?term=${encodeURIComponent(word)})`,
     );
 

@@ -68,7 +68,9 @@ try {
       string
     >;
   }
-} catch {}
+} catch {
+  // ignore parse errors
+}
 
 console.log("Checking existing application emojis...");
 

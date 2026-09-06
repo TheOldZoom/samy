@@ -279,7 +279,9 @@ export async function deliverPunishmentDm(options: {
     if (fallback) {
       try {
         await fallback();
-      } catch {}
+      } catch {
+        // ignore fallback errors
+      }
     }
     return false;
   }

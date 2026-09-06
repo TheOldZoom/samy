@@ -10,8 +10,6 @@ import {
   deleteInvokeMessage,
   getAllInvokeMessages,
   validateInvokeScript,
-  type InvokeCommand,
-  type InvokeType,
 } from "@/utils/invoke";
 
 export default new MessageCommand({
@@ -372,20 +370,10 @@ export default new MessageCommand({
           return;
         }
 
-        let deleted = 0;
-        if (
-          typeInput === "message" ||
-          typeInput === "dm" ||
-          typeInput === "jail"
-        ) {
-          deleted = await deleteInvokeMessage(
-            message.guild.id,
-            action,
-            typeInput as InvokeType,
-          );
-        } else {
-          deleted = await deleteInvokeMessage(message.guild.id, action);
-        }
+        const deleted =
+          typeInput === "message" || typeInput === "dm" || typeInput === "jail"
+            ? await deleteInvokeMessage(message.guild.id, action, typeInput)
+            : await deleteInvokeMessage(message.guild.id, action);
 
         await message.reply({
           flags: MessageFlags.IsComponentsV2,
@@ -595,12 +583,7 @@ export default new MessageCommand({
         return;
       }
 
-      await setInvokeMessage(
-        message.guild.id,
-        action,
-        type as InvokeType,
-        content,
-      );
+      await setInvokeMessage(message.guild.id, action, type, content);
 
       const successKey =
         type === "dm"

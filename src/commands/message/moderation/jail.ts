@@ -1,8 +1,4 @@
-import {
-  ChannelType,
-  MessageFlags,
-  type GuildTextBasedChannel,
-} from "discord.js";
+import { ChannelType, MessageFlags } from "discord.js";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import { icons } from "@/utils/icons";
@@ -59,9 +55,7 @@ export default new MessageCommand({
         const role = args.getRole("role");
         const channelLike = args.getChannelLike("channel");
         const channel =
-          channelLike && channelLike.isTextBased()
-            ? (channelLike as GuildTextBasedChannel)
-            : undefined;
+          channelLike && channelLike.isTextBased() ? channelLike : undefined;
 
         try {
           const result = await setupJail(message.guild, message.author, {
@@ -167,17 +161,12 @@ export default new MessageCommand({
             ],
             reason: `Jail system setup by ${message.author.tag}`,
           });
-          channel = created as GuildTextBasedChannel;
+          channel = created;
           await setJailChannel(message.guild.id, channel.id);
         } else {
           const botMember = message.guild.members.me;
           if (!botMember) return;
-          await ensureJailPermissions(
-            message.guild,
-            role,
-            channel as GuildTextBasedChannel,
-            botMember,
-          );
+          await ensureJailPermissions(message.guild, role, channel, botMember);
         }
 
         await message.reply({
@@ -245,12 +234,7 @@ export default new MessageCommand({
         const botMember = message.guild.members.me;
         if (!botMember) return;
 
-        await ensureJailPermissions(
-          message.guild,
-          role,
-          channel as GuildTextBasedChannel,
-          botMember,
-        );
+        await ensureJailPermissions(message.guild, role, channel, botMember);
 
         await message.reply({
           flags: MessageFlags.IsComponentsV2,
@@ -670,7 +654,7 @@ export default new MessageCommand({
         reason,
         duration: durationStr ?? undefined,
         caseNumber,
-        channel: jailChannel as GuildTextBasedChannel,
+        channel: jailChannel,
         fallback: async () => {
           await jailChannel.send({
             flags: MessageFlags.IsComponentsV2,

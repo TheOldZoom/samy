@@ -13,7 +13,6 @@ import { ensureGuild } from "@/utils/guild";
 import { createModerationCase } from "@/utils/moderationCase";
 import { deliverPunishmentDm } from "@/utils/invoke";
 import { Container, Text } from "@/ui/components";
-import { msToHuman } from "@/utils/duration";
 
 const MAX_TIMER_MS = 2_147_000_000;
 const jailTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -70,27 +69,40 @@ export async function setJailChannel(
 export async function ensureJailPermissions(
   guild: Guild,
   role: Role,
-  channel: GuildTextBasedChannel,
+  channel: GuildChannel,
   botMember: GuildMember,
 ): Promise<void> {
-  await channel.permissionOverwrites
-    .edit(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { permissionOverwrites } = channel;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const edit = permissionOverwrites.edit as (
+    targetId: string,
+    options: Record<string, unknown>,
+    reason?: string,
+  ) => Promise<unknown>;
+
+  try {
+    await edit(
       guild.roles.everyone.id,
       { ViewChannel: false },
       { reason: "Jail channel setup: isolate from @everyone" },
-    )
-    .catch(() => null);
+    );
+  } catch {
+    // ignore errors
+  }
 
-  await channel.permissionOverwrites
-    .edit(
+  try {
+    await edit(
       role.id,
       { ViewChannel: true, SendMessages: true, ReadMessageHistory: true },
       { reason: "Jail channel setup: allow jailed role" },
-    )
-    .catch(() => null);
+    );
+  } catch {
+    // ignore errors
+  }
 
-  await channel.permissionOverwrites
-    .edit(
+  try {
+    await edit(
       botMember.id,
       {
         ViewChannel: true,
@@ -99,8 +111,10 @@ export async function ensureJailPermissions(
         ManageChannels: true,
       },
       { reason: "Jail channel setup: allow bot" },
-    )
-    .catch(() => null);
+    );
+  } catch {
+    // ignore errors
+  }
 }
 
 export async function setupJail(
@@ -130,7 +144,7 @@ export async function setupJail(
   if (!channel && config.jailChannelId) {
     const found = guild.channels.cache.get(config.jailChannelId);
     if (found && found.isTextBased()) {
-      channel = found as GuildTextBasedChannel;
+      channel = found;
     }
   }
   if (!channel) {
@@ -159,7 +173,7 @@ export async function setupJail(
       ],
       reason: `Jail system setup by ${moderator.tag}`,
     });
-    channel = created as GuildTextBasedChannel;
+    channel = created;
   }
 
   await ensureJailPermissions(guild, role, channel, botMember);
@@ -216,7 +230,8 @@ async function processJailExpiry(
   }
 
   const botUser =
-    client.user ?? (await client.users.fetch(client.user?.id ?? ""));
+    client.user ??
+    (await client.users.fetch((client.user?.id ?? "") as string));
   await unjailMember({
     client,
     guild,
@@ -303,9 +318,9 @@ export async function unjailMember({
     },
   });
 
-  let previousRoleIds: string[] = [];
+  let previousRoleIds: string[];
   try {
-    previousRoleIds = JSON.parse(jailed.roles);
+    previousRoleIds = JSON.parse(jailed.roles) as string[];
   } catch {
     previousRoleIds = [];
   }

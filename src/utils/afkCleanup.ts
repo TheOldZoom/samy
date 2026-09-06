@@ -88,7 +88,9 @@ async function sendAfkMentionDm(
           flags: MessageFlags.IsComponentsV2,
           components: [new Container().text(Text(dmLines.join("\n")))],
         });
-      } catch {}
+      } catch {
+        // ignore DM errors
+      }
     },
   );
 }
