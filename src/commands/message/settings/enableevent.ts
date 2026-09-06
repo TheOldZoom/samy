@@ -5,10 +5,7 @@ import { icons } from "@/utils/icons";
 import { MessageCommand, MessageSubcommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 
-import {
-  BOT_EVENTS,
-  setBotEventEnabled,
-} from "@/utils/botEvents";
+import { BOT_EVENTS, setBotEventEnabled } from "@/utils/botEvents";
 
 export default new MessageCommand({
   name: "enableevent",

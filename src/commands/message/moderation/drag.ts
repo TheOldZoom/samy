@@ -18,7 +18,7 @@ export default new MessageCommand({
   guildOnly: true,
   userPermissions: ["MoveMembers"],
   botPermissions: ["MoveMembers"],
-
+  cooldown: 10,
   arguments: [
     {
       name: "targets",

@@ -23,7 +23,7 @@ export default new MessageCommand({
   guildOnly: true,
   userPermissions: ["ManageChannels"],
   botPermissions: ["ManageChannels"],
-
+  cooldown: 30,
   arguments: [
     {
       name: "channel",

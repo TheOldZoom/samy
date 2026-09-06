@@ -5,6 +5,8 @@ import { icons } from "@/utils/icons";
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeUntimeout({
   message,
@@ -109,6 +111,23 @@ async function executeUntimeout({
     return;
   }
 
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: "untimeout",
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+  });
+
+  await deliverPunishmentDm({
+    guild: message.guild,
+    target,
+    action: "untimeout",
+    moderator: message.author,
+    reason,
+    caseNumber,
+  });
+
   try {
     await member.timeout(null, `${message.author.tag}: ${reason}`);
   } catch {
@@ -126,20 +145,30 @@ async function executeUntimeout({
     return;
   }
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          icons.timeout +
-            " " +
-            client.i18n.t("commands.untimeout.success", {
-              user: target.tag,
-              reason,
-            }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action: "untimeout",
+    moderator: message.author,
+    reason,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              icons.timeout +
+                " " +
+                client.i18n.t("commands.untimeout.success", {
+                  user: target.tag,
+                  reason,
+                }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 

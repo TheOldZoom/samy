@@ -24,6 +24,7 @@ export default new MessageCommand({
   guildOnly: true,
   botPermissions: ["SendMessages", "EmbedLinks"],
   userPermissions: ["ManageMessages"],
+  cooldown: 5,
 
   arguments: [
     {

@@ -16,6 +16,7 @@ export default new MessageCommand({
   description: "View your currently playing or last played Last.fm track.",
   category: "Utility",
   aliases: ["fm"],
+  cooldown: 5,
   arguments: [
     {
       name: "user",

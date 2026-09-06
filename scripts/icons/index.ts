@@ -69,7 +69,7 @@ try {
     >;
   }
 } catch {
-  // ignore
+  // ignore parse errors
 }
 
 console.log("Checking existing application emojis...");

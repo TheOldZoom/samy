@@ -153,7 +153,7 @@ export default new MessageCommand({
   guildOnly: true,
   userPermissions: ["ManageMessages"],
   botPermissions: ["ManageMessages", "ReadMessageHistory"],
-
+  cooldown: 10,
   arguments: [
     {
       name: "amount",

@@ -5,6 +5,8 @@ import { icons } from "@/utils/icons";
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeSoftban({
   message,
@@ -97,6 +99,23 @@ async function executeSoftban({
     }
   }
 
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: "softban",
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+  });
+
+  await deliverPunishmentDm({
+    guild: message.guild,
+    target,
+    action: "softban",
+    moderator: message.author,
+    reason,
+    caseNumber,
+  });
+
   try {
     await message.guild.members.ban(target, {
       reason: `${message.author.tag}: ${reason}`,
@@ -119,20 +138,30 @@ async function executeSoftban({
     return;
   }
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          icons.ban +
-            " " +
-            client.i18n.t("commands.softban.success", {
-              user: target.tag,
-              reason,
-            }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action: "softban",
+    moderator: message.author,
+    reason,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              icons.ban +
+                " " +
+                client.i18n.t("commands.softban.success", {
+                  user: target.tag,
+                  reason,
+                }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 

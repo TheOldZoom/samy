@@ -71,6 +71,14 @@ model Guild {
   temporaryRoles         TemporaryRole[]
   hardBans               HardBan[]
   botEventSettings       BotEventSetting[]
+  jailRoleId             String?
+  jailChannelId          String?
+  imageMuteRoleId        String?
+  reactionMuteRoleId     String?
+  jailedMembers          JailedMember[]
+  staffRoles             StaffRole[]
+  temporaryMutes         TemporaryMute[]
+  invokeMessages         InvokeMessage[]
 }
 
 model GuildBan {
@@ -533,3 +541,72 @@ model BotEventSetting {
   @@index([guildId])
   @@index([event])
 }
+
+model JailedMember {
+  id          String    @id @default(cuid())
+
+  guildId     String
+  guild       Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  userId      String
+  roles       String    @db.Text
+  reason      String?
+  moderatorId String
+  expiresAt   DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([guildId, userId])
+  @@index([guildId])
+  @@index([expiresAt])
+}
+
+model StaffRole {
+  id        String   @id @default(cuid())
+
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  roleId    String
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, roleId])
+  @@index([guildId])
+}
+
+model TemporaryMute {
+  id        String   @id @default(cuid())
+
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  userId    String
+  type      String   // "image" | "reaction"
+  roleId    String
+  reason    String?
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, userId, type])
+  @@index([guildId])
+  @@index([expiresAt])
+}
+
+model InvokeMessage {
+  id        String   @id @default(cuid())
+
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  command   String   // "ban", "jail", etc.
+  type      String   // "message" | "dm"
+  content   String   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, command, type])
+  @@index([guildId])
+}
+

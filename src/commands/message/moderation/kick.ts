@@ -5,6 +5,8 @@ import { icons } from "@/utils/icons";
 import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeKick({
   message,
@@ -104,6 +106,23 @@ async function executeKick({
     return;
   }
 
+  const caseNumber = await createModerationCase({
+    guildId: message.guild.id,
+    type: "kick",
+    userId: target.id,
+    moderatorId: message.author.id,
+    reason,
+  });
+
+  await deliverPunishmentDm({
+    guild: message.guild,
+    target,
+    action: "kick",
+    moderator: message.author,
+    reason,
+    caseNumber,
+  });
+
   try {
     await member.kick(`${message.author.tag}: ${reason}`);
   } catch {
@@ -119,20 +138,30 @@ async function executeKick({
     return;
   }
 
-  await message.reply({
-    flags: MessageFlags.IsComponentsV2,
-    components: [
-      new Container().text(
-        Text(
-          icons.kick +
-            " " +
-            client.i18n.t("commands.kick.success", {
-              user: target.tag,
-              reason,
-            }),
-        ),
-      ),
-    ],
+  await sendPunishmentResponse({
+    message,
+    target,
+    action: "kick",
+    moderator: message.author,
+    reason,
+    caseNumber,
+    fallback: async () => {
+      await message.reply({
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+          new Container().text(
+            Text(
+              icons.kick +
+                " " +
+                client.i18n.t("commands.kick.success", {
+                  user: target.tag,
+                  reason,
+                }),
+            ),
+          ),
+        ],
+      });
+    },
   });
 }
 

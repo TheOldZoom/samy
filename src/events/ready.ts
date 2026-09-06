@@ -5,6 +5,8 @@ import { reconcileGuildBans } from "@/utils/guildBan";
 import { reconcileHardBans } from "./hardban";
 import { reconcileStickyRoles } from "./stickyRole";
 import { ensureGuild } from "@/utils/guild";
+import { reconcileJails } from "@/utils/jail";
+import { reconcileTemporaryMutes } from "@/utils/mute";
 import { startTemporaryRoleCleanup } from "@/utils/temporaryRoles";
 import { startMarkovFlush } from "@/utils/markov";
 import { startAfkCleanup } from "@/utils/afkCleanup";
@@ -18,6 +20,8 @@ export default new Event({
     await reconcileGuildBans(client);
     await reconcileHardBans(client);
     await reconcileStickyRoles(client);
+    await reconcileJails(client);
+    await reconcileTemporaryMutes(client);
     await registerGuilds(client);
     await cacheStuff(client);
     startTemporaryRoleCleanup(client);

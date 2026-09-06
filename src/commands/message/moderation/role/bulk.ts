@@ -84,7 +84,9 @@ export const allAddSubcommand = new MessageSubcommand({
       try {
         await member.roles.add(role, `Role all-add by ${message.author.tag}`);
         added++;
-      } catch {}
+      } catch {
+        // ignore role add errors
+      }
     }
 
     await replyKey(client, message, "Correct", "commands.role.all_added", {
@@ -150,7 +152,9 @@ export const allRemoveSubcommand = new MessageSubcommand({
           `Role all-remove by ${message.author.tag}`,
         );
         removed++;
-      } catch {}
+      } catch {
+        // ignore role remove errors
+      }
     }
 
     await replyKey(client, message, "Correct", "commands.role.all_removed", {
@@ -204,7 +208,9 @@ export const massAddSubcommand = new MessageSubcommand({
       try {
         await member.roles.add(role, `Role mass-add by ${message.author.tag}`);
         added++;
-      } catch {}
+      } catch {
+        // ignore role add errors
+      }
     }
 
     await replyKey(client, message, "Correct", "commands.role.mass_added", {
@@ -257,7 +263,9 @@ export const massRemoveSubcommand = new MessageSubcommand({
           `Role mass-remove by ${message.author.tag}`,
         );
         removed++;
-      } catch {}
+      } catch {
+        // ignore role remove errors
+      }
     }
 
     await replyKey(client, message, "Correct", "commands.role.mass_removed", {

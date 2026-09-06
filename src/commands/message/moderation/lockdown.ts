@@ -228,7 +228,7 @@ export default new MessageCommand({
   guildOnly: true,
   userPermissions: ["ManageGuild"],
   botPermissions: ["ManageChannels", "ManageRoles"],
-
+  cooldown: 15,
   arguments: [
     {
       name: "reason",

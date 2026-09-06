@@ -11,6 +11,7 @@ export default new MessageCommand({
   description: "Search Urban Dictionary for a definition.",
   category: "Fun",
   aliases: ["ud", "dictionary", "define"],
+  cooldown: 5,
   arguments: [
     {
       name: "query",

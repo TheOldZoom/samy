@@ -6,6 +6,8 @@ import { MessageCommand } from "@/classes/Command";
 import { Container, Text } from "@/ui/components";
 import type Client from "@/classes/client";
 import { ensureGuild } from "@/utils/guild";
+import { deliverPunishmentDm, sendPunishmentResponse } from "@/utils/invoke";
+import { createModerationCase } from "@/utils/moderationCase";
 
 async function executeWarn({
   message,
@@ -96,12 +98,6 @@ async function executeWarn({
   }
 
   const guildId = message.guild.id;
-  const lastCase = await client.prisma.moderationCase.findFirst({
-    where: { guildId },
-    orderBy: { caseNumber: "desc" },
-  });
-
-  const caseNumber = (lastCase?.caseNumber ?? 0) + 1;
 
   try {
     await ensureGuild(guildId);
@@ -115,50 +111,65 @@ async function executeWarn({
       },
     });
 
-    await client.prisma.moderationCase.create({
-      data: {
-        guildId,
-        caseNumber,
-        type: "warn",
-        userId: target.id,
-        moderatorId: message.author.id,
-        reason,
+    const caseNumber = await createModerationCase({
+      guildId,
+      type: "warn",
+      userId: target.id,
+      moderatorId: message.author.id,
+      reason,
+    });
+
+    await deliverPunishmentDm({
+      guild: message.guild,
+      target,
+      action: "warn",
+      moderator: message.author,
+      reason,
+      caseNumber,
+      fallback: async () => {
+        await target.send({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text(
+                icons.warning +
+                  " " +
+                  client.i18n.t("commands.warn.dm", {
+                    guild: message.guild!.name,
+                    reason,
+                  }),
+              ),
+            ),
+          ],
+        });
       },
     });
 
-    try {
-      await target.send({
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-          new Container().text(
-            Text(
-              icons.warning +
-                " " +
-                client.i18n.t("commands.warn.dm", {
-                  guild: message.guild.name,
-                  reason,
-                }),
+    await sendPunishmentResponse({
+      message,
+      target,
+      action: "warn",
+      moderator: message.author,
+      reason,
+      caseNumber,
+      fallback: async () => {
+        await message.reply({
+          flags: MessageFlags.IsComponentsV2,
+          components: [
+            new Container().text(
+              Text(
+                icons.warning +
+                  " " +
+                  client.i18n.t("commands.warn.success", {
+                    user: target.tag,
+                    case: String(caseNumber),
+                    reason,
+                  }),
+              ),
             ),
-          ),
-        ],
-      });
-    } catch {}
-
-    await message.reply({
-      flags: MessageFlags.IsComponentsV2,
-      components: [
-        new Container().text(
-          Text(
-            icons.warning +
-              " " +
-              client.i18n.t("commands.warn.success", {
-                user: target.tag,
-                case: String(caseNumber),
-                reason,
-              }),
-          ),
-        ),
-      ],
+          ],
+        });
+      },
     });
   } catch {
     await message.reply({
