@@ -94,7 +94,7 @@ A roadmap for Samy's development.
 - [ ] Screenshot a website (`screenshot`)
 - [x] Character/symbol info (`charinfo`)
 - [x] Random hex / dominant color from image (`randomhex`, `hex`/`dominant`)
-- [ ] Copy an embed from a message link into builder syntax (`embed copy`)
+- [x] Copy an embed from a message link into builder syntax (`embed copy`)
 - [ ] Sticky messages per channel (`stickymessage`)
 - [ ] Timed nuke / scheduled channel recreation (`nuke add/remove/list/view`)
 - [ ] Firstmessage / pin / unpin / pin archival system
