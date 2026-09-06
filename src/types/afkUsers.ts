@@ -4,3 +4,12 @@ export type AfkUser = {
   reason?: string;
   createdAt: Date;
 };
+
+export type AfkMention = {
+  guildId: string;
+  userId: string;
+  mentionerId: string;
+  messageId: string;
+  channelId: string;
+  createdAt: Date;
+};

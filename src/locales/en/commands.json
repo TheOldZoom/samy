@@ -444,7 +444,11 @@
     "default_reason": "Meowing at my rivals.",
     "removed": "Welcome back! I've removed your AFK status. You were away for {duration}.",
     "mentioned": "{user} has been AFK for {time}: {reason}",
-    "limit": "You can't have more than **256 characters** in your reason."
+    "limit": "You can't have more than **256 characters** in your reason.",
+    "dm_title": "AFK Mentions Log",
+    "dm_empty": "You weren't pinged by anyone during your AFK period.",
+    "dm_entry": "- <@{mentioner}> in <#{channel}> [Jump]({url})",
+    "dm_footer": "Total: {count} mention(s)"
   },
   "lockdown": {
     "guild_only": "This command can only be used in a server.",

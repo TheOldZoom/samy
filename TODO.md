@@ -86,7 +86,7 @@ A roadmap for Samy's development.
 
 - [x] AFK
 
-- [ ] AFK mentions log (see who pinged you while AFK)
+- [x] AFK mentions log (see who pinged you while AFK)
 - [ ] Reminders (`remind add/list/remove`)
 - [ ] Highlight / keyword notification system (`highlight add/remove/list/ignore`)
 - [ ] Quick poll / timed poll (`poll`, `quickpoll`)
