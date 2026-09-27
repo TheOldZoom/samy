@@ -14,7 +14,7 @@ Moderation, utility, Last.fm, server management, and more, one bot for your whol
 [Add to your server](https://samy.zoomhub.xyz/invite) · [Documentation](https://samy.zoomhub.xyz/docs) · [Support Server](https://samy.zoomhub.xyz/discord)
 
 </div>
-
+4
 ---
 
 ## Table of Contents
