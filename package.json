@@ -28,8 +28,7 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
-    "@prisma/client": "7.10.0",
-    "discord.js": "^14.27.0"
+    "@prisma/client": "7.10.0"
   },
   "license": "AGPL-3.0"
 }
