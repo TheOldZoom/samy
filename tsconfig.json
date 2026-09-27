@@ -32,6 +32,9 @@
     "src/**/*.ts",
     "scripts/**/*.ts",
     "eslint.config.js",
-    "prisma.config.ts"
+    "prisma.config.ts",
+    "important/say.ts",
+    "important/builder.ts",
+    "important/ArgumentError.ts"
   ]
 }
