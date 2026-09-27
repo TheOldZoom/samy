@@ -5,8 +5,6 @@
   "scripts": {
     "dev": "nodemon --watch src --exec bun src/index.ts",
     "prisma": "prisma",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
     "format": "prettier --write",
     "format:check": "prettier --check .",
     "icons": "bun scripts/icons/index.ts"
@@ -31,13 +29,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
-    "discord.js": "^14.27.0",
-    "elysia": "latest",
-    "fs": "^0.0.1-security",
-    "parse-duration": "^2.1.8",
-    "pg": "^8.23.0",
-    "pino": "^10.3.1",
-    "pino-pretty": "^13.1.3"
+    "discord.js": "^14.27.0"
   },
   "license": "AGPL-3.0"
 }
