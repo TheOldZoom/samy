@@ -27,6 +27,9 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@discordjs/core": "^2.6.0",
+    "@discordjs/rest": "^2.6.3",
+    "@discordjs/ws": "^2.0.4",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0"
   },
