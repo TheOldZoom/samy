@@ -266,7 +266,7 @@ export default new Command({
       components: v2(
         new Container()
           .text(
-            Text(`${icons.paintpadbrush} ${hex}`),
+            Text(`${icons.paintpadbrush} **${hex}**`),
             Text(
               `> **HEX:** \`${hex}\`
 > **RGB:** \`rgb(${normalized.r}, ${normalized.g}, ${normalized.b})\`

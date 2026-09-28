@@ -114,32 +114,30 @@ export default class Command {
       this.subcommandGroups.set(group.name, group);
     }
 
-    const commandOptions = options.subcommandGroups?.length
-      ? options.subcommandGroups.map((group) => ({
-          name: group.name,
-          description: group.description,
-          type: ApplicationCommandOptionType.SubcommandGroup as const,
-          options: [...group.subcommands.values()].map((sub) => ({
-            name: sub.name,
-            description: sub.description,
-            type: ApplicationCommandOptionType.Subcommand as const,
-            options: sub.ephemeral
-              ? [...(sub.options ?? []), EPHEMERAL_OPTION]
-              : sub.options,
-          })),
-        }))
-      : options.subcommands?.length
-        ? options.subcommands.map((sub) => ({
-            name: sub.name,
-            description: sub.description,
-            type: ApplicationCommandOptionType.Subcommand as const,
-            options: sub.ephemeral
-              ? [...(sub.options ?? []), EPHEMERAL_OPTION]
-              : sub.options,
-          }))
-        : options.ephemeral
-          ? [...(options.options ?? []), EPHEMERAL_OPTION]
-          : options.options;
+    const commandOptions = [
+      ...(options.subcommandGroups?.map((group) => ({
+        name: group.name,
+        description: group.description,
+        type: ApplicationCommandOptionType.SubcommandGroup as const,
+        options: [...group.subcommands.values()].map((sub) => ({
+          name: sub.name,
+          description: sub.description,
+          type: ApplicationCommandOptionType.Subcommand as const,
+          options: sub.ephemeral
+            ? [...(sub.options ?? []), EPHEMERAL_OPTION]
+            : sub.options,
+        })),
+      })) ?? []),
+
+      ...(options.subcommands?.map((sub) => ({
+        name: sub.name,
+        description: sub.description,
+        type: ApplicationCommandOptionType.Subcommand as const,
+        options: sub.ephemeral
+          ? [...(sub.options ?? []), EPHEMERAL_OPTION]
+          : sub.options,
+      })) ?? []),
+    ];
 
     this.data = {
       name: options.name,

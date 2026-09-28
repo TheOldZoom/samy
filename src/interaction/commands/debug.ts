@@ -45,7 +45,7 @@ export default new Command({
                 `https://discord.com/oauth2/authorize?client_id=${client.user!.id}`,
                 icons.invite,
               ),
-              Buttons.link("Website", process.env.WEBSITE_URL!, icons.info),
+              Buttons.link("Website", process.env.WEBSITE_URL!, icons.link),
               Buttons.link("Discord", process.env.DISCORD_URL!, icons.Discord),
             ),
           ),
