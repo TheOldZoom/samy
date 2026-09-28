@@ -2,10 +2,15 @@ import { Client as DiscordClient, GatewayIntentBits } from "@discordjs/core";
 import { REST } from "@discordjs/rest";
 import { WebSocketManager } from "@discordjs/ws";
 import type { APIUser } from "@discordjs/core";
+
 import Logger from "./Logger";
 import { LoadEvents } from "./Event";
 import type Command from "./Command";
 import { LoadCommands } from "./Command";
+import InteractionHandler, {
+  LoadInteractionHandlers,
+} from "@/interaction/Handler";
+
 import prisma from "@/libs/Prisma";
 
 const token = process.env.DISCORD_TOKEN!;
@@ -15,11 +20,22 @@ export default class Client extends DiscordClient {
   private readonly ws: WebSocketManager;
 
   private shuttingDown = false;
-  private activeCommands = 0;
+  private activeInteractions = 0;
   private resolveShutdown?: () => void;
 
   user: APIUser | null = null;
+
   commands = new Map<string, Command>();
+
+  interactionHandlers: {
+    buttons: Map<string, InteractionHandler>;
+    selects: Map<string, InteractionHandler>;
+    modals: Map<string, InteractionHandler>;
+  } = {
+    buttons: new Map(),
+    selects: new Map(),
+    modals: new Map(),
+  };
 
   constructor() {
     const rest = new REST({ version: "10" }).setToken(token);
@@ -33,12 +49,18 @@ export default class Client extends DiscordClient {
     super({ gateway, rest });
 
     this.ws = gateway;
+
     this.setupGateway();
   }
 
   async login() {
     await LoadEvents(this);
     await LoadCommands(this);
+
+    await LoadInteractionHandlers(this, "buttons");
+    await LoadInteractionHandlers(this, "selects");
+    await LoadInteractionHandlers(this, "modals");
+
     await this.ws.connect();
   }
 
@@ -62,17 +84,20 @@ export default class Client extends DiscordClient {
     });
   }
 
-  startCommand() {
-    if (this.shuttingDown) return false;
+  startInteraction() {
+    if (this.shuttingDown) {
+      return false;
+    }
 
-    this.activeCommands++;
+    this.activeInteractions++;
+
     return true;
   }
 
-  finishCommand() {
-    this.activeCommands--;
+  finishInteraction() {
+    this.activeInteractions--;
 
-    if (this.shuttingDown && this.activeCommands === 0) {
+    if (this.shuttingDown && this.activeInteractions === 0) {
       this.resolveShutdown?.();
     }
   }
@@ -81,16 +106,16 @@ export default class Client extends DiscordClient {
     this.shuttingDown = true;
 
     this.logger.info(
-      `Shutting down, waiting for ${this.activeCommands} active command(s)...`,
+      `Shutting down, waiting for ${this.activeInteractions} active interaction(s)...`,
     );
 
-    if (this.activeCommands > 0) {
+    if (this.activeInteractions > 0) {
       await new Promise<void>((resolve) => {
         this.resolveShutdown = resolve;
       });
     }
 
-    this.logger.info("All commands finished");
+    this.logger.info("All interactions finished");
 
     this.ws.destroy();
 

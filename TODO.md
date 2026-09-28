@@ -5,12 +5,12 @@
 - [x] Finish Prisma integration
 - [x] Add graceful shutdown
 - [x] Add Gateway error/reconnect handling
-- [ ] Finish interaction routing
+- [x] Finish interaction routing
 
-  - [ ] Autocomplete
-  - [ ] Buttons
-  - [ ] Selects
-  - [ ] Modals
+  - [x] Autocomplete
+  - [x] Buttons
+  - [x] Selects
+  - [x] Modals
 
 - [ ] Add cooldowns
 - [ ] Add permission helpers

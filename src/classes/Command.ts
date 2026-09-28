@@ -7,7 +7,9 @@ import {
   type APIChatInputApplicationCommandInteraction,
   type APIApplicationCommandBasicOption,
   type APIApplicationCommandInteractionDataOption,
+  type APIApplicationCommandAutocompleteInteraction,
 } from "@discordjs/core";
+
 import type Client from "./Client";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
@@ -15,7 +17,7 @@ import type { Interaction } from "./Interaction";
 
 export type CommandExecute = (
   client: Client,
-  interaction: Interaction<APIChatInputApplicationCommandInteraction>,
+  interaction: Interaction,
 ) => Promise<void> | void;
 
 export interface SubcommandOptions {
@@ -23,6 +25,7 @@ export interface SubcommandOptions {
   description: string;
   options?: APIApplicationCommandBasicOption[];
   execute: CommandExecute;
+  autocomplete?: CommandExecute;
 }
 
 export class Subcommand {
@@ -30,12 +33,14 @@ export class Subcommand {
   public readonly description: string;
   public readonly options?: APIApplicationCommandBasicOption[];
   public readonly execute: CommandExecute;
+  public readonly autocomplete?: CommandExecute;
 
   constructor(options: SubcommandOptions) {
     this.name = options.name;
     this.description = options.description;
     this.options = options.options;
     this.execute = options.execute;
+    this.autocomplete = options.autocomplete;
   }
 }
 
@@ -69,12 +74,17 @@ export interface CommandOptions {
   everywhere?: boolean;
   defaultMemberPermissions?: string;
   execute?: CommandExecute;
+  autocomplete?: CommandExecute;
 }
 
 export default class Command {
   public readonly data: RESTPostAPIChatInputApplicationCommandsJSONBody;
+
   public readonly execute?: CommandExecute;
+  public readonly autocomplete?: CommandExecute;
+
   public readonly subcommands = new Map<string, Subcommand>();
+
   public readonly subcommandGroups = new Map<string, SubcommandGroup>();
 
   constructor(options: CommandOptions) {
@@ -113,12 +123,14 @@ export default class Command {
       type: ApplicationCommandType.ChatInput,
       options: commandOptions,
       default_member_permissions: options.defaultMemberPermissions,
+
       ...(options.everywhere
         ? {
             integration_types: [
               ApplicationIntegrationType.GuildInstall,
               ApplicationIntegrationType.UserInstall,
             ],
+
             contexts: [
               InteractionContextType.Guild,
               InteractionContextType.BotDM,
@@ -129,6 +141,7 @@ export default class Command {
     };
 
     this.execute = options.execute;
+    this.autocomplete = options.autocomplete;
   }
 
   get name() {
@@ -144,6 +157,7 @@ export default class Command {
     if (first?.type === ApplicationCommandOptionType.SubcommandGroup) {
       const group = this.subcommandGroups.get(first.name);
       const sub = first.options?.[0];
+
       const subcommand = sub ? group?.subcommands.get(sub.name) : undefined;
 
       return {
@@ -163,12 +177,41 @@ export default class Command {
       };
     }
 
-    return { execute: this.execute, options: interaction.data.options };
+    return {
+      execute: this.execute,
+      options: interaction.data.options,
+    };
+  }
+
+  resolveAutocomplete(
+    interaction: APIApplicationCommandAutocompleteInteraction,
+  ): CommandExecute | undefined {
+    const first = interaction.data.options?.[0];
+
+    if (first?.type === ApplicationCommandOptionType.SubcommandGroup) {
+      const group = this.subcommandGroups.get(first.name);
+      const sub = first.options?.[0];
+
+      if (sub?.type === ApplicationCommandOptionType.Subcommand) {
+        return group?.subcommands.get(sub.name)?.autocomplete;
+      }
+
+      return undefined;
+    }
+
+    if (first?.type === ApplicationCommandOptionType.Subcommand) {
+      return this.subcommands.get(first.name)?.autocomplete;
+    }
+
+    return this.autocomplete;
   }
 }
 
 async function getCommandFiles(directory: string): Promise<string[]> {
-  const entries = await readdir(directory, { withFileTypes: true });
+  const entries = await readdir(directory, {
+    withFileTypes: true,
+  });
+
   const files: string[] = [];
 
   for (const entry of entries) {
@@ -191,12 +234,18 @@ async function getCommandFiles(directory: string): Promise<string[]> {
 }
 
 export async function LoadCommands(client: Client) {
-  const commandsDirectory = join(import.meta.dir, "../commands");
+  const commandsDirectory = join(import.meta.dir, "../interaction/commands");
   const files = await getCommandFiles(commandsDirectory);
 
   for (const file of files) {
-    const command = ((await import(file)) as { default: Command }).default;
+    const command = (
+      (await import(file)) as {
+        default: Command;
+      }
+    ).default;
+
     client.commands.set(command.name, command);
+
     client.logger.info(`${`[COMMAND]:`.padEnd(10)} ${command.name}`);
   }
 }
@@ -208,6 +257,8 @@ interface NormalizableCommand {
   options?: unknown[];
   default_member_permissions?: string | null;
   nsfw?: boolean;
+  integration_types?: unknown[] | null;
+  contexts?: unknown[] | null;
 }
 
 function normalize(command: NormalizableCommand) {
@@ -218,6 +269,8 @@ function normalize(command: NormalizableCommand) {
     options: command.options ?? [],
     default_member_permissions: command.default_member_permissions ?? null,
     nsfw: command.nsfw ?? false,
+    integration_types: command.integration_types ?? [],
+    contexts: command.contexts ?? [],
   });
 }
 
@@ -228,10 +281,14 @@ function stableStringify(value: unknown): string {
 
   if (value !== null && typeof value === "object") {
     const keys = Object.keys(value as Record<string, unknown>).sort();
+
     const entries = keys.map(
       (key) =>
-        `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`,
+        `${JSON.stringify(key)}:${stableStringify(
+          (value as Record<string, unknown>)[key],
+        )}`,
     );
+
     return `{${entries.join(",")}}`;
   }
 
@@ -240,6 +297,7 @@ function stableStringify(value: unknown): string {
 
 export async function RegisterCommands(client: Client) {
   const local = [...client.commands.values()].map((command) => command.data);
+
   const existing = await client.api.applicationCommands.getGlobalCommands(
     client.user!.id,
   );
@@ -249,13 +307,18 @@ export async function RegisterCommands(client: Client) {
   const noDifferences =
     sameCount &&
     local.every((localCommand) => {
-      const match = existing.find((e) => e.name === localCommand.name);
+      const match = existing.find(
+        (existingCommand) => existingCommand.name === localCommand.name,
+      );
+
       if (!match) return false;
+
       return normalize(localCommand) === normalize(match);
     });
 
   if (noDifferences) {
     client.logger.info("Commands unchanged, skipping registration");
+
     return;
   }
 

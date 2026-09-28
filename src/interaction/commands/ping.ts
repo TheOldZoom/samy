@@ -1,4 +1,4 @@
-import Command from "../classes/Command";
+import Command from "@/classes/Command";
 
 export default new Command({
   name: "ping",
