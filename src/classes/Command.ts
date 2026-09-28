@@ -17,6 +17,13 @@ import type { Interaction } from "./Interaction";
 
 const DEFAULT_COOLDOWN = 2.5;
 
+const EPHEMERAL_OPTION: APIApplicationCommandBasicOption = {
+  name: "ephemeral",
+  description: "Whether the response should only be visible to you",
+  type: ApplicationCommandOptionType.Boolean,
+  required: false,
+};
+
 export type CommandExecute = (
   client: Client,
   interaction: Interaction,
@@ -27,6 +34,7 @@ export interface SubcommandOptions {
   description: string;
   options?: APIApplicationCommandBasicOption[];
   cooldown?: number;
+  ephemeral?: boolean;
   execute: CommandExecute;
   autocomplete?: CommandExecute;
 }
@@ -36,6 +44,7 @@ export class Subcommand {
   public readonly description: string;
   public readonly options?: APIApplicationCommandBasicOption[];
   public readonly cooldown?: number;
+  public readonly ephemeral: boolean;
   public readonly execute: CommandExecute;
   public readonly autocomplete?: CommandExecute;
 
@@ -44,6 +53,7 @@ export class Subcommand {
     this.description = options.description;
     this.options = options.options;
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
+    this.ephemeral = options.ephemeral ?? false;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
   }
@@ -79,6 +89,7 @@ export interface CommandOptions {
   everywhere?: boolean;
   defaultMemberPermissions?: string;
   cooldown?: number;
+  ephemeral?: boolean;
   execute?: CommandExecute;
   autocomplete?: CommandExecute;
 }
@@ -87,11 +98,11 @@ export default class Command {
   public readonly data: RESTPostAPIChatInputApplicationCommandsJSONBody;
 
   public readonly cooldown?: number;
+  public readonly ephemeral: boolean;
   public readonly execute?: CommandExecute;
   public readonly autocomplete?: CommandExecute;
 
   public readonly subcommands = new Map<string, Subcommand>();
-
   public readonly subcommandGroups = new Map<string, SubcommandGroup>();
 
   constructor(options: CommandOptions) {
@@ -112,7 +123,9 @@ export default class Command {
             name: sub.name,
             description: sub.description,
             type: ApplicationCommandOptionType.Subcommand as const,
-            options: sub.options,
+            options: sub.ephemeral
+              ? [...(sub.options ?? []), EPHEMERAL_OPTION]
+              : sub.options,
           })),
         }))
       : options.subcommands?.length
@@ -120,9 +133,13 @@ export default class Command {
             name: sub.name,
             description: sub.description,
             type: ApplicationCommandOptionType.Subcommand as const,
-            options: sub.options,
+            options: sub.ephemeral
+              ? [...(sub.options ?? []), EPHEMERAL_OPTION]
+              : sub.options,
           }))
-        : options.options;
+        : options.ephemeral
+          ? [...(options.options ?? []), EPHEMERAL_OPTION]
+          : options.options;
 
     this.data = {
       name: options.name,
@@ -148,6 +165,7 @@ export default class Command {
     };
 
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
+    this.ephemeral = options.ephemeral ?? false;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
   }

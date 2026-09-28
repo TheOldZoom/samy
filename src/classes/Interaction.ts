@@ -11,8 +11,11 @@ import {
   type APIApplicationCommandInteractionDataOption,
 } from "@discordjs/core";
 
+import type { RawFile } from "@discordjs/rest";
+
 type ReplyData = APIInteractionResponseCallbackData & {
   ephemeral?: boolean;
+  files?: RawFile[];
 };
 
 type OptionValueMap = {
@@ -26,20 +29,6 @@ type OptionValueMap = {
   [ApplicationCommandOptionType.Number]: number;
   [ApplicationCommandOptionType.Attachment]: string;
 };
-
-type ComponentData = Extract<
-  APIInteraction,
-  {
-    type: InteractionType.MessageComponent;
-  }
->["data"];
-
-type ModalData = Extract<
-  APIInteraction,
-  {
-    type: InteractionType.ModalSubmit;
-  }
->["data"];
 
 export type Interaction<T extends APIInteraction = APIInteraction> = T & {
   isDeferred(): boolean;
@@ -79,28 +68,34 @@ export function createInteraction<T extends APIInteraction>(
   resolvedOptions?: APIApplicationCommandInteractionDataOption[],
 ): Interaction<T> {
   let state: "none" | "deferred" | "replied" = "none";
-  let ephemeral = false;
+  let ephemeral = getEphemeralOption(resolvedOptions);
 
-  function resolveFlags(
-    { ephemeral: requested, ...data }: ReplyData,
-    forceEphemeral?: boolean,
-  ): APIInteractionResponseCallbackData {
-    const isEphemeral = forceEphemeral ?? requested ?? false;
+  function resolveReplyData({
+    ephemeral: requested,
+    files,
+    ...data
+  }: ReplyData): {
+    data: APIInteractionResponseCallbackData;
+    files?: RawFile[];
+  } {
+    const isEphemeral = requested ?? ephemeral;
 
-    if (!isEphemeral) {
-      return data;
-    }
+    const resolvedData: APIInteractionResponseCallbackData = isEphemeral
+      ? {
+          ...data,
+          flags: (data.flags ?? 0) | MessageFlags.Ephemeral,
+        }
+      : data;
 
     return {
-      ...data,
-      flags: (data.flags ?? 0) | MessageFlags.Ephemeral,
+      data: resolvedData,
+      files,
     };
   }
 
   const interaction = raw as Interaction<T>;
 
   interaction.isDeferred = () => state === "deferred";
-
   interaction.isReplied = () => state === "replied";
 
   interaction.isButton = () => {
@@ -141,54 +136,56 @@ export function createInteraction<T extends APIInteraction>(
     return findModalValue(raw.data.components, customId);
   };
 
-  interaction.defer = async (eph = false) => {
+  interaction.defer = async (eph) => {
+    const isEphemeral = eph ?? ephemeral;
+
     await api.interactions.defer(raw.id, raw.token, {
-      flags: eph ? MessageFlags.Ephemeral : undefined,
+      flags: isEphemeral ? MessageFlags.Ephemeral : undefined,
     });
 
     state = "deferred";
-    ephemeral = eph;
+    ephemeral = isEphemeral;
   };
 
   interaction.reply = async (data) => {
+    const resolved = resolveReplyData(data);
+
     if (state === "deferred") {
-      await api.interactions.editReply(
-        raw.application_id,
-        raw.token,
-        resolveFlags(data, ephemeral),
-      );
+      await api.interactions.editReply(raw.application_id, raw.token, {
+        ...resolved.data,
+        files: resolved.files,
+      });
 
       state = "replied";
       return;
     }
 
     if (state === "replied") {
-      await api.interactions.followUp(
-        raw.application_id,
-        raw.token,
-        resolveFlags(data, ephemeral),
-      );
+      await api.interactions.followUp(raw.application_id, raw.token, {
+        ...resolved.data,
+        files: resolved.files,
+      });
 
       return;
     }
 
-    ephemeral = data.ephemeral ?? false;
+    ephemeral = data.ephemeral ?? ephemeral;
 
-    await api.interactions.reply(
-      raw.id,
-      raw.token,
-      resolveFlags(data, ephemeral),
-    );
+    await api.interactions.reply(raw.id, raw.token, {
+      ...resolved.data,
+      files: resolved.files,
+    });
 
     state = "replied";
   };
 
   interaction.followUp = async (data) => {
-    await api.interactions.followUp(
-      raw.application_id,
-      raw.token,
-      resolveFlags(data, ephemeral),
-    );
+    const resolved = resolveReplyData(data);
+
+    await api.interactions.followUp(raw.application_id, raw.token, {
+      ...resolved.data,
+      files: resolved.files,
+    });
   };
 
   interaction.deleteReply = async (messageId) => {
@@ -249,6 +246,20 @@ export function createInteraction<T extends APIInteraction>(
   };
 
   return interaction;
+}
+
+function getEphemeralOption(
+  options?: APIApplicationCommandInteractionDataOption[],
+): boolean {
+  const option = options?.find(
+    (option) =>
+      option.name === "ephemeral" &&
+      option.type === ApplicationCommandOptionType.Boolean,
+  );
+
+  return option && "value" in option && typeof option.value === "boolean"
+    ? option.value
+    : false;
 }
 
 function findModalValue(
