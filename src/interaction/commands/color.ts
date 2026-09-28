@@ -1,12 +1,10 @@
-import {
-  ApplicationCommandOptionType,
-  type APIApplicationCommandBasicOption,
-} from "@discordjs/core";
+import { ApplicationCommandOptionType } from "@discordjs/core";
 import convert from "color-convert";
 
 import Command from "@/classes/Command";
 import { Container, Text, v2 } from "@/utils/ui/components";
 import { Media } from "@/utils/ui/components";
+import { icons } from "@/utils/icons";
 
 type Color = {
   r: number;
@@ -218,6 +216,7 @@ export default new Command({
       required: false,
     },
   ],
+
   ephemeral: true,
 
   async execute(client, interaction) {
@@ -230,9 +229,20 @@ export default new Command({
 
     if (!color) {
       await interaction.reply({
-        content:
-          "Invalid color. Use HEX (`#5865F2`), RGB (`rgb(88, 101, 242)`), or HSL (`hsl(235, 86%, 65%)`).",
-        ephemeral: true,
+        components: v2(
+          new Container().text(
+            Text(`${icons.Wrong} Invalid color`),
+            Text(
+              `Use a valid HEX, RGB, or HSL color.
+
+> **HEX:** \`#5865F2\`
+> **RGB:** \`rgb(88, 101, 242)\`
+> **HSL:** \`hsl(235, 86%, 65%)\``,
+            ),
+          ),
+        ).components,
+
+        flags: 1 << 15,
       });
 
       return;
@@ -256,7 +266,7 @@ export default new Command({
       components: v2(
         new Container()
           .text(
-            Text(`## ${hex}`),
+            Text(`${icons.paintpadbrush} ${hex}`),
             Text(
               `> **HEX:** \`${hex}\`
 > **RGB:** \`rgb(${normalized.r}, ${normalized.g}, ${normalized.b})\`
