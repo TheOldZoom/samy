@@ -16,6 +16,8 @@ services:
   db:
     image: postgres:18
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-samy}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
