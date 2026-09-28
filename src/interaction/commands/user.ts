@@ -11,13 +11,14 @@ import {
   ActionRow,
   Buttons,
   Container,
+  Media,
   Section,
   Separator,
   Text,
   v2,
 } from "@/utils/ui/components";
 import { icons } from "@/utils/icons";
-import { avatarURL } from "@/utils/user";
+import { renderUserCard } from "@/utils/ui/cards/user";
 
 type MemberInfo = Pick<APIGuildMember, "nick" | "joined_at" | "premium_since">;
 
@@ -33,7 +34,7 @@ export default new Command({
   name: "user",
   description: "Shows information about a user",
   everywhere: true,
-
+  ephemeral: true,
   options: [
     {
       name: "user",
@@ -58,6 +59,8 @@ export default new Command({
 
     let user: APIUser | undefined;
     let member: MemberInfo | undefined;
+
+    interaction.defer();
 
     if (targetId) {
       member = interaction.data.resolved?.members?.[targetId];
@@ -89,12 +92,17 @@ export default new Command({
 
     const displayName = member?.nick ?? user.global_name ?? user.username;
 
+    const card = await renderUserCard({ user, member });
+
     await interaction.reply({
+      files: [{ name: `user.${card.ext}`, data: card.data }],
+
       ...v2(
         new Container()
-          .section(
-            Section({
-              description: [
+          .media(Media(`attachment://user.${card.ext}`))
+          .text(
+            Text(
+              [
                 `-# ${icons.Person} **${displayName}** · ${user.username}`,
                 `\`${user.id}\``,
                 " ",
@@ -103,13 +111,12 @@ export default new Command({
                   ? `Joined: **<t:${unix(member.joined_at)}:D> (<t:${unix(member.joined_at)}:R>)**`
                   : "",
                 member?.premium_since
-                  ? `Boosting: **<t:${unix(member.premium_since)}:D> (<t:${unix(member.premium_since)}:R>)**`
+                  ? `Boosted: **<t:${unix(member.premium_since)}:D> (<t:${unix(member.premium_since)}:R>)**`
                   : "",
               ]
                 .filter(Boolean)
                 .join("\n"),
-              thumbnail: avatarURL(user),
-            }),
+            ),
           )
           .separator(Separator())
           .actionRow(
@@ -131,7 +138,12 @@ export default new Command({
             ),
           ),
       ),
-      allowed_mentions: { parse: [] },
+
+      flags: 1 << 15,
+
+      allowed_mentions: {
+        parse: [],
+      },
     });
   },
 });
