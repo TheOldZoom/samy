@@ -66,9 +66,10 @@ export function createInteraction<T extends APIInteraction>(
   api: API,
   raw: T,
   resolvedOptions?: APIApplicationCommandInteractionDataOption[],
+  defaultEphemeral = false,
 ): Interaction<T> {
   let state: "none" | "deferred" | "replied" = "none";
-  let ephemeral = getEphemeralOption(resolvedOptions);
+  let ephemeral = getEphemeralOption(resolvedOptions) ?? defaultEphemeral;
 
   function resolveReplyData({
     ephemeral: requested,
@@ -248,9 +249,13 @@ export function createInteraction<T extends APIInteraction>(
   return interaction;
 }
 
+/**
+ * Returns the user's explicit choice, or `undefined` if they didn't set one,
+ * so the command default can apply.
+ */
 function getEphemeralOption(
   options?: APIApplicationCommandInteractionDataOption[],
-): boolean {
+): boolean | undefined {
   const option = options?.find(
     (option) =>
       option.name === "ephemeral" &&
@@ -259,7 +264,7 @@ function getEphemeralOption(
 
   return option && "value" in option && typeof option.value === "boolean"
     ? option.value
-    : false;
+    : undefined;
 }
 
 function findModalValue(

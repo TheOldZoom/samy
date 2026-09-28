@@ -24,6 +24,19 @@ const EPHEMERAL_OPTION: APIApplicationCommandBasicOption = {
   required: false,
 };
 
+function withEphemeral(
+  options: APIApplicationCommandBasicOption[] | undefined,
+  ephemeral: boolean,
+): APIApplicationCommandBasicOption[] | undefined {
+  if (!ephemeral) return options;
+
+  if (options?.some((option) => option.name === EPHEMERAL_OPTION.name)) {
+    return options;
+  }
+
+  return [...(options ?? []), EPHEMERAL_OPTION];
+}
+
 export type CommandExecute = (
   client: Client,
   interaction: Interaction,
@@ -114,30 +127,34 @@ export default class Command {
       this.subcommandGroups.set(group.name, group);
     }
 
-    const commandOptions = [
-      ...(options.subcommandGroups?.map((group) => ({
-        name: group.name,
-        description: group.description,
-        type: ApplicationCommandOptionType.SubcommandGroup as const,
-        options: [...group.subcommands.values()].map((sub) => ({
-          name: sub.name,
-          description: sub.description,
-          type: ApplicationCommandOptionType.Subcommand as const,
-          options: sub.ephemeral
-            ? [...(sub.options ?? []), EPHEMERAL_OPTION]
-            : sub.options,
-        })),
-      })) ?? []),
+    const ephemeral = options.ephemeral ?? false;
 
-      ...(options.subcommands?.map((sub) => ({
-        name: sub.name,
-        description: sub.description,
-        type: ApplicationCommandOptionType.Subcommand as const,
-        options: sub.ephemeral
-          ? [...(sub.options ?? []), EPHEMERAL_OPTION]
-          : sub.options,
-      })) ?? []),
-    ];
+    const hasSubcommands =
+      (options.subcommands?.length ?? 0) > 0 ||
+      (options.subcommandGroups?.length ?? 0) > 0;
+
+    const commandOptions = hasSubcommands
+      ? [
+          ...(options.subcommandGroups?.map((group) => ({
+            name: group.name,
+            description: group.description,
+            type: ApplicationCommandOptionType.SubcommandGroup as const,
+            options: [...group.subcommands.values()].map((sub) => ({
+              name: sub.name,
+              description: sub.description,
+              type: ApplicationCommandOptionType.Subcommand as const,
+              options: withEphemeral(sub.options, sub.ephemeral),
+            })),
+          })) ?? []),
+
+          ...(options.subcommands?.map((sub) => ({
+            name: sub.name,
+            description: sub.description,
+            type: ApplicationCommandOptionType.Subcommand as const,
+            options: withEphemeral(sub.options, sub.ephemeral),
+          })) ?? []),
+        ]
+      : withEphemeral(options.options, ephemeral);
 
     this.data = {
       name: options.name,
@@ -163,7 +180,7 @@ export default class Command {
     };
 
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
-    this.ephemeral = options.ephemeral ?? false;
+    this.ephemeral = ephemeral;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
   }
@@ -176,6 +193,7 @@ export default class Command {
     execute?: CommandExecute;
     options?: APIApplicationCommandInteractionDataOption[];
     cooldown?: number;
+    ephemeral: boolean;
     key: string;
   } {
     const first = interaction.data.options?.[0];
@@ -191,6 +209,7 @@ export default class Command {
         options: sub?.options as
           APIApplicationCommandInteractionDataOption[] | undefined,
         cooldown: subcommand?.cooldown ?? this.cooldown,
+        ephemeral: subcommand?.ephemeral ?? false,
         key: `${this.name}:${first.name}:${sub?.name}`,
       };
     }
@@ -203,6 +222,7 @@ export default class Command {
         options: first.options as
           APIApplicationCommandInteractionDataOption[] | undefined,
         cooldown: subcommand?.cooldown ?? this.cooldown,
+        ephemeral: subcommand?.ephemeral ?? false,
         key: `${this.name}:${first.name}`,
       };
     }
@@ -211,6 +231,7 @@ export default class Command {
       execute: this.execute,
       options: interaction.data.options,
       cooldown: this.cooldown,
+      ephemeral: this.ephemeral,
       key: this.name,
     };
   }
