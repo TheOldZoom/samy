@@ -7,7 +7,8 @@
     "prisma": "prisma",
     "format": "prettier --write",
     "format:check": "prettier --check .",
-    "icons": "bun scripts/icons/index.ts"
+    "icons": "bun scripts/icons/index.ts",
+    "merge": "bash scripts/merge.sh"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
