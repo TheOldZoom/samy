@@ -18,7 +18,7 @@
 
 ### Utilities
 
-- [ ] `/ping`
+- [x] `/ping`
 - [ ] `/status`
 - [ ] `/user`
 - [ ] `/server`
