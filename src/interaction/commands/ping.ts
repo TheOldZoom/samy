@@ -23,9 +23,9 @@ export default new Command({
           Text(`-# ${icons.pings} Ping`),
           Text(
             [
-              `> **Gateway:** ${formatMs(ws)}`,
-              `> **REST:** ${rest}ms`,
-              `> **Database:** ${formatMs(db, "Unreachable")}`,
+              `> Gateway: **${formatMs(ws)}**`,
+              `> REST: **${rest}ms**`,
+              `> Database: **${formatMs(db, "Unreachable")}**`,
             ].join("\n"),
           ),
         ),

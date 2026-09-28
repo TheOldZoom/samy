@@ -20,12 +20,11 @@
 
 [x] `/ping` Check if the bot is online
 [x] `/status` View the bot's current status
-[ ] `/user` View information about a user
+[x] `/user` View information about a user
 [ ] `/server` View information about the server
 [ ] `/emoji` View information about an emoji
 [ ] `/sticker` View information about a sticker
 [ ] `/remind` Create and manage reminders
-[ ] `/poll` Create and manage polls
 [ ] `/timestamp` Create and manage Discord timestamps
 [ ] `/afk` Set or remove your AFK status
 [ ] `/weather` Check the weather for a location

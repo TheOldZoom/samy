@@ -29,18 +29,42 @@ export function Button(options: {
 }
 
 export const Buttons = {
-  primary: (label: string, id: string) =>
-    Button({ label, customId: id, style: ButtonStyle.Primary }),
+  primary: (label: string, id: string, emoji?: string) =>
+    Button({
+      label,
+      customId: id,
+      style: ButtonStyle.Primary,
+      emoji,
+    }),
 
-  secondary: (label: string, id: string) =>
-    Button({ label, customId: id, style: ButtonStyle.Secondary }),
+  secondary: (label: string, id: string, emoji?: string) =>
+    Button({
+      label,
+      customId: id,
+      style: ButtonStyle.Secondary,
+      emoji,
+    }),
 
-  success: (label: string, id: string) =>
-    Button({ label, customId: id, style: ButtonStyle.Success }),
+  success: (label: string, id: string, emoji?: string) =>
+    Button({
+      label,
+      customId: id,
+      style: ButtonStyle.Success,
+      emoji,
+    }),
 
-  danger: (label: string, id: string) =>
-    Button({ label, customId: id, style: ButtonStyle.Danger }),
+  danger: (label: string, id: string, emoji?: string) =>
+    Button({
+      label,
+      customId: id,
+      style: ButtonStyle.Danger,
+      emoji,
+    }),
 
   link: (label: string, url: string, emoji?: string) =>
-    Button({ label, url, emoji }),
+    Button({
+      label,
+      url,
+      emoji,
+    }),
 };

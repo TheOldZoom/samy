@@ -10,6 +10,7 @@ import {
 } from "@discordjs/core";
 
 import type Client from "@/classes/Client";
+import prisma from "@/libs/Prisma";
 import { createInteraction, type Interaction } from "@/classes/Interaction";
 import { Container, Text, v2 } from "@/utils/ui/components";
 import { parseComponentId } from "./ComponentId";
@@ -60,6 +61,56 @@ export async function routeInteraction(
   }
 }
 
+function getUtcMidnightTimestamp(): number {
+  const now = new Date();
+  return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+}
+
+function getTomorrowMidnight(): Date {
+  const now = new Date();
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
+  );
+}
+
+async function consumeDailyUse(
+  userId: string,
+  commandKey: string,
+  dailyLimit: number,
+): Promise<{ allowed: true } | { allowed: false; resetAt: number }> {
+  const resetAt = getTomorrowMidnight();
+
+  const record = await prisma.dailyUsage.findFirst({
+    where: { userId, commandKey },
+  });
+
+  if (!record) {
+    await prisma.dailyUsage.create({
+      data: { userId, commandKey, count: 1, resetAt },
+    });
+    return { allowed: true };
+  }
+
+  if (record.resetAt <= new Date()) {
+    await prisma.dailyUsage.update({
+      where: { id: record.id },
+      data: { count: 1, resetAt },
+    });
+    return { allowed: true };
+  }
+
+  if (record.count >= dailyLimit) {
+    return { allowed: false, resetAt: record.resetAt.getTime() };
+  }
+
+  await prisma.dailyUsage.update({
+    where: { id: record.id },
+    data: { count: { increment: 1 } },
+  });
+
+  return { allowed: true };
+}
+
 async function handleCommand(client: Client, api: API, raw: APIInteraction) {
   if (raw.type !== InteractionType.ApplicationCommand) {
     return;
@@ -76,7 +127,7 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
     return;
   }
 
-  const { execute, options, cooldown, key } = command.resolve(raw);
+  const { execute, options, cooldown, key, dailyLimit } = command.resolve(raw);
 
   if (!execute) {
     client.logger.warn(`No handler resolved for "${raw.data.name}"`);
@@ -84,9 +135,9 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
   }
 
   const interaction = createInteraction(api, raw, options);
+  const userId = (raw.member?.user ?? raw.user)!.id;
 
   if (cooldown) {
-    const userId = (raw.member?.user ?? raw.user)!.id;
     const expires = client.useCooldown(key, userId, cooldown);
 
     if (expires) {
@@ -96,6 +147,27 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
             new Container().text(
               Text(
                 `You're on cooldown. Try again <t:${Math.ceil(expires / 1000)}:R>.`,
+              ),
+            ),
+          ),
+          ephemeral: true,
+        })
+        .catch(() => {});
+
+      return;
+    }
+  }
+
+  if (dailyLimit !== undefined) {
+    const result = await consumeDailyUse(userId, key, dailyLimit);
+
+    if (!result.allowed) {
+      await interaction
+        .reply({
+          ...v2(
+            new Container().text(
+              Text(
+                `You've reached your daily limit. Try again <t:${Math.ceil(result.resetAt / 1000)}:R>.`,
               ),
             ),
           ),

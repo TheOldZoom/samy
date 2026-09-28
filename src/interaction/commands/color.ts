@@ -268,9 +268,9 @@ export default new Command({
           .text(
             Text(`${icons.paintpadbrush} **${hex}**`),
             Text(
-              `> **HEX:** \`${hex}\`
-> **RGB:** \`rgb(${normalized.r}, ${normalized.g}, ${normalized.b})\`
-> **HSL:** \`hsl(${h}, ${s}%, ${l}%)\``,
+              `> HEX: \`${hex}\`
+> RGB: \`rgb(${normalized.r}, ${normalized.g}, ${normalized.b})\`
+> HSL: \`hsl(${h}, ${s}%, ${l}%)\``,
             ),
           )
           .media(Media("attachment://color.png")),

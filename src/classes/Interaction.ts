@@ -249,10 +249,6 @@ export function createInteraction<T extends APIInteraction>(
   return interaction;
 }
 
-/**
- * Returns the user's explicit choice, or `undefined` if they didn't set one,
- * so the command default can apply.
- */
 function getEphemeralOption(
   options?: APIApplicationCommandInteractionDataOption[],
 ): boolean | undefined {
