@@ -41,5 +41,6 @@ export const Buttons = {
   danger: (label: string, id: string) =>
     Button({ label, customId: id, style: ButtonStyle.Danger }),
 
-  link: (label: string, url: string) => Button({ label, url }),
+  link: (label: string, url: string, emoji?: string) =>
+    Button({ label, url, emoji }),
 };

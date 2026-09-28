@@ -19,6 +19,16 @@ import prisma from "@/libs/Prisma";
 
 const token = process.env.DISCORD_TOKEN!;
 
+const PING_TARGETS = ["ws", "rest", "db"] as const;
+
+export type PingTarget = (typeof PING_TARGETS)[number];
+
+interface PingResult {
+  ws: number | null;
+  rest: number;
+  db: number | null;
+}
+
 export default class Client extends DiscordClient {
   readonly logger = new Logger();
   private readonly ws: WebSocketManager;
@@ -71,6 +81,12 @@ export default class Client extends DiscordClient {
     await this.ws.connect();
   }
 
+  async getShardId(guildId: string): Promise<number> {
+    const shardCount = (await this.ws.getShardIds()).length;
+
+    return Number((BigInt(guildId) >> 22n) % BigInt(shardCount));
+  }
+
   private setupGateway() {
     this.ws.on(WebSocketShardEvents.Error, (error, shardId) => {
       this.logger.error({ err: error }, `Gateway error (shard ${shardId})`);
@@ -98,20 +114,53 @@ export default class Client extends DiscordClient {
     );
   }
 
-  async ping() {
-    const start = performance.now();
+  async ping<T extends PingTarget>(
+    guildId: string | null | undefined,
+    ...targets: T[]
+  ): Promise<Pick<PingResult, T>> {
+    const wanted = new Set<PingTarget>(targets.length ? targets : PING_TARGETS);
 
-    await this.rest.get(Routes.gateway());
+    const result: Partial<PingResult> = {};
+    const tasks: Promise<void>[] = [];
 
-    const rest = Math.round(performance.now() - start);
+    if (wanted.has("ws")) {
+      const shardId = guildId ? await this.getShardId(guildId) : null;
 
-    const latencies = [...this.shardLatencies.values()];
+      result.ws =
+        shardId === null ? null : (this.shardLatencies.get(shardId) ?? null);
+    }
 
-    const ws = latencies.length
-      ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length)
-      : null;
+    if (wanted.has("rest")) {
+      tasks.push(
+        (async () => {
+          const start = performance.now();
 
-    return { ws, rest };
+          await this.rest.get(Routes.gateway());
+
+          result.rest = Math.round(performance.now() - start);
+        })(),
+      );
+    }
+
+    if (wanted.has("db")) {
+      tasks.push(
+        (async () => {
+          const start = performance.now();
+
+          try {
+            await prisma.$queryRaw`SELECT 1`;
+
+            result.db = Math.round(performance.now() - start);
+          } catch {
+            result.db = null;
+          }
+        })(),
+      );
+    }
+
+    await Promise.all(tasks);
+
+    return result as Pick<PingResult, T>;
   }
 
   useCooldown(key: string, userId: string, seconds: number): number | null {

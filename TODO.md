@@ -19,7 +19,7 @@
 ### Utilities
 
 [x] `/ping` Check if the bot is online
-[ ] `/status` View the bot's current status
+[x] `/status` View the bot's current status
 [ ] `/user` View information about a user
 [ ] `/server` View information about the server
 [ ] `/emoji` View information about an emoji
