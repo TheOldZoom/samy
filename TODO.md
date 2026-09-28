@@ -34,13 +34,13 @@
 [ ] `/convert` Convert between units and currencies
 [ ] `/timezone` Manage and compare timezones
 [ ] `/shorten` Shorten or expand a URL
-[ ] `/text` Encode and transform text
+[x] `/text` Encode and transform text
 
-[ ] `base64` Encode or decode Base64 text
-[ ] `hash` Generate a hash from text
-[ ] `reverse` Reverse text
-[ ] `mock` Generate mock text
-[ ] `ascii` Convert text to ASCII
+[x] `base64` Encode or decode Base64 text
+[x] `hash` Generate a hash from text
+[x] `reverse` Reverse text
+[x] `mock` Generate mock text
+[x] `ascii` Convert text to ASCII
 
 [ ] `/unicode` Search and inspect Unicode characters
 [x] `/color` View and convert colors
