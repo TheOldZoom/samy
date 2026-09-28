@@ -1,19 +1,23 @@
 import InteractionHandler from "@/interaction/Handler";
+import {
+  ActionRow,
+  Container,
+  SelectMenu,
+  Text,
+  v2,
+} from "@/utils/ui/components";
 
 export default new InteractionHandler({
   feature: "demo",
   action: "select",
 
   async execute(client, interaction) {
-    await interaction.updateMessage({
-      content: "Choose an option:",
-      components: [
-        {
-          type: 1,
-          components: [
-            {
-              type: 3,
-              custom_id: "demo:choice",
+    await interaction.updateMessage(
+      v2(
+        new Container().text(Text("### Choose an option")).actionRow(
+          ActionRow(
+            SelectMenu({
+              customId: "demo:choice",
               placeholder: "Select something",
               options: [
                 {
@@ -32,10 +36,10 @@ export default new InteractionHandler({
                   description: "Artist",
                 },
               ],
-            },
-          ],
-        },
-      ],
-    });
+            }),
+          ),
+        ),
+      ),
+    );
   },
 });

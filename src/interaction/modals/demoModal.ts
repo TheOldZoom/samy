@@ -1,4 +1,5 @@
 import InteractionHandler from "@/interaction/Handler";
+import { Container, Text, v2 } from "@/utils/ui/components";
 
 export default new InteractionHandler({
   feature: "demo",
@@ -12,7 +13,9 @@ export default new InteractionHandler({
     const message = interaction.getModalValue("message");
 
     await interaction.reply({
-      content: `You submitted: ${message ?? "nothing"}`,
+      ...v2(
+        new Container().text(Text(`You submitted: ${message ?? "nothing"}`)),
+      ),
       ephemeral: true,
     });
   },

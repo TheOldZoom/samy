@@ -1,6 +1,10 @@
-import { Client as DiscordClient, GatewayIntentBits } from "@discordjs/core";
+import {
+  Client as DiscordClient,
+  GatewayIntentBits,
+  Routes,
+} from "@discordjs/core";
 import { REST } from "@discordjs/rest";
-import { WebSocketManager } from "@discordjs/ws";
+import { WebSocketManager, WebSocketShardEvents } from "@discordjs/ws";
 import type { APIUser } from "@discordjs/core";
 
 import Logger from "./Logger";
@@ -15,6 +19,16 @@ import prisma from "@/libs/Prisma";
 
 const token = process.env.DISCORD_TOKEN!;
 
+const PING_TARGETS = ["ws", "rest", "db"] as const;
+
+export type PingTarget = (typeof PING_TARGETS)[number];
+
+interface PingResult {
+  ws: number | null;
+  rest: number;
+  db: number | null;
+}
+
 export default class Client extends DiscordClient {
   readonly logger = new Logger();
   private readonly ws: WebSocketManager;
@@ -24,6 +38,7 @@ export default class Client extends DiscordClient {
   private resolveShutdown?: () => void;
 
   private readonly cooldowns = new Map<string, number>();
+  private readonly shardLatencies = new Map<number, number>();
 
   user: APIUser | null = null;
 
@@ -66,24 +81,86 @@ export default class Client extends DiscordClient {
     await this.ws.connect();
   }
 
+  async getShardId(guildId: string): Promise<number> {
+    const shardCount = (await this.ws.getShardIds()).length;
+
+    return Number((BigInt(guildId) >> 22n) % BigInt(shardCount));
+  }
+
   private setupGateway() {
-    this.ws.on("error", (error) => {
-      this.logger.error({ err: error }, "Gateway error");
+    this.ws.on(WebSocketShardEvents.Error, (error, shardId) => {
+      this.logger.error({ err: error }, `Gateway error (shard ${shardId})`);
     });
 
-    this.ws.on("shardDisconnect", ({ code, reason, shardId }) => {
-      this.logger.warn(
-        `Gateway disconnected (shard ${shardId}, code ${code}, reason: ${reason})`,
-      );
+    this.ws.on(WebSocketShardEvents.Closed, (code, shardId) => {
+      this.shardLatencies.delete(shardId);
+
+      this.logger.warn(`Gateway disconnected (shard ${shardId}, code ${code})`);
     });
 
-    this.ws.on("shardReady", ({ shardId }) => {
+    this.ws.on(WebSocketShardEvents.Ready, (_data, shardId) => {
       this.logger.info(`Gateway shard ${shardId} ready`);
     });
 
-    this.ws.on("shardResume", ({ shardId }) => {
+    this.ws.on(WebSocketShardEvents.Resumed, (shardId) => {
       this.logger.info(`Gateway shard ${shardId} resumed`);
     });
+
+    this.ws.on(
+      WebSocketShardEvents.HeartbeatComplete,
+      ({ latency }, shardId) => {
+        this.shardLatencies.set(shardId, latency);
+      },
+    );
+  }
+
+  async ping<T extends PingTarget>(
+    guildId: string | null | undefined,
+    ...targets: T[]
+  ): Promise<Pick<PingResult, T>> {
+    const wanted = new Set<PingTarget>(targets.length ? targets : PING_TARGETS);
+
+    const result: Partial<PingResult> = {};
+    const tasks: Promise<void>[] = [];
+
+    if (wanted.has("ws")) {
+      const shardId = guildId ? await this.getShardId(guildId) : null;
+
+      result.ws =
+        shardId === null ? null : (this.shardLatencies.get(shardId) ?? null);
+    }
+
+    if (wanted.has("rest")) {
+      tasks.push(
+        (async () => {
+          const start = performance.now();
+
+          await this.rest.get(Routes.gateway());
+
+          result.rest = Math.round(performance.now() - start);
+        })(),
+      );
+    }
+
+    if (wanted.has("db")) {
+      tasks.push(
+        (async () => {
+          const start = performance.now();
+
+          try {
+            await prisma.$queryRaw`SELECT 1`;
+
+            result.db = Math.round(performance.now() - start);
+          } catch {
+            result.db = null;
+          }
+        })(),
+      );
+    }
+
+    await Promise.all(tasks);
+
+    return result as Pick<PingResult, T>;
   }
 
   useCooldown(key: string, userId: string, seconds: number): number | null {
