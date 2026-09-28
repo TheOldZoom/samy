@@ -63,7 +63,7 @@ Avoid combining unrelated features, fixes, and refactors in the same pull reques
 Before committing, run:
 
 ```bash
-bun run format . && bun run lint
+bun run format .
 ```
 
 Make sure the project builds and that your changes work as expected.
@@ -277,7 +277,7 @@ Only maintainers should merge `development` into `master`.
 Before submitting a pull request, run:
 
 ```bash
-bun run format . && bun run lint
+bun run format .
 ```
 
 Follow the existing TypeScript and project conventions.

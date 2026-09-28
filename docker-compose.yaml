@@ -1,47 +1,31 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-samy}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-samy123}
-      POSTGRES_DB: ${POSTGRES_DB:-samy}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-samy} -d ${POSTGRES_DB:-samy}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    ports:
-      - "5432:5432"
-
   bot:
-    build:
-      context: .
+    build: .
     restart: unless-stopped
+    env_file: .env
+  environment:
+    DATABASE_URL: postgresql://samy:${POSTGRES_PASSWORD}@db:5432/samy
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
+    stop_grace_period: 20s
+
+  db:
+    image: postgres:18
+    restart: unless-stopped
     environment:
-      NODE_ENV: production
-      PORT: 4000
-      DISCORD_TOKEN: ${DISCORD_TOKEN}
-      LASTFM_API_KEY: ${LASTFM_API_KEY}
-      DATABASE_URL: postgres://${POSTGRES_USER:-samy}:${POSTGRES_PASSWORD:-samy123}@postgres:5432/${POSTGRES_DB:-samy}
+      POSTGRES_USER: samy
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: samy
+    volumes:
+      - postgres:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          'bun -e "fetch(''http://localhost:4000/health'').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"',
-        ]
-      interval: 30s
+      test: ["CMD-SHELL", "pg_isready -U samy -d samy"]
+      interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 10
 
 volumes:
-  postgres_data:
+  postgres:
