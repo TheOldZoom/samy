@@ -47,6 +47,7 @@ export interface SubcommandOptions {
   description: string;
   options?: APIApplicationCommandBasicOption[];
   cooldown?: number;
+  dailyLimit?: number;
   ephemeral?: boolean;
   execute: CommandExecute;
   autocomplete?: CommandExecute;
@@ -57,6 +58,7 @@ export class Subcommand {
   public readonly description: string;
   public readonly options?: APIApplicationCommandBasicOption[];
   public readonly cooldown?: number;
+  public readonly dailyLimit?: number;
   public readonly ephemeral: boolean;
   public readonly execute: CommandExecute;
   public readonly autocomplete?: CommandExecute;
@@ -66,6 +68,7 @@ export class Subcommand {
     this.description = options.description;
     this.options = options.options;
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
+    this.dailyLimit = options.dailyLimit;
     this.ephemeral = options.ephemeral ?? false;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
@@ -102,15 +105,26 @@ export interface CommandOptions {
   everywhere?: boolean;
   defaultMemberPermissions?: string;
   cooldown?: number;
+  dailyLimit?: number;
   ephemeral?: boolean;
   execute?: CommandExecute;
   autocomplete?: CommandExecute;
+}
+
+export interface ResolvedCommand {
+  execute?: CommandExecute;
+  options?: APIApplicationCommandInteractionDataOption[];
+  cooldown?: number;
+  dailyLimit?: number;
+  ephemeral: boolean;
+  key: string;
 }
 
 export default class Command {
   public readonly data: RESTPostAPIChatInputApplicationCommandsJSONBody;
 
   public readonly cooldown?: number;
+  public readonly dailyLimit?: number;
   public readonly ephemeral: boolean;
   public readonly execute?: CommandExecute;
   public readonly autocomplete?: CommandExecute;
@@ -180,6 +194,7 @@ export default class Command {
     };
 
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
+    this.dailyLimit = options.dailyLimit;
     this.ephemeral = ephemeral;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
@@ -189,13 +204,9 @@ export default class Command {
     return this.data.name;
   }
 
-  resolve(interaction: APIChatInputApplicationCommandInteraction): {
-    execute?: CommandExecute;
-    options?: APIApplicationCommandInteractionDataOption[];
-    cooldown?: number;
-    ephemeral: boolean;
-    key: string;
-  } {
+  resolve(
+    interaction: APIChatInputApplicationCommandInteraction,
+  ): ResolvedCommand {
     const first = interaction.data.options?.[0];
 
     if (first?.type === ApplicationCommandOptionType.SubcommandGroup) {
@@ -210,6 +221,7 @@ export default class Command {
           APIApplicationCommandInteractionDataOption[] | undefined,
         cooldown: subcommand?.cooldown ?? this.cooldown,
         ephemeral: subcommand?.ephemeral ?? false,
+        dailyLimit: subcommand?.dailyLimit ?? this.dailyLimit,
         key: `${this.name}:${first.name}:${sub?.name}`,
       };
     }
@@ -223,6 +235,7 @@ export default class Command {
           APIApplicationCommandInteractionDataOption[] | undefined,
         cooldown: subcommand?.cooldown ?? this.cooldown,
         ephemeral: subcommand?.ephemeral ?? false,
+        dailyLimit: subcommand?.dailyLimit ?? this.dailyLimit,
         key: `${this.name}:${first.name}`,
       };
     }
@@ -232,6 +245,7 @@ export default class Command {
       options: interaction.data.options,
       cooldown: this.cooldown,
       ephemeral: this.ephemeral,
+      dailyLimit: this.dailyLimit,
       key: this.name,
     };
   }
