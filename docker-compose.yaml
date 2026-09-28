@@ -8,6 +8,8 @@ services:
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       LASTFM_API_KEY: ${LASTFM_API_KEY}
       DATABASE_URL: postgresql://${POSTGRES_USER:-samy}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-samy}
+      WEBSITE_URL: ${WEBSITE_URL}
+      DISCORD_URL: ${DISCORD_URL}
     depends_on:
       db:
         condition: service_healthy
