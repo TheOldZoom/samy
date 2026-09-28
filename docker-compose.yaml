@@ -2,9 +2,12 @@ services:
   bot:
     build: .
     restart: unless-stopped
-    env_file: .env
-  environment:
-    DATABASE_URL: postgresql://samy:${POSTGRES_PASSWORD}@db:5432/samy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      LASTFM_API_KEY: ${LASTFM_API_KEY}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-samy}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-samy}
     depends_on:
       db:
         condition: service_healthy
@@ -14,15 +17,13 @@ services:
     image: postgres:18
     restart: unless-stopped
     environment:
-      POSTGRES_USER: samy
+      POSTGRES_USER: ${POSTGRES_USER:-samy}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: samy
+      POSTGRES_DB: ${POSTGRES_DB:-samy}
     volumes:
       - postgres:/var/lib/postgresql
-    ports:
-      - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U samy -d samy"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
