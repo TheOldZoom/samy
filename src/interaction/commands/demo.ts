@@ -1,5 +1,12 @@
 import { ApplicationCommandOptionType } from "@discordjs/core";
-
+import {
+  ActionRow,
+  Buttons,
+  Container,
+  Separator,
+  Text,
+  v2,
+} from "@/utils/ui/components";
 import Command from "@/classes/Command";
 
 export default new Command({
@@ -48,27 +55,18 @@ export default new Command({
   },
 
   async execute(client, interaction) {
-    await interaction.reply({
-      content: "Interaction demo",
-      components: [
-        {
-          type: 1,
-          components: [
-            {
-              type: 2,
-              style: 1,
-              label: "Open modal",
-              custom_id: "demo:modal",
-            },
-            {
-              type: 2,
-              style: 2,
-              label: "Choose option",
-              custom_id: "demo:select",
-            },
-          ],
-        },
-      ],
-    });
+    await interaction.reply(
+      v2(
+        new Container()
+          .text(Text("## Interaction demo"), Text("Try the buttons below."))
+          .separator(Separator())
+          .actionRow(
+            ActionRow(
+              Buttons.primary("Open modal", "demo:modal"),
+              Buttons.secondary("Choose option", "demo:select"),
+            ),
+          ),
+      ),
+    );
   },
 });

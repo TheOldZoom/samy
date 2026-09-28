@@ -27,6 +27,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@discordjs/builders": "^1.14.1",
     "@discordjs/core": "^2.6.0",
     "@discordjs/rest": "^2.6.3",
     "@discordjs/ws": "^2.0.4",

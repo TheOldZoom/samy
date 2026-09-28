@@ -11,6 +11,7 @@ import {
 
 import type Client from "@/classes/Client";
 import { createInteraction, type Interaction } from "@/classes/Interaction";
+import { Container, Text, v2 } from "@/utils/ui/components";
 import { parseComponentId } from "./ComponentId";
 
 function isChatInputCommand(
@@ -91,7 +92,13 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
     if (expires) {
       await interaction
         .reply({
-          content: `You're on cooldown. Try again <t:${Math.ceil(expires / 1000)}:R>.`,
+          ...v2(
+            new Container().text(
+              Text(
+                `You're on cooldown. Try again <t:${Math.ceil(expires / 1000)}:R>.`,
+              ),
+            ),
+          ),
           ephemeral: true,
         })
         .catch(() => {});
@@ -109,9 +116,13 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
     );
 
     await interaction
-      .reply({
-        content: "Something went wrong running that command.",
-      })
+      .reply(
+        v2(
+          new Container().text(
+            Text("Something went wrong running that command."),
+          ),
+        ),
+      )
       .catch(() => {});
   }
 }
