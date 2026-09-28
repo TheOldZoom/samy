@@ -78,7 +78,7 @@ export default new Command({
           new Container().text(
             Text(`-# ${icons.linkadd} URL shortened`),
             Text(
-              `> **Original:** ${url.href}\n` + `> **Shortened:** ${shortUrl}`,
+              `> Original: **${url.href}**\n` + `> Shortened: **${shortUrl}**`,
             ),
           ),
         ),

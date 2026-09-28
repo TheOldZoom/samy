@@ -115,7 +115,7 @@ const hash = new Subcommand({
         new Container().text(
           Text(`-# ${icons.fingerprint} Text hash`),
           Text(
-            `> **Algorithm:** \`${algorithm.toUpperCase()}\`\n> **Hash:** \`${digest}\``,
+            `> Algorithm: \`${algorithm.toUpperCase()}\`\n> Hash: \`${digest}\``,
           ),
         ),
       ),
