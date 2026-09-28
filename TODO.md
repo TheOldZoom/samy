@@ -4,7 +4,7 @@
 
 - [x] Finish Prisma integration
 - [x] Add graceful shutdown
-- [ ] Add Gateway error/reconnect handling
+- [x] Add Gateway error/reconnect handling
 - [ ] Finish interaction routing
 
   - [ ] Autocomplete

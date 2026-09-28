@@ -33,12 +33,33 @@ export default class Client extends DiscordClient {
     super({ gateway, rest });
 
     this.ws = gateway;
+    this.setupGateway();
   }
 
   async login() {
     await LoadEvents(this);
     await LoadCommands(this);
     await this.ws.connect();
+  }
+
+  private setupGateway() {
+    this.ws.on("error", (error) => {
+      this.logger.error({ err: error }, "Gateway error");
+    });
+
+    this.ws.on("shardDisconnect", ({ code, reason, shardId }) => {
+      this.logger.warn(
+        `Gateway disconnected (shard ${shardId}, code ${code}, reason: ${reason})`,
+      );
+    });
+
+    this.ws.on("shardReady", ({ shardId }) => {
+      this.logger.info(`Gateway shard ${shardId} ready`);
+    });
+
+    this.ws.on("shardResume", ({ shardId }) => {
+      this.logger.info(`Gateway shard ${shardId} resumed`);
+    });
   }
 
   startCommand() {
