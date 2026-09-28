@@ -43,7 +43,7 @@
 [ ] `ascii` Convert text to ASCII
 
 [ ] `/unicode` Search and inspect Unicode characters
-[ ] `/color` View and convert colors
+[x] `/color` View and convert colors
 
 ### Fun
 

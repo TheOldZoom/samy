@@ -14,6 +14,7 @@ export default new Command({
   name: "debug",
   description: "Replies with the bot's stats",
   everywhere: true,
+  ephemeral: true,
   async execute(client, interaction) {
     const [{ ws, rest, db }, application] = await Promise.all([
       client.ping(interaction.guild_id, "ws", "rest", "db"),

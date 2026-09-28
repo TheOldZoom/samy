@@ -7,6 +7,7 @@ export default new Command({
   name: "ping",
   description: "Replies with pong",
   everywhere: true,
+  ephemeral: true,
 
   execute: async (client, interaction) => {
     const { ws, rest, db } = await client.ping(
