@@ -12,8 +12,7 @@
   - [x] Selects
   - [x] Modals
 
-- [ ] Add cooldowns
-- [ ] Add permission helpers
+- [x] Add cooldowns
 
 ## Commands
 

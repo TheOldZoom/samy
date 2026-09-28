@@ -75,7 +75,7 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
     return;
   }
 
-  const { execute, options } = command.resolve(raw);
+  const { execute, options, cooldown, key } = command.resolve(raw);
 
   if (!execute) {
     client.logger.warn(`No handler resolved for "${raw.data.name}"`);
@@ -83,6 +83,22 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
   }
 
   const interaction = createInteraction(api, raw, options);
+
+  if (cooldown) {
+    const userId = (raw.member?.user ?? raw.user)!.id;
+    const expires = client.useCooldown(key, userId, cooldown);
+
+    if (expires) {
+      await interaction
+        .reply({
+          content: `You're on cooldown. Try again <t:${Math.ceil(expires / 1000)}:R>.`,
+          ephemeral: true,
+        })
+        .catch(() => {});
+
+      return;
+    }
+  }
 
   try {
     await execute(client, interaction);

@@ -15,6 +15,8 @@ import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { Interaction } from "./Interaction";
 
+const DEFAULT_COOLDOWN = 2.5;
+
 export type CommandExecute = (
   client: Client,
   interaction: Interaction,
@@ -24,6 +26,7 @@ export interface SubcommandOptions {
   name: string;
   description: string;
   options?: APIApplicationCommandBasicOption[];
+  cooldown?: number;
   execute: CommandExecute;
   autocomplete?: CommandExecute;
 }
@@ -32,6 +35,7 @@ export class Subcommand {
   public readonly name: string;
   public readonly description: string;
   public readonly options?: APIApplicationCommandBasicOption[];
+  public readonly cooldown?: number;
   public readonly execute: CommandExecute;
   public readonly autocomplete?: CommandExecute;
 
@@ -39,6 +43,7 @@ export class Subcommand {
     this.name = options.name;
     this.description = options.description;
     this.options = options.options;
+    this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
   }
@@ -73,6 +78,7 @@ export interface CommandOptions {
   subcommandGroups?: SubcommandGroup[];
   everywhere?: boolean;
   defaultMemberPermissions?: string;
+  cooldown?: number;
   execute?: CommandExecute;
   autocomplete?: CommandExecute;
 }
@@ -80,6 +86,7 @@ export interface CommandOptions {
 export default class Command {
   public readonly data: RESTPostAPIChatInputApplicationCommandsJSONBody;
 
+  public readonly cooldown?: number;
   public readonly execute?: CommandExecute;
   public readonly autocomplete?: CommandExecute;
 
@@ -140,6 +147,7 @@ export default class Command {
         : {}),
     };
 
+    this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
   }
@@ -151,6 +159,8 @@ export default class Command {
   resolve(interaction: APIChatInputApplicationCommandInteraction): {
     execute?: CommandExecute;
     options?: APIApplicationCommandInteractionDataOption[];
+    cooldown?: number;
+    key: string;
   } {
     const first = interaction.data.options?.[0];
 
@@ -164,6 +174,8 @@ export default class Command {
         execute: subcommand?.execute,
         options: sub?.options as
           APIApplicationCommandInteractionDataOption[] | undefined,
+        cooldown: subcommand?.cooldown ?? this.cooldown,
+        key: `${this.name}:${first.name}:${sub?.name}`,
       };
     }
 
@@ -174,12 +186,16 @@ export default class Command {
         execute: subcommand?.execute,
         options: first.options as
           APIApplicationCommandInteractionDataOption[] | undefined,
+        cooldown: subcommand?.cooldown ?? this.cooldown,
+        key: `${this.name}:${first.name}`,
       };
     }
 
     return {
       execute: this.execute,
       options: interaction.data.options,
+      cooldown: this.cooldown,
+      key: this.name,
     };
   }
 

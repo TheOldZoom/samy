@@ -23,6 +23,8 @@ export default class Client extends DiscordClient {
   private activeInteractions = 0;
   private resolveShutdown?: () => void;
 
+  private readonly cooldowns = new Map<string, number>();
+
   user: APIUser | null = null;
 
   commands = new Map<string, Command>();
@@ -82,6 +84,28 @@ export default class Client extends DiscordClient {
     this.ws.on("shardResume", ({ shardId }) => {
       this.logger.info(`Gateway shard ${shardId} resumed`);
     });
+  }
+
+  useCooldown(key: string, userId: string, seconds: number): number | null {
+    const id = `${key}:${userId}`;
+    const now = Date.now();
+    const active = this.cooldowns.get(id);
+
+    if (active && active > now) {
+      return active;
+    }
+
+    const expires = now + seconds * 1000;
+
+    this.cooldowns.set(id, expires);
+
+    setTimeout(() => {
+      if (this.cooldowns.get(id) === expires) {
+        this.cooldowns.delete(id);
+      }
+    }, seconds * 1000);
+
+    return null;
   }
 
   startInteraction() {
