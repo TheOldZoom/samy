@@ -6,6 +6,15 @@ export default new Command({
   description: "Replies with pong",
   everywhere: true,
   execute: async (client, interaction) => {
-    await interaction.reply(v2(new Container().text(Text("pong"))));
+    const { ws, rest } = await client.ping();
+
+    await interaction.reply(
+      v2(
+        new Container().text(
+          Text(`Websocket: **${ws === null ? "-1ms" : `${ws}ms`}**`),
+          Text(`API: **${rest}ms**`),
+        ),
+      ),
+    );
   },
 });

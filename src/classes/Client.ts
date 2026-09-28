@@ -1,6 +1,10 @@
-import { Client as DiscordClient, GatewayIntentBits } from "@discordjs/core";
+import {
+  Client as DiscordClient,
+  GatewayIntentBits,
+  Routes,
+} from "@discordjs/core";
 import { REST } from "@discordjs/rest";
-import { WebSocketManager } from "@discordjs/ws";
+import { WebSocketManager, WebSocketShardEvents } from "@discordjs/ws";
 import type { APIUser } from "@discordjs/core";
 
 import Logger from "./Logger";
@@ -24,6 +28,7 @@ export default class Client extends DiscordClient {
   private resolveShutdown?: () => void;
 
   private readonly cooldowns = new Map<string, number>();
+  private readonly shardLatencies = new Map<number, number>();
 
   user: APIUser | null = null;
 
@@ -67,23 +72,46 @@ export default class Client extends DiscordClient {
   }
 
   private setupGateway() {
-    this.ws.on("error", (error) => {
-      this.logger.error({ err: error }, "Gateway error");
+    this.ws.on(WebSocketShardEvents.Error, (error, shardId) => {
+      this.logger.error({ err: error }, `Gateway error (shard ${shardId})`);
     });
 
-    this.ws.on("shardDisconnect", ({ code, reason, shardId }) => {
-      this.logger.warn(
-        `Gateway disconnected (shard ${shardId}, code ${code}, reason: ${reason})`,
-      );
+    this.ws.on(WebSocketShardEvents.Closed, (code, shardId) => {
+      this.shardLatencies.delete(shardId);
+
+      this.logger.warn(`Gateway disconnected (shard ${shardId}, code ${code})`);
     });
 
-    this.ws.on("shardReady", ({ shardId }) => {
+    this.ws.on(WebSocketShardEvents.Ready, (_data, shardId) => {
       this.logger.info(`Gateway shard ${shardId} ready`);
     });
 
-    this.ws.on("shardResume", ({ shardId }) => {
+    this.ws.on(WebSocketShardEvents.Resumed, (shardId) => {
       this.logger.info(`Gateway shard ${shardId} resumed`);
     });
+
+    this.ws.on(
+      WebSocketShardEvents.HeartbeatComplete,
+      ({ latency }, shardId) => {
+        this.shardLatencies.set(shardId, latency);
+      },
+    );
+  }
+
+  async ping() {
+    const start = performance.now();
+
+    await this.rest.get(Routes.gateway());
+
+    const rest = Math.round(performance.now() - start);
+
+    const latencies = [...this.shardLatencies.values()];
+
+    const ws = latencies.length
+      ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length)
+      : null;
+
+    return { ws, rest };
   }
 
   useCooldown(key: string, userId: string, seconds: number): number | null {
