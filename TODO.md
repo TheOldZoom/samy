@@ -2,10 +2,9 @@
 
 ## Core
 
-- [ ] Finish Prisma integration
-- [ ] Add graceful shutdown
+- [x] Finish Prisma integration
+- [x] Add graceful shutdown
 - [ ] Add Gateway error/reconnect handling
-- [ ] Add standalone command registration
 - [ ] Finish interaction routing
 
   - [ ] Autocomplete

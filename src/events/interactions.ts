@@ -35,6 +35,10 @@ export default new Event({
 
     const interaction = createInteraction(api, raw, options);
 
+    if (!client.startCommand()) {
+      return;
+    }
+
     try {
       await execute(client, interaction);
     } catch (error) {
@@ -42,9 +46,12 @@ export default new Event({
         { err: error },
         `Error executing command "${command.name}"`,
       );
+
       await interaction
         .reply({ content: "Something went wrong running that command." })
         .catch(() => {});
+    } finally {
+      client.finishCommand();
     }
   },
 });
