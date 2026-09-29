@@ -1,10 +1,20 @@
-import {
-  MediaGalleryBuilder,
-  MediaGalleryItemBuilder,
-} from "@discordjs/builders";
+import { ComponentType, type APIMediaGalleryComponent } from "discord.js";
+
+export class MediaGallery {
+  constructor(private readonly urls: string[]) {}
+
+  toJSON(): APIMediaGalleryComponent {
+    return {
+      type: ComponentType.MediaGallery,
+      items: this.urls.map((url) => ({
+        media: {
+          url,
+        },
+      })),
+    };
+  }
+}
 
 export function Media(...urls: string[]) {
-  return new MediaGalleryBuilder().addItems(
-    ...urls.map((url) => new MediaGalleryItemBuilder().setURL(url)),
-  );
+  return new MediaGallery(urls);
 }

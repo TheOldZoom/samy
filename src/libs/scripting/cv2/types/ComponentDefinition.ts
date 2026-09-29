@@ -5,16 +5,16 @@ import type {
   VariableResolver,
 } from "../../common/value/resolveValue";
 import type { ScriptError } from "../../common/ScriptError";
+import type { ButtonBuilder } from "discord.js";
 import type {
-  ContainerBuilder,
-  SectionBuilder,
-  TextDisplayBuilder,
-  SeparatorBuilder,
-  MediaGalleryBuilder,
-  ThumbnailBuilder,
-  ButtonBuilder,
-  ActionRowBuilder,
-} from "@discordjs/builders";
+  ActionRowComponent,
+  Container,
+  MediaGallery,
+  SectionComponent,
+  SeparatorComponent,
+  TextDisplay,
+  ThumbnailComponent,
+} from "@/utils/ui/components";
 
 export interface Cv2Node {
   readonly kind: string;
@@ -30,12 +30,12 @@ export interface Cv2Script {
 }
 
 export type Cv2Child =
-  | TextDisplayBuilder
-  | SectionBuilder
-  | SeparatorBuilder
-  | MediaGalleryBuilder
-  | ActionRowBuilder<ButtonBuilder>
-  | ContainerBuilder;
+  | TextDisplay
+  | SectionComponent
+  | SeparatorComponent
+  | MediaGallery
+  | ActionRowComponent
+  | Container;
 
 export interface Cv2ValidationContext {
   errors: ScriptError[];
@@ -59,11 +59,11 @@ export interface Cv2ComponentDefinition<T extends Cv2Node = Cv2Node> {
 export type AnyCv2ComponentDefinition = Cv2ComponentDefinition<Cv2Node>;
 
 export type Cv2Renderable =
-  | ContainerBuilder
-  | SectionBuilder
-  | TextDisplayBuilder
-  | SeparatorBuilder
-  | MediaGalleryBuilder
-  | ThumbnailBuilder
+  | Container
+  | SectionComponent
+  | TextDisplay
+  | SeparatorComponent
+  | MediaGallery
+  | ThumbnailComponent
   | ButtonBuilder
-  | ActionRowBuilder<ButtonBuilder>;
+  | ActionRowComponent;

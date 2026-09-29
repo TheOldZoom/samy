@@ -1,21 +1,21 @@
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
-import type { MappedEvents } from "@discordjs/core";
+import type { ClientEvents } from "discord.js";
 import type Client from "./Client";
 
-export interface EventOptions<K extends keyof MappedEvents> {
+export interface EventOptions<K extends keyof ClientEvents> {
   name: K;
   once?: boolean;
 
-  execute: (client: Client, ...args: MappedEvents[K]) => Promise<void> | void;
+  execute: (client: Client, ...args: ClientEvents[K]) => Promise<void> | void;
 }
 
-export default class Event<K extends keyof MappedEvents> {
+export default class Event<K extends keyof ClientEvents> {
   public readonly name: K;
   public readonly once: boolean;
   public readonly execute: (
     client: Client,
-    ...args: MappedEvents[K]
+    ...args: ClientEvents[K]
   ) => Promise<void> | void;
 
   constructor(options: EventOptions<K>) {
@@ -57,12 +57,12 @@ export async function LoadEvents(client: Client) {
 
   for (const file of files) {
     const event = (
-      (await import(file)) as { default: Event<keyof MappedEvents> }
+      (await import(file)) as { default: Event<keyof ClientEvents> }
     ).default;
 
     client.logger.info(`${`[EVENT]:`.padEnd(10)} ${event.name}`);
 
-    const listener = (...args: MappedEvents[keyof MappedEvents]) =>
+    const listener = (...args: ClientEvents[keyof ClientEvents]) =>
       void event.execute(client, ...args);
 
     if (event.once) {

@@ -1,9 +1,9 @@
-import { GatewayDispatchEvents } from "@discordjs/core";
+import { Events } from "discord.js";
 import Event from "@/classes/Event";
 
 export default new Event({
-  name: GatewayDispatchEvents.Resumed,
-  execute: async (client) => {
-    client.logger.info("Gateway connection resumed");
+  name: Events.ShardResume,
+  execute: async (client, shardId) => {
+    client.logger.info(`Gateway shard ${shardId} resumed`);
   },
 });

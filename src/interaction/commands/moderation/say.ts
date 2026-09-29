@@ -1,11 +1,9 @@
 import {
   ApplicationCommandOptionType,
-  ApplicationCommandType,
   ChannelType,
-  InteractionType,
+  DiscordAPIError,
   PermissionFlagsBits,
-} from "@discordjs/core";
-import { DiscordAPIError } from "@discordjs/rest";
+} from "discord.js";
 
 import Command from "@/classes/Command";
 import type { Interaction } from "@/classes/Interaction";
@@ -27,11 +25,13 @@ const CONFIRMATION: Record<ScriptMessageKind, string> = {
 const NO_ACCESS_CODES = new Set<number | string>([50001, 50013]);
 
 function fail(interaction: Interaction, content: string) {
-  return interaction.reply({
+  const data = {
     content,
     ephemeral: true,
-    allowed_mentions: { parse: [] },
-  });
+    allowedMentions: { parse: [] },
+  } as const;
+
+  return interaction.reply(data);
 }
 
 export default new Command({
@@ -55,13 +55,6 @@ export default new Command({
   defaultMemberPermissions: PermissionFlagsBits.ManageMessages,
 
   async execute(client, interaction) {
-    if (
-      interaction.type !== InteractionType.ApplicationCommand ||
-      interaction.data.type !== ApplicationCommandType.ChatInput
-    ) {
-      return;
-    }
-
     const body = interaction
       .getOptionValue("message", ApplicationCommandOptionType.String)
       ?.trim();
@@ -71,23 +64,26 @@ export default new Command({
       return;
     }
 
-    const channelOption = interaction.getOptionValue(
+    const channelId = interaction.getOptionValue(
       "channel",
       ApplicationCommandOptionType.Channel,
     );
-
-    const target = channelOption
-      ? interaction.data.resolved?.channels?.[channelOption]
+    const target = channelId
+      ? await client.channels.fetch(channelId).catch(() => null)
       : interaction.channel;
 
-    if (!target || target.type !== ChannelType.GuildText) {
+    if (
+      !target ||
+      target.type !== ChannelType.GuildText ||
+      !("send" in target)
+    ) {
       await fail(interaction, "Invalid channel.");
       return;
     }
 
     await interaction.defer(true);
 
-    const source = await getVariableSource(client.api, interaction, body);
+    const source = await getVariableSource(client, interaction, body);
     const built = buildScriptMessage(replaceVariables(body, source));
 
     if (!built.success) {
@@ -100,7 +96,7 @@ export default new Command({
     let sent;
 
     try {
-      sent = await client.api.channels.createMessage(target.id, message);
+      sent = await target.send(message as never);
     } catch (error) {
       if (error instanceof DiscordAPIError && NO_ACCESS_CODES.has(error.code)) {
         await fail(
@@ -113,15 +109,11 @@ export default new Command({
       throw error;
     }
 
-    scheduleMessageDeletion(
-      () => client.api.channels.deleteMessage(sent.channel_id, sent.id),
-      deleteMs,
-    );
+    scheduleMessageDeletion(() => sent.delete(), deleteMs);
 
     await interaction.reply({
       content: CONFIRMATION[kind],
-      ephemeral: true,
-      allowed_mentions: { parse: [] },
+      allowedMentions: { parse: [] },
     });
   },
 });

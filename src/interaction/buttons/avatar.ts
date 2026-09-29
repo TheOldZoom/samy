@@ -1,6 +1,3 @@
-import { InteractionType } from "@discordjs/core";
-import { CDN } from "@discordjs/rest";
-
 import InteractionHandler from "@/interaction/Handler";
 import {
   ActionRow,
@@ -10,53 +7,34 @@ import {
   v2,
 } from "@/utils/ui/components";
 import { icons } from "@/utils/icons";
-import { bannerURL } from "@/utils/user";
-
-const cdn = new CDN();
 
 export default new InteractionHandler({
   feature: "user",
   action: "avatar",
 
   async execute(client, interaction, component) {
-    if (
-      interaction.type !== InteractionType.MessageComponent ||
-      !component.id
-    ) {
+    if (!interaction.isMessageComponent() || !component.id) {
       return;
     }
 
     const userId = component.id;
-    const user = await client.api.users.get(userId);
+    const user = await client.users.fetch(userId, { force: true });
 
-    const avatar = user.avatar
-      ? cdn.avatar(user.id, user.avatar, { size: 1024 })
-      : cdn.defaultAvatar(
-          user.discriminator === "0"
-            ? Number((BigInt(user.id) >> 22n) % 6n)
-            : Number(user.discriminator) % 5,
-        );
+    const avatar = user.displayAvatarURL({ size: 1024, extension: "png" });
+    const banner = user.bannerURL({ size: 1024, extension: "png" });
 
-    const banner = bannerURL(user);
+    const container = new Container().media(Media(avatar));
+
+    if (banner) {
+      container.actionRow(
+        ActionRow(
+          Buttons.secondary("Banner", `user:banner:${user.id}`, icons.image),
+        ),
+      );
+    }
 
     await interaction.reply({
-      ...v2(
-        new Container()
-          .media(Media(avatar))
-          .actionRow(
-            ActionRow(
-              ...(banner
-                ? [
-                    Buttons.secondary(
-                      "Banner",
-                      `user:banner:${user.id}`,
-                      icons.image,
-                    ),
-                  ]
-                : []),
-            ),
-          ),
-      ),
+      ...v2(container),
       ephemeral: true,
     });
   },

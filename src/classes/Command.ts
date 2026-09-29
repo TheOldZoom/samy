@@ -3,17 +3,23 @@ import {
   ApplicationCommandOptionType,
   ApplicationIntegrationType,
   InteractionContextType,
-  type RESTPostAPIChatInputApplicationCommandsJSONBody,
-  type APIChatInputApplicationCommandInteraction,
+  Routes,
   type APIApplicationCommandBasicOption,
   type APIApplicationCommandInteractionDataOption,
-  type APIApplicationCommandAutocompleteInteraction,
-} from "@discordjs/core";
+  type APIApplicationCommandOption,
+  type APIChatInputApplicationCommandInteractionData,
+  type RESTGetAPIApplicationCommandsResult,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type RESTPutAPIApplicationCommandsJSONBody,
+  type RESTPutAPIApplicationCommandsResult,
+  type AutocompleteInteraction,
+  type ChatInputCommandInteraction,
+} from "discord.js";
 
+import type { Interaction } from "./Interaction";
 import type Client from "./Client";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
-import type { Interaction } from "./Interaction";
 
 const DEFAULT_COOLDOWN = 2.5;
 
@@ -39,7 +45,12 @@ function withEphemeral(
 
 export type CommandExecute = (
   client: Client,
-  interaction: Interaction,
+  interaction: Interaction<ChatInputCommandInteraction>,
+) => Promise<void> | void;
+
+export type AutocompleteExecute = (
+  client: Client,
+  interaction: Interaction<AutocompleteInteraction>,
 ) => Promise<void> | void;
 
 export interface SubcommandOptions {
@@ -50,7 +61,7 @@ export interface SubcommandOptions {
   dailyLimit?: number;
   ephemeral?: boolean;
   execute: CommandExecute;
-  autocomplete?: CommandExecute;
+  autocomplete?: AutocompleteExecute;
 }
 
 export class Subcommand {
@@ -61,7 +72,7 @@ export class Subcommand {
   public readonly dailyLimit?: number;
   public readonly ephemeral: boolean;
   public readonly execute: CommandExecute;
-  public readonly autocomplete?: CommandExecute;
+  public readonly autocomplete?: AutocompleteExecute;
 
   constructor(options: SubcommandOptions) {
     this.name = options.name;
@@ -108,7 +119,7 @@ export interface CommandOptions {
   dailyLimit?: number;
   ephemeral?: boolean;
   execute?: CommandExecute;
-  autocomplete?: CommandExecute;
+  autocomplete?: AutocompleteExecute;
 }
 
 export interface ResolvedCommand {
@@ -127,7 +138,7 @@ export default class Command {
   public readonly dailyLimit?: number;
   public readonly ephemeral: boolean;
   public readonly execute?: CommandExecute;
-  public readonly autocomplete?: CommandExecute;
+  public readonly autocomplete?: AutocompleteExecute;
 
   public readonly subcommands = new Map<string, Subcommand>();
   public readonly subcommandGroups = new Map<string, SubcommandGroup>();
@@ -204,10 +215,10 @@ export default class Command {
     return this.data.name;
   }
 
-  resolve(
-    interaction: APIChatInputApplicationCommandInteraction,
-  ): ResolvedCommand {
-    const first = interaction.data.options?.[0];
+  resolve(interaction: ChatInputCommandInteraction): ResolvedCommand {
+    const data = interaction.options
+      .data as APIChatInputApplicationCommandInteractionData["options"];
+    const first = data?.[0];
 
     if (first?.type === ApplicationCommandOptionType.SubcommandGroup) {
       const group = this.subcommandGroups.get(first.name);
@@ -242,7 +253,7 @@ export default class Command {
 
     return {
       execute: this.execute,
-      options: interaction.data.options,
+      options: data,
       cooldown: this.cooldown,
       ephemeral: this.ephemeral,
       dailyLimit: this.dailyLimit,
@@ -251,9 +262,11 @@ export default class Command {
   }
 
   resolveAutocomplete(
-    interaction: APIApplicationCommandAutocompleteInteraction,
-  ): CommandExecute | undefined {
-    const first = interaction.data.options?.[0];
+    interaction: AutocompleteInteraction,
+  ): AutocompleteExecute | undefined {
+    const data = interaction.options
+      .data as APIChatInputApplicationCommandInteractionData["options"];
+    const first = data?.[0];
 
     if (first?.type === ApplicationCommandOptionType.SubcommandGroup) {
       const group = this.subcommandGroups.get(first.name);
@@ -320,8 +333,8 @@ export async function LoadCommands(client: Client) {
 interface NormalizableCommand {
   name: string;
   description: string;
-  type?: ApplicationCommandType;
-  options?: unknown[];
+  type?: ApplicationCommandType | number;
+  options?: readonly APIApplicationCommandOption[];
   default_member_permissions?: string | null;
   nsfw?: boolean;
   integration_types?: unknown[] | null;
@@ -365,9 +378,14 @@ function stableStringify(value: unknown): string {
 export async function RegisterCommands(client: Client) {
   const local = [...client.commands.values()].map((command) => command.data);
 
-  const existing = await client.api.applicationCommands.getGlobalCommands(
-    client.user!.id,
-  );
+  if (!client.user) {
+    client.logger.warn("Skipping command registration before client is ready");
+    return;
+  }
+
+  const existing = (await client.rest.get(
+    Routes.applicationCommands(client.user.id),
+  )) as RESTGetAPIApplicationCommandsResult;
 
   const sameCount = local.length === existing.length;
 
@@ -389,11 +407,12 @@ export async function RegisterCommands(client: Client) {
     return;
   }
 
-  const result =
-    await client.api.applicationCommands.bulkOverwriteGlobalCommands(
-      client.user!.id,
-      local,
-    );
+  const result = (await client.rest.put(
+    Routes.applicationCommands(client.user.id),
+    {
+      body: local as RESTPutAPIApplicationCommandsJSONBody,
+    },
+  )) as RESTPutAPIApplicationCommandsResult;
 
   client.logger.info(`Registered ${result.length} global commands`);
 }

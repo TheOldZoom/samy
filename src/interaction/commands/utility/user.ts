@@ -1,10 +1,8 @@
 import {
   ApplicationCommandOptionType,
-  ApplicationCommandType,
-  InteractionType,
   type APIGuildMember,
-  type APIUser,
-} from "@discordjs/core";
+  type User,
+} from "discord.js";
 
 import Command from "@/classes/Command";
 import {
@@ -21,6 +19,28 @@ import { icons } from "@/utils/icons";
 import { renderUserCard } from "@/utils/ui/cards/user";
 
 type MemberInfo = Pick<APIGuildMember, "nick" | "joined_at" | "premium_since">;
+
+function normalizeMember(member: unknown): MemberInfo | undefined {
+  if (!member || typeof member !== "object") {
+    return undefined;
+  }
+
+  if ("joined_at" in member) {
+    return member as MemberInfo;
+  }
+
+  const guildMember = member as {
+    nickname?: string | null;
+    joinedAt?: Date | null;
+    premiumSince?: Date | null;
+  };
+
+  return {
+    nick: guildMember.nickname ?? null,
+    joined_at: guildMember.joinedAt?.toISOString() ?? null,
+    premium_since: guildMember.premiumSince?.toISOString() ?? null,
+  };
+}
 
 function unix(date: string) {
   return Math.floor(Date.parse(date) / 1000);
@@ -45,57 +65,40 @@ export default new Command({
   ],
 
   async execute(client, interaction) {
-    if (
-      interaction.type !== InteractionType.ApplicationCommand ||
-      interaction.data.type !== ApplicationCommandType.ChatInput
-    ) {
-      return;
-    }
-
     const targetId = interaction.getOptionValue(
       "user",
       ApplicationCommandOptionType.User,
     );
 
-    let user: APIUser | undefined;
+    let user: User | undefined;
     let member: MemberInfo | undefined;
 
-    interaction.defer();
+    await interaction.defer();
 
     if (targetId) {
-      member = interaction.data.resolved?.members?.[targetId];
-      user = await client.api.users.get(targetId);
+      member = interaction.inCachedGuild()
+        ? normalizeMember(interaction.guild.members.cache.get(targetId))
+        : undefined;
+      user = await client.users.fetch(targetId, { force: true });
     } else {
-      const currentUser = interaction.member?.user ?? interaction.user;
-
-      if (!currentUser) {
-        await interaction.reply({
-          ...v2(new Container().text(Text("Couldn't find that user."))),
-          ephemeral: true,
-        });
-
-        return;
-      }
-
-      user = await client.api.users.get(currentUser.id);
-      member = interaction.member;
+      user = await client.users.fetch(interaction.user.id, { force: true });
+      member = normalizeMember(interaction.member);
     }
 
     if (!user) {
-      await interaction.reply({
-        ...v2(new Container().text(Text("Couldn't find that user."))),
-        ephemeral: true,
-      });
+      await interaction.reply(
+        v2(new Container().text(Text("Couldn't find that user."))),
+      );
 
       return;
     }
 
-    const displayName = member?.nick ?? user.global_name ?? user.username;
+    const displayName = member?.nick ?? user.globalName ?? user.username;
 
     const card = await renderUserCard({ user, member });
 
     await interaction.reply({
-      files: [{ name: `user.${card.ext}`, data: card.data }],
+      files: [{ name: `user.${card.ext}`, attachment: card.data }],
 
       ...v2(
         new Container()
@@ -141,7 +144,7 @@ export default new Command({
 
       flags: 1 << 15,
 
-      allowed_mentions: {
+      allowedMentions: {
         parse: [],
       },
     });

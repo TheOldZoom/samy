@@ -2,7 +2,7 @@ import {
   MessageFlags,
   type APIEmbed,
   type APIMessageTopLevelComponent,
-} from "@discordjs/core";
+} from "discord.js";
 
 import { isScriptError } from "./common/ScriptError";
 import { compileCv2Script } from "./cv2";

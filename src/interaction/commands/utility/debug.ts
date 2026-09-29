@@ -1,3 +1,7 @@
+import {
+  Routes,
+  type RESTGetAPIOAuth2CurrentApplicationResult,
+} from "discord.js";
 import Command from "@/classes/Command";
 import { formatDuration, formatMs, toMB } from "@/utils/format";
 import { icons } from "@/utils/icons";
@@ -17,8 +21,10 @@ export default new Command({
   ephemeral: true,
   async execute(client, interaction) {
     const [{ ws, rest, db }, application] = await Promise.all([
-      client.ping(interaction.guild_id, "ws", "rest", "db"),
-      client.api.applications.getCurrent(),
+      client.ping(interaction.guildId, "ws", "rest", "db"),
+      client.rest.get(
+        Routes.oauth2CurrentApplication(),
+      ) as Promise<RESTGetAPIOAuth2CurrentApplicationResult>,
     ]);
 
     const startedAt = Math.floor(Date.now() / 1000 - process.uptime());

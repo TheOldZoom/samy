@@ -11,7 +11,7 @@ export default new Command({
 
   execute: async (client, interaction) => {
     const { ws, rest, db } = await client.ping(
-      interaction.guild_id,
+      interaction.guildId,
       "ws",
       "rest",
       "db",

@@ -1,8 +1,13 @@
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
+import type {
+  Interaction as DiscordInteraction,
+  MessageComponentInteraction,
+} from "discord.js";
 
 import type Client from "@/classes/Client";
 import type { Interaction } from "@/classes/Interaction";
+
 import type { ComponentId } from "./ComponentId";
 
 export type InteractionHandlerExecute = (
@@ -29,6 +34,46 @@ export default class InteractionHandler {
   get key() {
     return `${this.feature}:${this.action}`;
   }
+}
+
+export function LogInteraction(
+  client: Client,
+  interaction: DiscordInteraction | MessageComponentInteraction,
+  target: string,
+) {
+  const data: Record<string, unknown> = {
+    interactionId: interaction.id,
+    userId: interaction.user.id,
+    guildId: interaction.guildId,
+    channelId: interaction.channelId,
+    target,
+  };
+
+  let type: string;
+
+  if (interaction.isChatInputCommand()) {
+    type = "command";
+    data.commandName = interaction.commandName;
+    data.options = interaction.options.data.map((option) => option.name);
+  } else if (interaction.isAutocomplete()) {
+    type = "autocomplete";
+    data.commandName = interaction.commandName;
+    data.focusedOption = interaction.options.getFocused(true).name;
+  } else if (interaction.isButton()) {
+    type = "button";
+    data.customId = interaction.customId;
+  } else if (interaction.isAnySelectMenu()) {
+    type = "select";
+    data.customId = interaction.customId;
+    data.values = interaction.values;
+  } else if (interaction.isModalSubmit()) {
+    type = "modal";
+    data.customId = interaction.customId;
+  } else {
+    type = "unknown";
+  }
+
+  client.logger.info(data, `Interaction: ${type}`);
 }
 
 async function getFiles(directory: string): Promise<string[]> {

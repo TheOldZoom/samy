@@ -4,8 +4,7 @@ import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
 import UPNG from "upng-js";
 import { GIFEncoder, quantize, applyPalette } from "gifenc";
-import type { APIUser, APIGuildMember } from "@discordjs/core";
-import { avatarDecorationURL, avatarURL, bannerURL } from "@/utils/user";
+import type { APIGuildMember, User } from "discord.js";
 
 sharp.cache(false);
 sharp.concurrency(2);
@@ -13,7 +12,7 @@ sharp.concurrency(2);
 type MemberInfo = Pick<APIGuildMember, "nick" | "joined_at" | "premium_since">;
 
 type UserCardOptions = {
-  user: APIUser;
+  user: User;
   member?: MemberInfo;
 };
 
@@ -186,22 +185,36 @@ async function build({ user, member }: UserCardOptions): Promise<Card> {
   };
 
   const [avatar, banner, decoration] = await Promise.all([
-    decodeFrames(avatarURL(user, 256, animated), avatarPrep),
+    decodeFrames(
+      user.displayAvatarURL({
+        size: 256,
+        extension: "png",
+        forceStatic: !animated,
+      }),
+      avatarPrep,
+    ),
 
     (async (): Promise<Track | null> => {
-      const url = bannerURL(user, animated ? 512 : 1024, animated);
+      const url = user.bannerURL({
+        size: animated ? 512 : 1024,
+        extension: "png",
+        forceStatic: !animated,
+      });
       return url ? await decodeFrames(url, bannerPrep).catch(() => null) : null;
     })(),
 
     (async (): Promise<Track | null> => {
-      const url = avatarDecorationURL(user, 512);
+      const url = user.avatarDecorationURL({ size: 512 });
       return url
-        ? await decodeDecoration(url, decorationPrep).catch(() => null)
+        ? await decodeDecoration(
+            `${url}?passthrough=true`,
+            decorationPrep,
+          ).catch(() => null)
         : null;
     })(),
   ]);
 
-  const displayName = member?.nick ?? user.global_name ?? user.username;
+  const displayName = member?.nick ?? user.globalName ?? user.username;
   const discriminator =
     user.discriminator !== "0" ? `#${user.discriminator}` : "";
 
@@ -388,8 +401,8 @@ export async function renderUserCard(options: UserCardOptions) {
     user.id,
     user.avatar,
     user.banner,
-    user.avatar_decoration_data?.asset,
-    user.global_name,
+    user.avatarDecorationData?.asset,
+    user.globalName,
     user.username,
     member?.nick,
   ].join(":");

@@ -1,69 +1,43 @@
 import {
-  ApplicationCommandType,
   ComponentType,
-  InteractionType,
-  type API,
-  type APIApplicationCommandInteraction,
-  type APIApplicationCommandAutocompleteInteraction,
-  type APIChatInputApplicationCommandInteraction,
-  type APIInteraction,
-} from "@discordjs/core";
+  MessageFlags,
+  type AutocompleteInteraction,
+  type ChatInputCommandInteraction,
+  type Interaction,
+  type MessageComponentInteraction,
+  type ModalSubmitInteraction,
+} from "discord.js";
 
 import type Client from "@/classes/Client";
+import { createInteraction } from "@/classes/Interaction";
 import prisma from "@/libs/Prisma";
-import { createInteraction, type Interaction } from "@/classes/Interaction";
 import { Container, Text, v2 } from "@/utils/ui/components";
 import { parseComponentId } from "./ComponentId";
-
-function isChatInputCommand(
-  interaction: APIApplicationCommandInteraction,
-): interaction is APIChatInputApplicationCommandInteraction {
-  return interaction.data.type === ApplicationCommandType.ChatInput;
-}
-
-function isAutocomplete(
-  interaction: APIInteraction,
-): interaction is APIApplicationCommandAutocompleteInteraction {
-  return interaction.type === InteractionType.ApplicationCommandAutocomplete;
-}
+import { LogInteraction } from "./Handler";
 
 export async function routeInteraction(
   client: Client,
-  api: API,
-  raw: APIInteraction,
+  interaction: Interaction,
 ) {
   if (!client.startInteraction()) {
     return;
   }
 
   try {
-    switch (raw.type) {
-      case InteractionType.ApplicationCommand:
-        await handleCommand(client, api, raw);
-        break;
-
-      case InteractionType.ApplicationCommandAutocomplete:
-        await handleAutocomplete(client, api, raw);
-        break;
-
-      case InteractionType.MessageComponent:
-        await handleComponent(client, api, raw);
-        break;
-
-      case InteractionType.ModalSubmit:
-        await handleModal(client, api, raw);
-        break;
+    if (interaction.isChatInputCommand()) {
+      await handleCommand(client, interaction);
+    } else if (interaction.isAutocomplete()) {
+      await handleAutocomplete(client, interaction);
+    } else if (interaction.isMessageComponent()) {
+      await handleComponent(client, interaction);
+    } else if (interaction.isModalSubmit()) {
+      await handleModal(client, interaction);
     }
   } catch (error) {
     client.logger.error({ err: error }, "Error handling interaction");
   } finally {
     client.finishInteraction();
   }
-}
-
-function getUtcMidnightTimestamp(): number {
-  const now = new Date();
-  return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
 }
 
 function getTomorrowMidnight(): Date {
@@ -111,37 +85,36 @@ async function consumeDailyUse(
   return { allowed: true };
 }
 
-async function handleCommand(client: Client, api: API, raw: APIInteraction) {
-  if (raw.type !== InteractionType.ApplicationCommand) {
-    return;
-  }
-
-  if (!isChatInputCommand(raw)) {
-    return;
-  }
-
-  const command = client.commands.get(raw.data.name);
+async function handleCommand(
+  client: Client,
+  interaction: ChatInputCommandInteraction,
+) {
+  const command = client.commands.get(interaction.commandName);
 
   if (!command) {
-    client.logger.warn(`No command matched for "${raw.data.name}"`);
+    client.logger.warn(`No command matched for "${interaction.commandName}"`);
     return;
   }
 
-  const { execute, options, cooldown, key, dailyLimit } = command.resolve(raw);
+  const { execute, options, cooldown, key, dailyLimit } =
+    command.resolve(interaction);
+
+  const wrapped = createInteraction(interaction, options, false);
 
   if (!execute) {
-    client.logger.warn(`No handler resolved for "${raw.data.name}"`);
+    client.logger.warn(`No handler resolved for "${interaction.commandName}"`);
     return;
   }
 
-  const interaction = createInteraction(api, raw, options);
-  const userId = (raw.member?.user ?? raw.user)!.id;
+  LogInteraction(client, interaction, key);
+
+  const userId = interaction.user.id;
 
   if (cooldown) {
     const expires = client.useCooldown(key, userId, cooldown);
 
     if (expires) {
-      await interaction
+      await wrapped
         .reply({
           ...v2(
             new Container().text(
@@ -162,7 +135,7 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
     const result = await consumeDailyUse(userId, key, dailyLimit);
 
     if (!result.allowed) {
-      await interaction
+      await wrapped
         .reply({
           ...v2(
             new Container().text(
@@ -180,53 +153,49 @@ async function handleCommand(client: Client, api: API, raw: APIInteraction) {
   }
 
   try {
-    await execute(client, interaction);
+    await execute(client, wrapped);
   } catch (error) {
     client.logger.error(
       { err: error },
       `Error executing command "${command.name}"`,
     );
 
-    await interaction
-      .reply(
-        v2(
-          new Container().text(
-            Text("Something went wrong running that command."),
-          ),
-        ),
-      )
-      .catch(() => {});
+    const data = v2(
+      new Container().text(Text("Something went wrong running that command.")),
+    );
+
+    await (
+      wrapped.isReplied() || wrapped.isDeferred()
+        ? wrapped.followUp(data)
+        : wrapped.reply(data)
+    ).catch(() => {});
   }
 }
 
 async function handleAutocomplete(
   client: Client,
-  api: API,
-  raw: APIInteraction,
+  interaction: AutocompleteInteraction,
 ) {
-  if (!isAutocomplete(raw)) {
-    return;
-  }
-
-  const command = client.commands.get(raw.data.name);
+  const command = client.commands.get(interaction.commandName);
 
   if (!command) {
     client.logger.warn(
-      `No command matched for autocomplete "${raw.data.name}"`,
+      `No command matched for autocomplete "${interaction.commandName}"`,
     );
     return;
   }
 
-  const execute = command.resolveAutocomplete(raw);
+  const execute = command.resolveAutocomplete(interaction);
+  const wrapped = createInteraction(interaction);
 
   if (!execute) {
     return;
   }
 
-  const interaction = createInteraction(api, raw);
+  LogInteraction(client, interaction, interaction.commandName);
 
   try {
-    await execute(client, interaction);
+    await execute(client, wrapped);
   } catch (error) {
     client.logger.error(
       { err: error },
@@ -235,20 +204,19 @@ async function handleAutocomplete(
   }
 }
 
-async function handleComponent(client: Client, api: API, raw: APIInteraction) {
-  if (raw.type !== InteractionType.MessageComponent) {
-    return;
-  }
-
-  const parsed = parseComponentId(raw.data.custom_id);
+async function handleComponent(
+  client: Client,
+  interaction: MessageComponentInteraction,
+) {
+  const parsed = parseComponentId(interaction.customId);
 
   if (!parsed) {
-    client.logger.warn(`Invalid component ID "${raw.data.custom_id}"`);
+    client.logger.warn(`Invalid component ID "${interaction.customId}"`);
     return;
   }
 
   const type =
-    raw.data.component_type === ComponentType.Button ? "buttons" : "selects";
+    interaction.componentType === ComponentType.Button ? "buttons" : "selects";
 
   const handler = client.interactionHandlers[type].get(
     `${parsed.feature}:${parsed.action}`,
@@ -261,10 +229,9 @@ async function handleComponent(client: Client, api: API, raw: APIInteraction) {
     return;
   }
 
-  const interaction = createInteraction(api, raw);
-
+  LogInteraction(client, interaction, handler.key);
   try {
-    await handler.execute(client, interaction, parsed);
+    await handler.execute(client, createInteraction(interaction), parsed);
   } catch (error) {
     client.logger.error(
       { err: error },
@@ -273,15 +240,14 @@ async function handleComponent(client: Client, api: API, raw: APIInteraction) {
   }
 }
 
-async function handleModal(client: Client, api: API, raw: APIInteraction) {
-  if (raw.type !== InteractionType.ModalSubmit) {
-    return;
-  }
-
-  const parsed = parseComponentId(raw.data.custom_id);
+async function handleModal(
+  client: Client,
+  interaction: ModalSubmitInteraction,
+) {
+  const parsed = parseComponentId(interaction.customId);
 
   if (!parsed) {
-    client.logger.warn(`Invalid modal ID "${raw.data.custom_id}"`);
+    client.logger.warn(`Invalid modal ID "${interaction.customId}"`);
     return;
   }
 
@@ -296,10 +262,9 @@ async function handleModal(client: Client, api: API, raw: APIInteraction) {
     return;
   }
 
-  const interaction = createInteraction(api, raw);
-
+  LogInteraction(client, interaction, handler.key);
   try {
-    await handler.execute(client, interaction, parsed);
+    await handler.execute(client, createInteraction(interaction), parsed);
   } catch (error) {
     client.logger.error(
       { err: error },

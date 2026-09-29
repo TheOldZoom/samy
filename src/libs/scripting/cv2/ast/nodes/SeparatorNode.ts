@@ -1,4 +1,4 @@
-import { SeparatorSpacingSize } from "@discordjs/core";
+import { SeparatorSpacingSize } from "discord.js";
 import type { ScriptValue } from "../../../common/value/ValueNode";
 import { resolveValue } from "../../../common/value/resolveValue";
 import { ScriptError } from "../../../common/ScriptError";

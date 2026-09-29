@@ -1,28 +1,18 @@
-import type {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ContainerBuilder,
-  FileBuilder,
-  MediaGalleryBuilder,
-  SectionBuilder,
-  SeparatorBuilder,
-  StringSelectMenuBuilder,
-  TextDisplayBuilder,
-} from "@discordjs/builders";
-import { MessageFlags } from "@discordjs/core";
+import { MessageFlags, type APIMessageTopLevelComponent } from "discord.js";
 
 type TopLevel =
-  | ContainerBuilder
-  | SectionBuilder
-  | TextDisplayBuilder
-  | MediaGalleryBuilder
-  | FileBuilder
-  | SeparatorBuilder
-  | ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>;
+  { toJSON(): APIMessageTopLevelComponent } | APIMessageTopLevelComponent;
 
-export function v2(...components: TopLevel[]) {
+function toJSON(component: TopLevel): APIMessageTopLevelComponent {
+  return "toJSON" in component ? component.toJSON() : component;
+}
+
+export function v2(...components: TopLevel[]): {
+  flags: MessageFlags.IsComponentsV2;
+  components: APIMessageTopLevelComponent[];
+} {
   return {
     flags: MessageFlags.IsComponentsV2,
-    components: components.map((component) => component.toJSON()),
+    components: components.map(toJSON),
   };
 }

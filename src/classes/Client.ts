@@ -1,11 +1,4 @@
-import {
-  Client as DiscordClient,
-  GatewayIntentBits,
-  Routes,
-} from "@discordjs/core";
-import { REST } from "@discordjs/rest";
-import { WebSocketManager, WebSocketShardEvents } from "@discordjs/ws";
-import type { APIUser } from "@discordjs/core";
+import { Client as DiscordClient, GatewayIntentBits, Routes } from "discord.js";
 
 import Logger from "./Logger";
 import { LoadEvents } from "./Event";
@@ -31,16 +24,12 @@ interface PingResult {
 
 export default class Client extends DiscordClient {
   readonly logger = new Logger();
-  private readonly ws: WebSocketManager;
 
   private shuttingDown = false;
   private activeInteractions = 0;
   private resolveShutdown?: () => void;
 
   private readonly cooldowns = new Map<string, number>();
-  private readonly shardLatencies = new Map<number, number>();
-
-  user: APIUser | null = null;
 
   commands = new Map<string, Command>();
 
@@ -55,22 +44,12 @@ export default class Client extends DiscordClient {
   };
 
   constructor() {
-    const rest = new REST({ version: "10" }).setToken(token);
-
-    const gateway = new WebSocketManager({
-      token,
-      intents: GatewayIntentBits.Guilds,
-      rest,
+    super({
+      intents: [GatewayIntentBits.Guilds],
     });
-
-    super({ gateway, rest });
-
-    this.ws = gateway;
-
-    this.setupGateway();
   }
 
-  async login() {
+  override async login() {
     await LoadEvents(this);
     await LoadCommands(this);
 
@@ -78,40 +57,13 @@ export default class Client extends DiscordClient {
     await LoadInteractionHandlers(this, "selects");
     await LoadInteractionHandlers(this, "modals");
 
-    await this.ws.connect();
+    return super.login(token);
   }
 
   async getShardId(guildId: string): Promise<number> {
-    const shardCount = (await this.ws.getShardIds()).length;
+    const shardCount = this.ws.shards.size || 1;
 
     return Number((BigInt(guildId) >> 22n) % BigInt(shardCount));
-  }
-
-  private setupGateway() {
-    this.ws.on(WebSocketShardEvents.Error, (error, shardId) => {
-      this.logger.error({ err: error }, `Gateway error (shard ${shardId})`);
-    });
-
-    this.ws.on(WebSocketShardEvents.Closed, (code, shardId) => {
-      this.shardLatencies.delete(shardId);
-
-      this.logger.warn(`Gateway disconnected (shard ${shardId}, code ${code})`);
-    });
-
-    this.ws.on(WebSocketShardEvents.Ready, (_data, shardId) => {
-      this.logger.info(`Gateway shard ${shardId} ready`);
-    });
-
-    this.ws.on(WebSocketShardEvents.Resumed, (shardId) => {
-      this.logger.info(`Gateway shard ${shardId} resumed`);
-    });
-
-    this.ws.on(
-      WebSocketShardEvents.HeartbeatComplete,
-      ({ latency }, shardId) => {
-        this.shardLatencies.set(shardId, latency);
-      },
-    );
   }
 
   async ping<T extends PingTarget>(
@@ -127,7 +79,7 @@ export default class Client extends DiscordClient {
       const shardId = guildId ? await this.getShardId(guildId) : null;
 
       result.ws =
-        shardId === null ? null : (this.shardLatencies.get(shardId) ?? null);
+        shardId === null ? null : (this.ws.shards.get(shardId)?.ping ?? null);
     }
 
     if (wanted.has("rest")) {
@@ -203,7 +155,7 @@ export default class Client extends DiscordClient {
     }
   }
 
-  async destroy() {
+  override async destroy() {
     this.shuttingDown = true;
 
     this.logger.info(
@@ -218,7 +170,7 @@ export default class Client extends DiscordClient {
 
     this.logger.info("All interactions finished");
 
-    this.ws.destroy();
+    await super.destroy();
 
     await prisma.$disconnect();
 

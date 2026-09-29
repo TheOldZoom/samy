@@ -1,7 +1,7 @@
 import {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
-} from "@discordjs/builders";
+} from "discord.js";
 
 import { parseEmoji } from "./emoji";
 
