@@ -1,0 +1,124 @@
+import {
+  ActionRowBuilder,
+  EmbedBuilder,
+  type ButtonBuilder,
+} from "@discordjs/builders";
+import type {
+  APIActionRowComponent,
+  APIButtonComponent,
+  APIEmbed,
+} from "@discordjs/core";
+import {
+  passthroughVariableResolver,
+  type VariableContext,
+  type VariableResolver,
+} from "../../common/value/resolveValue";
+import type { EmbedScript } from "../ast/EmbedNode";
+import { getEmbedParameter } from "../registry";
+import type {
+  EmbedRenderContext,
+  EmbedRenderTarget,
+} from "../types/ParameterDefinition";
+import { EMBED_LIMITS } from "../../common/limits";
+
+export interface EmbedRenderResult {
+  embed: APIEmbed;
+  components: APIActionRowComponent<APIButtonComponent>[];
+  content?: string;
+  deleteMs?: number;
+}
+
+export interface MultiEmbedRenderResult {
+  embeds: EmbedRenderResult[];
+  content?: string;
+  deleteMs?: number;
+}
+
+export interface EmbedRenderOptions {
+  variables?: VariableContext;
+  resolver?: VariableResolver;
+}
+
+export class EmbedRenderer {
+  render(
+    script: EmbedScript,
+    options: EmbedRenderOptions = {},
+  ): EmbedRenderResult {
+    const target: EmbedRenderTarget = {
+      embed: new EmbedBuilder(),
+      buttons: [],
+    };
+
+    const context: EmbedRenderContext = {
+      variables: options.variables ?? {},
+      resolver: options.resolver ?? passthroughVariableResolver,
+    };
+
+    for (const node of script.nodes) {
+      const definition = getEmbedParameter(node.kind);
+      if (!definition) continue;
+      definition.render(node, target, context);
+    }
+
+    return {
+      embed: target.embed.toJSON(),
+      components: chunkButtons(target.buttons),
+      content: target.content,
+      deleteMs: target.deleteMs,
+    };
+  }
+
+  renderMultiple(
+    scripts: EmbedScript[],
+    options: EmbedRenderOptions = {},
+  ): MultiEmbedRenderResult {
+    let globalContent: string | undefined;
+    let globalDeleteMs: number | undefined;
+
+    const embeds = scripts.map((script) => {
+      const result = this.render(script, options);
+      if (result.content) {
+        globalContent = result.content;
+      }
+      if (result.deleteMs) {
+        globalDeleteMs = result.deleteMs;
+      }
+      return result;
+    });
+
+    return {
+      embeds,
+      content: globalContent,
+      deleteMs: globalDeleteMs,
+    };
+  }
+}
+
+function chunkButtons(
+  buttons: ButtonBuilder[],
+): APIActionRowComponent<APIButtonComponent>[] {
+  const rows: APIActionRowComponent<APIButtonComponent>[] = [];
+
+  for (let i = 0; i < buttons.length; i += EMBED_LIMITS.buttonsPerRow) {
+    const slice = buttons.slice(i, i + EMBED_LIMITS.buttonsPerRow);
+    rows.push(
+      new ActionRowBuilder<ButtonBuilder>().addComponents(slice).toJSON(),
+    );
+  }
+
+  return rows;
+}
+
+export function renderEmbedScript(
+  script: EmbedScript,
+  options?: EmbedRenderOptions,
+): EmbedRenderResult {
+  return new EmbedRenderer().render(script, options);
+}
+
+export function renderMultiEmbedScripts(
+  scripts: EmbedScript[],
+  options?: EmbedRenderOptions,
+): MultiEmbedRenderResult {
+  return new EmbedRenderer().renderMultiple(scripts, options);
+}

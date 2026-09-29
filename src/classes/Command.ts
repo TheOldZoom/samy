@@ -103,7 +103,7 @@ export interface CommandOptions {
   subcommands?: Subcommand[];
   subcommandGroups?: SubcommandGroup[];
   everywhere?: boolean;
-  defaultMemberPermissions?: string;
+  defaultMemberPermissions?: string | bigint;
   cooldown?: number;
   dailyLimit?: number;
   ephemeral?: boolean;
@@ -175,7 +175,7 @@ export default class Command {
       description: options.description,
       type: ApplicationCommandType.ChatInput,
       options: commandOptions,
-      default_member_permissions: options.defaultMemberPermissions,
+      default_member_permissions: options.defaultMemberPermissions?.toString(),
 
       ...(options.everywhere
         ? {
