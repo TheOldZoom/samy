@@ -32,7 +32,7 @@
 [ ] `/calc` Calculate a mathematical expression
 [ ] `/convert` Convert between units and currencies
 [ ] `/timezone` Manage and compare timezones
-[ ] `/shorten` Shorten or expand a URL
+[x] `/shorten` Shorten or expand a URL
 [x] `/text` Encode and transform text
 
 [x] `base64` Encode or decode Base64 text
