@@ -1,7 +1,14 @@
-import { SectionBuilder, type ButtonBuilder } from "@discordjs/builders";
+import {
+  ComponentType,
+  type APIButtonComponent,
+  type APISectionComponent,
+  type ButtonBuilder,
+} from "discord.js";
 
-import { Text } from "./text";
-import { Thumbnail } from "./thumbnail";
+import { Text, type TextDisplay } from "./text";
+import { Thumbnail, type ThumbnailComponent } from "./thumbnail";
+
+type SectionAccessory = ButtonBuilder | ThumbnailComponent;
 
 type SectionOptions = {
   title?: string;
@@ -10,8 +17,36 @@ type SectionOptions = {
   button?: ButtonBuilder;
 };
 
+export class SectionComponent {
+  private readonly components: TextDisplay[] = [];
+  private accessory?: SectionAccessory;
+
+  addTextDisplayComponents(...components: TextDisplay[]) {
+    this.components.push(...components);
+    return this;
+  }
+
+  setThumbnailAccessory(accessory: ThumbnailComponent) {
+    this.accessory = accessory;
+    return this;
+  }
+
+  setButtonAccessory(accessory: ButtonBuilder) {
+    this.accessory = accessory;
+    return this;
+  }
+
+  toJSON(): APISectionComponent {
+    return {
+      type: ComponentType.Section,
+      components: this.components.map((component) => component.toJSON()),
+      accessory: this.accessory?.toJSON() as APISectionComponent["accessory"],
+    };
+  }
+}
+
 export function Section(options: SectionOptions) {
-  const section = new SectionBuilder();
+  const section = new SectionComponent();
 
   if (options.title)
     section.addTextDisplayComponents(Text(`## ${options.title}`));

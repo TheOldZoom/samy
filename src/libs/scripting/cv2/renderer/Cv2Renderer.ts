@@ -1,5 +1,6 @@
-import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
-import type { APIMessageTopLevelComponent } from "@discordjs/core";
+import { ButtonBuilder } from "discord.js";
+import type { APIMessageTopLevelComponent } from "discord.js";
+import { ActionRow } from "@/utils/ui/components";
 import {
   passthroughVariableResolver,
   type VariableContext,
@@ -41,9 +42,7 @@ export class Cv2Renderer {
     const flushButtons = () => {
       while (pendingButtons.length > 0) {
         const slice = pendingButtons.splice(0, CV2_LIMITS.buttonsPerActionRow);
-        components.push(
-          new ActionRowBuilder<ButtonBuilder>().addComponents(slice),
-        );
+        components.push({ toJSON: () => ActionRow(...slice) });
       }
     };
 

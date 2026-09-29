@@ -1,4 +1,4 @@
-import type { ButtonBuilder, EmbedBuilder } from "@discordjs/builders";
+import type { ButtonBuilder, EmbedBuilder } from "discord.js";
 import type { Token } from "../../common/Token";
 import type { ScriptValue } from "../../common/value/ValueNode";
 import type {

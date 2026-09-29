@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from "@discordjs/core";
+import { ApplicationCommandOptionType } from "discord.js";
 
 import Command from "@/classes/Command";
 import { icons } from "@/utils/icons";

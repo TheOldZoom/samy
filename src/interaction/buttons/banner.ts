@@ -1,5 +1,3 @@
-import { InteractionType } from "@discordjs/core";
-
 import InteractionHandler from "@/interaction/Handler";
 import {
   ActionRow,
@@ -10,24 +8,20 @@ import {
   v2,
 } from "@/utils/ui/components";
 import { icons } from "@/utils/icons";
-import { avatarURL, bannerURL } from "@/utils/user";
 
 export default new InteractionHandler({
   feature: "user",
   action: "banner",
 
   async execute(client, interaction, component) {
-    if (
-      interaction.type !== InteractionType.MessageComponent ||
-      !component.id
-    ) {
+    if (!interaction.isMessageComponent() || !component.id) {
       return;
     }
 
     const userId = component.id;
-    const user = await client.api.users.get(userId);
+    const user = await client.users.fetch(userId, { force: true });
 
-    const banner = bannerURL(user, 1024);
+    const banner = user.bannerURL({ size: 1024, extension: "png" });
 
     if (!banner) {
       await interaction.reply({

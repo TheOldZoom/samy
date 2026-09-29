@@ -1,8 +1,4 @@
-import {
-  ApplicationCommandOptionType,
-  ApplicationCommandType,
-  InteractionType,
-} from "@discordjs/core";
+import { ApplicationCommandOptionType } from "discord.js";
 
 import Command from "@/classes/Command";
 import {
@@ -27,13 +23,6 @@ export default new Command({
   ephemeral: true,
 
   async execute(client, interaction) {
-    if (
-      interaction.type !== InteractionType.ApplicationCommand ||
-      interaction.data.type !== ApplicationCommandType.ChatInput
-    ) {
-      return;
-    }
-
     const raw = interaction
       .getOptionValue("message", ApplicationCommandOptionType.String)
       ?.trim();
@@ -41,28 +30,25 @@ export default new Command({
     if (!raw) {
       await interaction.reply({
         content: "Missing message content.",
-        ephemeral: true,
-        allowed_mentions: { parse: [] },
+        allowedMentions: { parse: [] },
       });
       return;
     }
 
-    const source = await getVariableSource(client.api, interaction, raw);
+    const source = await getVariableSource(client, interaction, raw);
     const built = buildScriptMessage(replaceVariables(raw, source));
 
     if (!built.success) {
       await interaction.reply({
         content: built.error,
-        ephemeral: true,
-        allowed_mentions: { parse: [] },
+        allowedMentions: { parse: [] },
       });
       return;
     }
 
     await interaction.reply({
-      ...built.message.body,
-      ephemeral: true,
-      allowed_mentions: { parse: [] },
+      ...(built.message.body as Record<string, unknown>),
+      allowedMentions: { parse: [] },
     });
 
     scheduleMessageDeletion(

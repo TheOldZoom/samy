@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from "@discordjs/core";
+import { ApplicationCommandOptionType } from "discord.js";
 import figlet from "figlet";
 
 import Command, { Subcommand, SubcommandGroup } from "@/classes/Command";

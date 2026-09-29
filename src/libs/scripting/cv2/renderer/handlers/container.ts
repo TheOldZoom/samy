@@ -1,12 +1,5 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  MediaGalleryBuilder,
-  SectionBuilder,
-  SeparatorBuilder,
-  TextDisplayBuilder,
-} from "@discordjs/builders";
-import { Container } from "@/utils/ui/components";
+import { ButtonBuilder, ComponentType } from "discord.js";
+import { ActionRow, Container } from "@/utils/ui/components";
 import { resolveValue } from "../../../common/value/resolveValue";
 import { parseColor } from "../../../common/parseHelpers";
 import type { ContainerNode } from "../../ast/nodes/ContainerNode";
@@ -30,9 +23,7 @@ export const containerRenderer: Cv2NodeRenderer<ContainerNode> = {
     const flushButtons = () => {
       while (pendingButtons.length > 0) {
         const slice = pendingButtons.splice(0, CV2_LIMITS.buttonsPerActionRow);
-        container.addActionRowComponents(
-          new ActionRowBuilder<ButtonBuilder>().addComponents(slice),
-        );
+        container.addActionRowComponents(ActionRow(...slice));
       }
     };
 
@@ -52,16 +43,18 @@ export const containerRenderer: Cv2NodeRenderer<ContainerNode> = {
       const items = Array.isArray(rendered) ? rendered : [rendered];
 
       for (const item of items) {
-        if (item instanceof TextDisplayBuilder) {
-          container.addTextDisplayComponents(item);
-        } else if (item instanceof SectionBuilder) {
-          container.addSectionComponents(item);
-        } else if (item instanceof SeparatorBuilder) {
-          container.addSeparatorComponents(item);
-        } else if (item instanceof MediaGalleryBuilder) {
-          container.addMediaGalleryComponents(item);
-        } else if (item instanceof ActionRowBuilder) {
-          container.addActionRowComponents(item);
+        const json = item?.toJSON();
+
+        if (json?.type === ComponentType.TextDisplay) {
+          container.addTextDisplayComponents(item as never);
+        } else if (json?.type === ComponentType.Section) {
+          container.addSectionComponents(item as never);
+        } else if (json?.type === ComponentType.Separator) {
+          container.addSeparatorComponents(item as never);
+        } else if (json?.type === ComponentType.MediaGallery) {
+          container.addMediaGalleryComponents(item as never);
+        } else if (json?.type === ComponentType.ActionRow) {
+          container.addActionRowComponents(json);
         }
       }
     }

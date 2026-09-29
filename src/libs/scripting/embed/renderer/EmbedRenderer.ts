@@ -1,13 +1,9 @@
-import {
-  ActionRowBuilder,
-  EmbedBuilder,
-  type ButtonBuilder,
-} from "@discordjs/builders";
+import { ActionRowBuilder, EmbedBuilder, type ButtonBuilder } from "discord.js";
 import type {
   APIActionRowComponent,
   APIButtonComponent,
   APIEmbed,
-} from "@discordjs/core";
+} from "discord.js";
 import {
   passthroughVariableResolver,
   type VariableContext,

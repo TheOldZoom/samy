@@ -1,16 +1,16 @@
 import {
   GuildPremiumTier,
   GuildVerificationLevel,
-  type API,
   type APIGuild,
   type APIGuildMember,
   type APIInteractionGuildMember,
   type APIRole,
-  type APIUser,
-} from "@discordjs/core";
-import { CDN } from "@discordjs/rest";
+  type User,
+} from "discord.js";
+import { CDN, type ChatInputCommandInteraction } from "discord.js";
+import type { Interaction } from "@/classes/Interaction";
 
-import { avatarURL } from "@/utils/user";
+import type Client from "@/classes/Client";
 
 const cdn = new CDN();
 
@@ -22,7 +22,7 @@ export type VariableMember = Pick<
 >;
 
 export interface VariableSource {
-  user: APIUser;
+  user: User;
   guild?: APIGuild | null;
   member?: VariableMember | null;
 }
@@ -38,35 +38,83 @@ export function needsGuildData(content: string): boolean {
 }
 
 export async function getVariableSource(
-  api: API,
-  interaction: {
-    guild_id?: string;
-    member?: APIInteractionGuildMember;
-    user?: APIUser;
-  },
+  client: Client,
+  interaction: Interaction<ChatInputCommandInteraction>,
   content: string,
 ): Promise<VariableSource> {
-  const user = interaction.member?.user ?? interaction.user;
-
-  if (!user) {
-    throw new Error("Interaction has no user.");
-  }
+  const user = interaction.user;
+  const member = normalizeMember(interaction.member);
 
   const guild =
-    interaction.guild_id && needsGuildData(content)
-      ? await api.guilds
-          .get(interaction.guild_id, { with_counts: true })
-          .catch(() => null)
+    interaction.guild && needsGuildData(content)
+      ? ({
+          id: interaction.guild.id,
+          name: interaction.guild.name,
+          icon: interaction.guild.icon,
+          banner: interaction.guild.banner,
+          splash: interaction.guild.splash,
+          description: interaction.guild.description,
+          approximate_member_count: interaction.guild.memberCount,
+          premium_subscription_count:
+            interaction.guild.premiumSubscriptionCount ?? undefined,
+          premium_tier: interaction.guild.premiumTier,
+          owner_id: interaction.guild.ownerId,
+          vanity_url_code: interaction.guild.vanityURLCode,
+          verification_level: interaction.guild.verificationLevel,
+          roles: interaction.guild.roles.cache.map((role) => ({
+            id: role.id,
+            name: role.name,
+            color: role.color,
+            position: role.position,
+          })),
+        } as APIGuild)
       : null;
 
-  return { user, member: interaction.member ?? null, guild };
+  return { user, member, guild };
+}
+
+function normalizeMember(
+  member: ChatInputCommandInteraction["member"],
+): VariableMember | null {
+  if (!member) {
+    return null;
+  }
+
+  if ("roles" in member && Array.isArray(member.roles)) {
+    const apiMember = member as APIInteractionGuildMember;
+
+    return {
+      nick: apiMember.nick ?? null,
+      roles: apiMember.roles,
+      joined_at: apiMember.joined_at,
+      premium_since: apiMember.premium_since ?? null,
+    };
+  }
+
+  if ("roles" in member && "cache" in member.roles) {
+    const guildMember = member as {
+      nickname: string | null;
+      roles: { cache: Map<string, unknown> };
+      joinedAt: Date | null;
+      premiumSince: Date | null;
+    };
+
+    return {
+      nick: guildMember.nickname,
+      roles: [...guildMember.roles.cache.keys()],
+      joined_at: guildMember.joinedAt?.toISOString() ?? null,
+      premium_since: guildMember.premiumSince?.toISOString() ?? null,
+    };
+  }
+
+  return null;
 }
 
 export function replaceVariables(
   content: string,
   { user, guild = null, member = null }: VariableSource,
 ): string {
-  const displayName = user.global_name ?? user.username;
+  const displayName = user.globalName ?? user.username;
   const memberName = member?.nick ?? displayName;
 
   const tag =
@@ -88,7 +136,11 @@ export function replaceVariables(
     "{user.username}": user.username,
     "{user.displayname}": displayName,
     "{user.tag}": tag,
-    "{user.avatar}": avatarURL(user, 1024, true),
+    "{user.avatar}": user.displayAvatarURL({
+      size: 1024,
+      extension: "png",
+      forceStatic: false,
+    }),
     "{user.createdat}": dynamicTimestamp(userCreatedAt),
     "{user.createdtimestamp}": unixSeconds(userCreatedAt).toString(),
     "{user.bot}": user.bot ? "Yes" : "No",

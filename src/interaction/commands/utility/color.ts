@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from "@discordjs/core";
+import { ApplicationCommandOptionType } from "discord.js";
 import convert from "color-convert";
 
 import Command from "@/classes/Command";
@@ -229,7 +229,7 @@ export default new Command({
 
     if (!color) {
       await interaction.reply({
-        components: v2(
+        ...v2(
           new Container().text(
             Text(`${icons.Wrong} Invalid color`),
             Text(
@@ -258,12 +258,12 @@ export default new Command({
     await interaction.reply({
       files: [
         {
-          data: image,
+          attachment: Buffer.from(image),
           name: "color.png",
         },
       ],
 
-      components: v2(
+      ...v2(
         new Container()
           .text(
             Text(`${icons.paintpadbrush} **${hex}**`),
@@ -274,9 +274,7 @@ export default new Command({
             ),
           )
           .media(Media("attachment://color.png")),
-      ).components,
-
-      flags: 1 << 15,
+      ),
     });
   },
 });

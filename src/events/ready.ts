@@ -1,13 +1,12 @@
-import { GatewayDispatchEvents } from "@discordjs/core";
+import { Events } from "discord.js";
 import Event from "../classes/Event";
 import { RegisterCommands } from "@/classes/Command";
 
 export default new Event({
-  name: GatewayDispatchEvents.Ready,
+  name: Events.ClientReady,
   once: true,
-  execute: async (client, { data }) => {
-    client.user = data.user;
-    client.logger.info(`Logged in as ${client.user.username}`);
+  execute: async (client) => {
+    client.logger.info(`Logged in as ${client.user?.username ?? "unknown"}`);
 
     await RegisterCommands(client);
   },

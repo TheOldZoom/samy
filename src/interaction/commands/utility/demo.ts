@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType } from "@discordjs/core";
+import { ApplicationCommandOptionType } from "discord.js";
 import {
   ActionRow,
   Buttons,

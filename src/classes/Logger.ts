@@ -18,7 +18,6 @@ export default class Logger {
         colorizeObjects: true,
         translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
         levelFirst: true,
-        singleLine: true,
         ignore: "pid,hostname",
       },
     },

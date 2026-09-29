@@ -1,5 +1,4 @@
-import { ButtonBuilder } from "@discordjs/builders";
-import { ButtonStyle } from "@discordjs/core";
+import { ButtonBuilder, ButtonStyle } from "discord.js";
 
 import { parseEmoji } from "./emoji";
 

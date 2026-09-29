@@ -1,12 +1,12 @@
-import { GatewayDispatchEvents } from "@discordjs/core";
+import { Events } from "discord.js";
 
 import Event from "@/classes/Event";
 import { routeInteraction } from "@/interaction/Router";
 
 export default new Event({
-  name: GatewayDispatchEvents.InteractionCreate,
+  name: Events.InteractionCreate,
 
-  execute: async (client, { data: raw, api }) => {
-    await routeInteraction(client, api, raw);
+  execute: async (client, interaction) => {
+    await routeInteraction(client, interaction);
   },
 });

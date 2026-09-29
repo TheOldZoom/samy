@@ -1,21 +1,21 @@
 import {
-  MessageFlags,
   ApplicationCommandOptionType,
   ComponentType,
-  InteractionType,
-  type API,
-  type APIInteraction,
-  type APIInteractionResponseCallbackData,
-  type APIModalInteractionResponseCallbackData,
-  type APICommandAutocompleteInteractionResponseCallbackData,
+  MessageFlags,
   type APIApplicationCommandInteractionDataOption,
-} from "@discordjs/core";
+  type AutocompleteInteraction,
+  type ChatInputCommandInteraction,
+  type CommandInteraction,
+  type Interaction as DiscordInteraction,
+  type InteractionEditReplyOptions,
+  type InteractionReplyOptions,
+  type InteractionUpdateOptions,
+  type MessageComponentInteraction,
+  type ModalSubmitInteraction,
+} from "discord.js";
 
-import type { RawFile } from "@discordjs/rest";
-
-type ReplyData = APIInteractionResponseCallbackData & {
+type ReplyData = InteractionReplyOptions & {
   ephemeral?: boolean;
-  files?: RawFile[];
 };
 
 type OptionValueMap = {
@@ -30,7 +30,13 @@ type OptionValueMap = {
   [ApplicationCommandOptionType.Attachment]: string;
 };
 
-export type Interaction<T extends APIInteraction = APIInteraction> = T & {
+type PatchableInteraction =
+  | ChatInputCommandInteraction
+  | AutocompleteInteraction
+  | MessageComponentInteraction
+  | ModalSubmitInteraction;
+
+interface InteractionMethods {
   isDeferred(): boolean;
   isReplied(): boolean;
 
@@ -45,102 +51,128 @@ export type Interaction<T extends APIInteraction = APIInteraction> = T & {
   reply(data: ReplyData): Promise<void>;
   followUp(data: ReplyData): Promise<void>;
   deleteReply(messageId?: string): Promise<void>;
-  getOriginalReply(): ReturnType<API["interactions"]["getOriginalReply"]>;
+  getOriginalReply(): Promise<unknown>;
 
   deferUpdate(): Promise<void>;
-  updateMessage(data: APIInteractionResponseCallbackData): Promise<void>;
+  updateMessage(data: InteractionUpdateOptions): Promise<void>;
 
-  showModal(data: APIModalInteractionResponseCallbackData): Promise<void>;
-
-  autocomplete(
-    data: APICommandAutocompleteInteractionResponseCallbackData,
+  showModal(
+    data: Parameters<CommandInteraction["showModal"]>[0],
   ): Promise<void>;
+
+  autocomplete(data: {
+    choices: { name: string; value: string | number }[];
+  }): Promise<void>;
 
   getOptionValue<K extends keyof OptionValueMap>(
     name: string,
     type: K,
   ): OptionValueMap[K] | undefined;
-};
+}
 
-export function createInteraction<T extends APIInteraction>(
-  api: API,
+type InteractionOverrideKeys =
+  keyof InteractionMethods | "reply" | "followUp" | "deleteReply" | "showModal";
+
+export type Interaction<T extends object = any> = Omit<
+  T,
+  InteractionOverrideKeys
+> &
+  InteractionMethods;
+
+export function createInteraction<T extends PatchableInteraction>(
   raw: T,
   resolvedOptions?: APIApplicationCommandInteractionDataOption[],
   defaultEphemeral = false,
 ): Interaction<T> {
-  let state: "none" | "deferred" | "replied" = "none";
-  let ephemeral = getEphemeralOption(resolvedOptions) ?? defaultEphemeral;
+  const base = raw as any;
+  let state: "none" | "deferred" | "replied" = base.replied
+    ? "replied"
+    : base.deferred
+      ? "deferred"
+      : "none";
+  const requestedEphemeral = getEphemeralOption(raw, resolvedOptions);
+  let ephemeral = requestedEphemeral ?? defaultEphemeral;
 
-  function resolveReplyData({
-    ephemeral: requested,
-    files,
-    ...data
-  }: ReplyData): {
-    data: APIInteractionResponseCallbackData;
-    files?: RawFile[];
-  } {
+  const patched = raw as unknown as Interaction<T>;
+
+  const native = {
+    reply: typeof base.reply === "function" ? base.reply.bind(raw) : null,
+    deferReply:
+      typeof base.deferReply === "function" ? base.deferReply.bind(raw) : null,
+    followUp:
+      typeof base.followUp === "function" ? base.followUp.bind(raw) : null,
+    editReply:
+      typeof base.editReply === "function" ? base.editReply.bind(raw) : null,
+    deleteReply:
+      typeof base.deleteReply === "function"
+        ? base.deleteReply.bind(raw)
+        : null,
+    fetchReply:
+      typeof base.fetchReply === "function" ? base.fetchReply.bind(raw) : null,
+    deferUpdate:
+      typeof base.deferUpdate === "function"
+        ? base.deferUpdate.bind(raw)
+        : null,
+    update: typeof base.update === "function" ? base.update.bind(raw) : null,
+    showModal:
+      typeof base.showModal === "function" ? base.showModal.bind(raw) : null,
+    respond: typeof base.respond === "function" ? base.respond.bind(raw) : null,
+  };
+
+  function withEphemeral(data: ReplyData): InteractionReplyOptions {
+    const { ephemeral: requested, ...rest } = data;
     const isEphemeral = requested ?? ephemeral;
-
-    const resolvedData: APIInteractionResponseCallbackData = isEphemeral
+    const resolved = isEphemeral
       ? {
-          ...data,
-          flags: (data.flags ?? 0) | MessageFlags.Ephemeral,
+          ...rest,
+          flags: addFlag(rest.flags, MessageFlags.Ephemeral),
         }
-      : data;
+      : rest;
 
-    return {
-      data: resolvedData,
-      files,
-    };
+    return resolved;
   }
 
-  const interaction = raw as Interaction<T>;
+  function withoutEphemeral(data: ReplyData): InteractionEditReplyOptions {
+    const { ephemeral: _requested, ...rest } = data;
 
-  interaction.isDeferred = () => state === "deferred";
-  interaction.isReplied = () => state === "replied";
+    return rest as InteractionEditReplyOptions;
+  }
 
-  interaction.isButton = () => {
-    if (raw.type !== InteractionType.MessageComponent) {
-      return false;
-    }
+  patched.isDeferred = () => Boolean(base.deferred) || state === "deferred";
+  patched.isReplied = () => Boolean(base.replied) || state === "replied";
 
-    return raw.data.component_type === ComponentType.Button;
-  };
+  patched.isButton = () =>
+    raw.isMessageComponent() && raw.componentType === ComponentType.Button;
 
-  interaction.isSelect = () => {
-    if (raw.type !== InteractionType.MessageComponent) {
-      return false;
-    }
+  patched.isSelect = () =>
+    raw.isMessageComponent() && raw.componentType !== ComponentType.Button;
 
-    return raw.data.component_type !== ComponentType.Button;
-  };
+  patched.isModal = () => raw.isModalSubmit();
 
-  interaction.isModal = () => raw.type === InteractionType.ModalSubmit;
-
-  interaction.getSelectedValues = () => {
-    if (raw.type !== InteractionType.MessageComponent) {
+  patched.getSelectedValues = () => {
+    if (!raw.isAnySelectMenu()) {
       return [];
     }
 
-    if (!("values" in raw.data)) {
-      return [];
-    }
-
-    return raw.data.values;
+    return raw.values;
   };
 
-  interaction.getModalValue = (customId) => {
-    if (raw.type !== InteractionType.ModalSubmit) {
+  patched.getModalValue = (customId) => {
+    if (!raw.isModalSubmit()) {
       return undefined;
     }
 
-    return findModalValue(raw.data.components, customId);
+    return raw.fields.getTextInputValue(customId);
   };
 
-  interaction.defer = async (eph) => {
+  patched.defer = async (eph?: boolean) => {
+    if (!native.deferReply) {
+      return;
+    }
+
     const isEphemeral = eph ?? ephemeral;
 
-    await api.interactions.defer(raw.id, raw.token, {
+    await native.deferReply({
       flags: isEphemeral ? MessageFlags.Ephemeral : undefined,
     });
 
@@ -148,110 +180,92 @@ export function createInteraction<T extends APIInteraction>(
     ephemeral = isEphemeral;
   };
 
-  interaction.reply = async (data) => {
-    const resolved = resolveReplyData(data);
-
-    if (state === "deferred") {
-      await api.interactions.editReply(raw.application_id, raw.token, {
-        ...resolved.data,
-        files: resolved.files,
-      });
-
+  patched.reply = async (data: ReplyData) => {
+    if (patched.isDeferred()) {
+      await native.editReply?.(withoutEphemeral(data));
       state = "replied";
       return;
     }
 
-    if (state === "replied") {
-      await api.interactions.followUp(raw.application_id, raw.token, {
-        ...resolved.data,
-        files: resolved.files,
-      });
+    const resolved = withEphemeral(data);
 
+    if (patched.isReplied()) {
+      await native.followUp?.(resolved);
       return;
     }
 
     ephemeral = data.ephemeral ?? ephemeral;
 
-    await api.interactions.reply(raw.id, raw.token, {
-      ...resolved.data,
-      files: resolved.files,
-    });
-
+    await native.reply?.(resolved);
     state = "replied";
   };
 
-  interaction.followUp = async (data) => {
-    const resolved = resolveReplyData(data);
-
-    await api.interactions.followUp(raw.application_id, raw.token, {
-      ...resolved.data,
-      files: resolved.files,
-    });
+  patched.followUp = async (data: ReplyData) => {
+    const resolved = withEphemeral(data);
+    await native.followUp?.(resolved);
   };
 
-  interaction.deleteReply = async (messageId) => {
-    await api.interactions.deleteReply(
-      raw.application_id,
-      raw.token,
-      messageId,
-    );
+  patched.deleteReply = async (messageId?: string) => {
+    await native.deleteReply?.(messageId);
 
     if (!messageId) {
       state = "none";
     }
   };
 
-  interaction.getOriginalReply = () =>
-    api.interactions.getOriginalReply(raw.application_id, raw.token);
+  patched.getOriginalReply = async () => native.fetchReply?.();
 
-  interaction.deferUpdate = async () => {
-    await api.interactions.deferMessageUpdate(raw.id, raw.token);
-
+  patched.deferUpdate = async () => {
+    await native.deferUpdate?.();
     state = "replied";
   };
 
-  interaction.updateMessage = async (data) => {
-    await api.interactions.updateMessage(raw.id, raw.token, data);
-
+  patched.updateMessage = async (data: InteractionUpdateOptions) => {
+    await native.update?.(data);
     state = "replied";
   };
 
-  interaction.showModal = async (data) => {
-    await api.interactions.createModal(raw.id, raw.token, data);
-
+  patched.showModal = async (
+    data: Parameters<CommandInteraction["showModal"]>[0],
+  ) => {
+    await native.showModal?.(data);
     state = "replied";
   };
 
-  interaction.autocomplete = async (data) => {
-    await api.interactions.createAutocompleteResponse(raw.id, raw.token, data);
+  patched.autocomplete = async (data: {
+    choices: { name: string; value: string | number }[];
+  }) => {
+    await native.respond?.(data.choices);
   };
 
-  interaction.getOptionValue = (name, type) => {
-    const options =
-      resolvedOptions ??
-      (
-        raw.data as {
-          options?: APIApplicationCommandInteractionDataOption[];
-        }
-      ).options;
-
+  patched.getOptionValue = (name, type) => {
+    const options = resolvedOptions ?? getNativeOptions(raw);
     const option = options?.find(
       (option) => option.name === name && option.type === type,
     );
+    const value =
+      option && "value" in option
+        ? (option.value as OptionValueMap[typeof type])
+        : undefined;
 
-    if (!option || !("value" in option)) {
-      return undefined;
-    }
-
-    return option.value as OptionValueMap[typeof type];
+    return value;
   };
 
-  return interaction;
+  return patched;
 }
 
 function getEphemeralOption(
+  interaction: PatchableInteraction,
   options?: APIApplicationCommandInteractionDataOption[],
 ): boolean | undefined {
+  if (interaction.isChatInputCommand()) {
+    const value = interaction.options.getBoolean("ephemeral");
+
+    if (value !== null) {
+      return value;
+    }
+  }
+
   const option = options?.find(
     (option) =>
       option.name === "ephemeral" &&
@@ -263,33 +277,25 @@ function getEphemeralOption(
     : undefined;
 }
 
-function findModalValue(
-  components: unknown[],
-  customId: string,
-): string | undefined {
-  for (const component of components) {
-    if (typeof component !== "object" || component === null) {
-      continue;
-    }
-
-    const value = component as {
-      custom_id?: unknown;
-      value?: unknown;
-      components?: unknown[];
-    };
-
-    if (value.custom_id === customId && typeof value.value === "string") {
-      return value.value;
-    }
-
-    if (Array.isArray(value.components)) {
-      const nestedValue = findModalValue(value.components, customId);
-
-      if (nestedValue !== undefined) {
-        return nestedValue;
-      }
-    }
+function getNativeOptions(
+  interaction: PatchableInteraction,
+): APIApplicationCommandInteractionDataOption[] | undefined {
+  if (!interaction.isCommand() && !interaction.isAutocomplete()) {
+    return undefined;
   }
 
-  return undefined;
+  return interaction.options
+    .data as APIApplicationCommandInteractionDataOption[];
+}
+
+function addFlag(flags: InteractionReplyOptions["flags"], flag: MessageFlags) {
+  if (typeof flags === "number") {
+    return flags | flag;
+  }
+
+  if (Array.isArray(flags)) {
+    return [...flags, flag];
+  }
+
+  return flag;
 }

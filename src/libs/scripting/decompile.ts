@@ -4,7 +4,7 @@ import {
   SeparatorSpacingSize,
   type APIEmbed,
   type APIMessageTopLevelComponent,
-} from "@discordjs/core";
+} from "discord.js";
 
 type EmbedInput = APIEmbed | { toJSON(): APIEmbed };
 
