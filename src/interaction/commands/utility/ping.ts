@@ -20,7 +20,7 @@ export default new Command({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.pings} Ping`),
+          Text(`-# ${icons.pings} · Ping`),
           Text(
             [
               `> Gateway: **${formatMs(ws)}**`,

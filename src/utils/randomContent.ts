@@ -27,7 +27,7 @@ export function imageResponse(
   source?: { label: string; url: string },
 ) {
   const container = new Container()
-    .text(Text(`-# ${icon} ${heading}`))
+    .text(Text(`-# ${icon} · ${heading}`))
     .media(Media(imageUrl));
 
   if (source) {
@@ -42,7 +42,7 @@ export function imageResponse(
 
 export function textResponse(icon: string, heading: string, content: string) {
   return {
-    ...v2(new Container().text(Text(`-# ${icon} ${heading}\n${content}`))),
+    ...v2(new Container().text(Text(`-# ${icon} · ${heading}\n${content}`))),
     allowedMentions: { parse: [] },
   };
 }

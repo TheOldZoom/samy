@@ -27,7 +27,7 @@ export default new InteractionHandler({
       await interaction.reply({
         ...v2(
           new Container().text(
-            Text(`-# ${icons.image} This user doesn't have a banner.`),
+            Text(`-# ${icons.image} · This user doesn't have a banner.`),
           ),
         ),
         ephemeral: true,

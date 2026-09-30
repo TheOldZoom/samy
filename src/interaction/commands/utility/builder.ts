@@ -34,7 +34,6 @@ export default new Command({
       });
       return;
     }
-
     const source = await getVariableSource(client, interaction, raw);
     const built = buildScriptMessage(replaceVariables(raw, source));
 
