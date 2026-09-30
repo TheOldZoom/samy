@@ -6,7 +6,11 @@ import {
 
 import Command, { Subcommand } from "@/classes/Command";
 import prisma from "@/libs/Prisma";
-import { buildScriptMessage } from "@/libs/scripting";
+import {
+  buildScriptMessage,
+  getVariableSource,
+  replaceVariables,
+} from "@/libs/scripting";
 import {
   deliverMemberMessage,
   missingMemberMessagePermissions,
@@ -44,7 +48,7 @@ export default new Command({
           required: true,
         },
       ],
-      async execute(_client, interaction) {
+      async execute(client, interaction) {
         if (!interaction.guildId || !interaction.guild) return;
 
         const channelId = interaction.getOptionValue(
@@ -62,7 +66,10 @@ export default new Command({
           return;
         }
 
-        const validation = buildScriptMessage(message);
+        const source = await getVariableSource(client, interaction, message);
+        const validation = buildScriptMessage(
+          replaceVariables(message, source),
+        );
 
         if (!validation.success) {
           await interaction.reply(response(validation.error));
