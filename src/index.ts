@@ -14,7 +14,7 @@ async function shutdown(signal: string) {
   const timeout = setTimeout(() => {
     client.logger.error("Shutdown timed out");
     process.exit(1);
-  }, 15_000);
+  }, 120_000);
 
   try {
     await client.destroy();
