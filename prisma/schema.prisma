@@ -21,6 +21,11 @@ model DailyUsage {
   @@unique([userId, commandKey])
 }
 
+model GuildConfig {
+  guildId             String  @id
+  mentionLinksEnabled Boolean @default(false)
+}
+
 model Welcome {
   id        String @id @default(uuid())
   guildId   String
