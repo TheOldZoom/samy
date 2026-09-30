@@ -21,8 +21,8 @@
 [x] `/ping` Check if the bot is online
 [x] `/status` View the bot's current status
 [x] `/user` View information about a user
-[ ] `/server` View information about the server
-[ ] `/emoji` View information about an emoji
+[x] `/server` View information about the server
+[x] `/emoji` View information about an emoji
 [ ] `/sticker` View information about a sticker
 [ ] `/remind` Create and manage reminders
 [ ] `/timestamp` Create and manage Discord timestamps
