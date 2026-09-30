@@ -15,6 +15,7 @@ async function shutdown(signal: string) {
     client.logger.error("Shutdown timed out");
     process.exit(1);
   }, 120_000);
+  timeout.unref();
 
   try {
     await client.destroy();
