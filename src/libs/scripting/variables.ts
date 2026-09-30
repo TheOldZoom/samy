@@ -5,6 +5,9 @@ import {
   type APIGuildMember,
   type APIInteractionGuildMember,
   type APIRole,
+  type Guild,
+  type GuildMember,
+  type PartialGuildMember,
   type User,
 } from "discord.js";
 import { CDN, type ChatInputCommandInteraction } from "discord.js";
@@ -47,30 +50,49 @@ export async function getVariableSource(
 
   const guild =
     interaction.guild && needsGuildData(content)
-      ? ({
-          id: interaction.guild.id,
-          name: interaction.guild.name,
-          icon: interaction.guild.icon,
-          banner: interaction.guild.banner,
-          splash: interaction.guild.splash,
-          description: interaction.guild.description,
-          approximate_member_count: interaction.guild.memberCount,
-          premium_subscription_count:
-            interaction.guild.premiumSubscriptionCount ?? undefined,
-          premium_tier: interaction.guild.premiumTier,
-          owner_id: interaction.guild.ownerId,
-          vanity_url_code: interaction.guild.vanityURLCode,
-          verification_level: interaction.guild.verificationLevel,
-          roles: interaction.guild.roles.cache.map((role) => ({
-            id: role.id,
-            name: role.name,
-            color: role.color,
-            position: role.position,
-          })),
-        } as APIGuild)
+      ? toVariableGuild(interaction.guild)
       : null;
 
   return { user, member, guild };
+}
+
+export function getMemberVariableSource(
+  member: GuildMember | PartialGuildMember,
+  content: string,
+): VariableSource {
+  return {
+    user: member.user,
+    member: {
+      nick: member.nickname,
+      roles: [...member.roles.cache.keys()],
+      joined_at: member.joinedAt?.toISOString() ?? null,
+      premium_since: member.premiumSince?.toISOString() ?? null,
+    },
+    guild: needsGuildData(content) ? toVariableGuild(member.guild) : null,
+  };
+}
+
+function toVariableGuild(guild: Guild): APIGuild {
+  return {
+    id: guild.id,
+    name: guild.name,
+    icon: guild.icon,
+    banner: guild.banner,
+    splash: guild.splash,
+    description: guild.description,
+    approximate_member_count: guild.memberCount,
+    premium_subscription_count: guild.premiumSubscriptionCount ?? undefined,
+    premium_tier: guild.premiumTier,
+    owner_id: guild.ownerId,
+    vanity_url_code: guild.vanityURLCode,
+    verification_level: guild.verificationLevel,
+    roles: guild.roles.cache.map((role) => ({
+      id: role.id,
+      name: role.name,
+      color: role.color,
+      position: role.position,
+    })),
+  } as APIGuild;
 }
 
 function normalizeMember(

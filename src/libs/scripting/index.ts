@@ -21,6 +21,7 @@ export type {
   ScriptMessageKind,
 } from "./buildScriptMessage";
 export {
+  getMemberVariableSource,
   getVariableSource,
   needsGuildData,
   replaceVariables,

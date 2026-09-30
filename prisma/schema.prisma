@@ -20,3 +20,21 @@ model DailyUsage {
 
   @@unique([userId, commandKey])
 }
+
+model Welcome {
+  id        String @id @default(uuid())
+  guildId   String
+  channelId String
+  message   String
+
+  @@unique([guildId, channelId])
+}
+
+model Leave {
+  id        String @id @default(uuid())
+  guildId   String
+  channelId String
+  message   String
+
+  @@unique([guildId, channelId])
+}
