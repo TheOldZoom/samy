@@ -1,4 +1,3 @@
--- CreateTable
 CREATE TABLE "DailyUsage" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -8,6 +7,4 @@ CREATE TABLE "DailyUsage" (
 
     CONSTRAINT "DailyUsage_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
 CREATE INDEX "DailyUsage_userId_commandKey_idx" ON "DailyUsage"("userId", "commandKey");

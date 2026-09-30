@@ -1,4 +1,3 @@
--- CreateTable
 CREATE TABLE "Welcome" (
     "id" TEXT NOT NULL,
     "guildId" TEXT NOT NULL,
@@ -7,8 +6,6 @@ CREATE TABLE "Welcome" (
 
     CONSTRAINT "Welcome_pkey" PRIMARY KEY ("id")
 );
-
--- CreateTable
 CREATE TABLE "Leave" (
     "id" TEXT NOT NULL,
     "guildId" TEXT NOT NULL,
@@ -17,9 +14,5 @@ CREATE TABLE "Leave" (
 
     CONSTRAINT "Leave_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
 CREATE UNIQUE INDEX "Welcome_guildId_channelId_key" ON "Welcome"("guildId", "channelId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Leave_guildId_channelId_key" ON "Leave"("guildId", "channelId");

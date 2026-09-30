@@ -43,3 +43,95 @@ model Leave {
 
   @@unique([guildId, channelId])
 }
+
+model ModerationCase {
+  id          String    @id @default(uuid())
+  guildId     String
+  number      Int
+  type        String
+  userId      String
+  moderatorId String
+  reason      String
+  durationMs  BigInt?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([guildId, number])
+  @@index([guildId, userId, createdAt])
+}
+
+model Warning {
+  id          String   @id @default(uuid())
+  guildId     String
+  userId      String
+  moderatorId String
+  reason      String
+  createdAt   DateTime @default(now())
+
+  @@index([guildId, userId, createdAt])
+}
+
+model MemberNote {
+  id        String   @id @default(uuid())
+  guildId   String
+  userId    String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([guildId, userId, createdAt])
+}
+
+model ModerationConfig {
+  guildId            String  @id
+  imageMuteRoleId    String?
+  reactionMuteRoleId String?
+  jailRoleId         String?
+  jailChannelId      String?
+}
+
+model TemporaryAction {
+  id        String   @id @default(uuid())
+  guildId   String
+  userId    String
+  type      String
+  roleId    String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, userId, type])
+  @@index([expiresAt])
+}
+
+model TemporaryBan {
+  id        String   @id @default(uuid())
+  guildId   String
+  userId    String
+  expiresAt DateTime
+
+  @@unique([guildId, userId])
+  @@index([expiresAt])
+}
+
+model Lockdown {
+  guildId String  @id
+  active  Boolean @default(false)
+}
+
+model LockdownChannel {
+  id        String   @id @default(uuid())
+  guildId   String
+  channelId String
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, channelId])
+}
+
+model LockdownRole {
+  id        String   @id @default(uuid())
+  guildId   String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  @@unique([guildId, roleId])
+}
