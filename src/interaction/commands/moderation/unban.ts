@@ -39,14 +39,20 @@ export default new Command({
         "reason",
         ApplicationCommandOptionType.String,
       ) ?? DEFAULT_REASON;
-    const ban = await interaction.guild.bans.fetch(userId).catch(() => null);
+    const ban = await interaction.guild.bans
+      .fetch({ user: userId, force: true })
+      .catch(() => null);
     if (!ban)
       return await interaction.reply(response("That user is not banned."));
 
-    await interaction.guild.members.unban(
-      userId,
-      `${interaction.user.tag}: ${reason}`,
-    );
+    const unbanned = await interaction.guild.members
+      .unban(userId, `${interaction.user.tag}: ${reason}`)
+      .then(() => true)
+      .catch(() => false);
+    if (!unbanned)
+      return await interaction.reply(
+        response("That user is no longer banned, or I could not unban them."),
+      );
     await prisma.temporaryBan.deleteMany({
       where: { guildId: interaction.guild.id, userId },
     });
