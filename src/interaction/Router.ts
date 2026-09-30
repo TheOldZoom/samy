@@ -3,6 +3,7 @@ import {
   MessageFlags,
   type AutocompleteInteraction,
   type ChatInputCommandInteraction,
+  type ContextMenuCommandInteraction,
   type Interaction,
   type MessageComponentInteraction,
   type ModalSubmitInteraction,
@@ -26,6 +27,8 @@ export async function routeInteraction(
   try {
     if (interaction.isChatInputCommand()) {
       await handleCommand(client, interaction);
+    } else if (interaction.isContextMenuCommand()) {
+      await handleContextCommand(client, interaction);
     } else if (interaction.isAutocomplete()) {
       await handleAutocomplete(client, interaction);
     } else if (interaction.isMessageComponent()) {
@@ -163,6 +166,97 @@ async function handleCommand(
     const data = v2(
       new Container().text(Text("Something went wrong running that command.")),
     );
+
+    await (
+      wrapped.isReplied() || wrapped.isDeferred()
+        ? wrapped.followUp(data)
+        : wrapped.reply(data)
+    ).catch(() => {});
+  }
+}
+
+async function handleContextCommand(
+  client: Client,
+  interaction: ContextMenuCommandInteraction,
+) {
+  const lookupKey = interaction.commandType + ":" + interaction.commandName;
+  const command = client.contextCommands.get(lookupKey);
+
+  if (!command) {
+    client.logger.warn(
+      "No context command matched for " +
+        JSON.stringify(interaction.commandName),
+    );
+    return;
+  }
+
+  const wrapped = createInteraction(interaction);
+  const key = "context:" + lookupKey;
+
+  LogInteraction(client, interaction, key);
+
+  if (command.cooldown) {
+    const expires = client.useCooldown(
+      key,
+      interaction.user.id,
+      command.cooldown,
+    );
+
+    if (expires) {
+      await wrapped.reply({
+        ...v2(
+          new Container().text(
+            Text(
+              "You are on cooldown. Try again <t:" +
+                Math.ceil(expires / 1000) +
+                ":R>.",
+            ),
+          ),
+        ),
+        ephemeral: true,
+      });
+      return;
+    }
+  }
+
+  if (command.dailyLimit !== undefined) {
+    const result = await consumeDailyUse(
+      interaction.user.id,
+      key,
+      command.dailyLimit,
+    );
+
+    if (!result.allowed) {
+      await wrapped.reply({
+        ...v2(
+          new Container().text(
+            Text(
+              "You have reached your daily limit. Try again <t:" +
+                Math.ceil(result.resetAt / 1000) +
+                ":R>.",
+            ),
+          ),
+        ),
+        ephemeral: true,
+      });
+      return;
+    }
+  }
+
+  try {
+    await command.execute(client, wrapped);
+  } catch (error) {
+    client.logger.error(
+      { err: error },
+      "Error executing context command " + JSON.stringify(command.name),
+    );
+
+    const data = {
+      ...v2(
+        new Container().text(Text("Something went wrong running that action.")),
+      ),
+      ephemeral: true,
+    };
 
     await (
       wrapped.isReplied() || wrapped.isDeferred()
