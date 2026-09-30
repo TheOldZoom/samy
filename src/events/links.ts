@@ -1,7 +1,7 @@
 import { Events, MessageFlags } from "discord.js";
 import Event from "@/classes/Event";
 import { getMentionLinksEnabled } from "@/libs/GuildConfig";
-import { linkHandlers } from "@/utils/Links";
+import { linkHandlers } from "@/utils/links";
 
 export default new Event({
   name: Events.MessageCreate,

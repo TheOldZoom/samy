@@ -1,4 +1,3 @@
-// src/handlers/links.ts
 import { icons } from "@/utils/icons";
 import {
   ActionRow,
@@ -14,6 +13,9 @@ const MEDIA_GALLERY_LIMIT = 10;
 
 const INSTAGRAM_HOST =
   process.env.INSTAGRAM_EMBED_HOST ?? "https://ig.mynameistito.com";
+
+const REDDIT_UA =
+  "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)";
 
 type LinkButton = { label: string; icon: string };
 
@@ -225,6 +227,20 @@ async function fetchReddit(id: string) {
   return (Array.isArray(json) ? json : json?.data)?.[0] ?? null;
 }
 
+async function resolveRedditShare(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": REDDIT_UA },
+      redirect: "manual",
+      signal: AbortSignal.timeout(8000),
+    });
+    const loc = res.headers.get("location");
+    return loc?.match(/\/comments\/(\w+)/i)?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function redditMedia(p: RedditPost): string[] {
   const meta = p.media_metadata;
   if (p.gallery_data && meta) {
@@ -324,9 +340,14 @@ export const linkHandlers: LinkHandler[] = [
   },
   {
     pattern:
-      /https?:\/\/(?:(?:(?:www|old|new|np|m)\.)?reddit\.com\/(?:r\/\w+\/)?comments\/|redd\.it\/)(\w+)/i,
-    async run([, id]) {
-      const post = await fetchReddit(id!);
+      /https?:\/\/(?:(?:(?:www|old|new|np|m)\.)?reddit\.com\/(?:(?:r\/\w+\/)?comments\/(\w+)|r\/\w+\/s\/(\w+))|redd\.it\/(\w+))/i,
+    async run([url, commentsId, shareToken, shortId]) {
+      const id = shareToken
+        ? await resolveRedditShare(url!)
+        : (commentsId ?? shortId);
+      if (!id) return null;
+
+      const post = await fetchReddit(id);
       return (
         post &&
         single(redditPost(post), {
@@ -336,7 +357,6 @@ export const linkHandlers: LinkHandler[] = [
       );
     },
   },
-
   {
     pattern:
       /https?:\/\/(?:www\.)?instagram\.com\/(?:[\w.]+\/)?(p|reels?|tv)\/([\w-]+)/i,
