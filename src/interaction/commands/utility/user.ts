@@ -106,7 +106,7 @@ export default new Command({
           .text(
             Text(
               [
-                `-# ${icons.Person} **${displayName}** · ${user.username}`,
+                `-# ${icons.Person} · **${displayName}** · ${user.username}`,
                 `\`${user.id}\``,
                 " ",
                 `Created: **<t:${createdAt(user.id)}:D> (<t:${createdAt(user.id)}:R>)**`,

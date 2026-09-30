@@ -33,7 +33,7 @@ export default new Command({
       v2(
         new Container()
           .text(
-            Text(`-# ${icons.snowflake} Bot stats`),
+            Text(`-# ${icons.snowflake} · Bot stats`),
             Text(
               `> Gateway: **${formatMs(ws)}**
 > REST: **${rest}ms**

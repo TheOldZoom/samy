@@ -66,6 +66,8 @@ export default new Command({
           return;
         }
 
+        await interaction.defer(true);
+
         const source = await getVariableSource(client, interaction, message);
         const validation = buildScriptMessage(
           replaceVariables(message, source),
@@ -205,6 +207,8 @@ export default new Command({
       async execute(_client, interaction) {
         if (!interaction.guildId) return;
 
+        await interaction.defer(true);
+
         const records = await prisma.welcome.findMany({
           where: { guildId: interaction.guildId },
         });
@@ -271,6 +275,8 @@ export default new Command({
         );
 
         if (!channelId) return;
+
+        await interaction.defer(true);
 
         const record = await prisma.welcome.findUnique({
           where: {

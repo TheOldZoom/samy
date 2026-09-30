@@ -62,7 +62,7 @@ export default new Command({
       await interaction.reply(
         v2(
           new Container().text(
-            Text(`-# ${icons.Wrong} URL shortener`),
+            Text(`-# ${icons.Wrong} · URL shortener`),
             Text("Please provide a valid HTTP or HTTPS URL."),
           ),
         ),
@@ -76,7 +76,7 @@ export default new Command({
       await interaction.reply(
         v2(
           new Container().text(
-            Text(`-# ${icons.linkadd} URL shortened`),
+            Text(`-# ${icons.linkadd} · URL shortened`),
             Text(
               `> Original: **${url.href}**\n` + `> Shortened: **${shortUrl}**`,
             ),
@@ -87,7 +87,7 @@ export default new Command({
       await interaction.reply(
         v2(
           new Container().text(
-            Text(`-# ${icons.Wrong} URL shortener`),
+            Text(`-# ${icons.Wrong} · URL shortener`),
             Text("Failed to shorten the URL. Please try again."),
           ),
         ),

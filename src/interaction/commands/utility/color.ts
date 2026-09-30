@@ -231,7 +231,7 @@ export default new Command({
       await interaction.reply({
         ...v2(
           new Container().text(
-            Text(`${icons.Wrong} Invalid color`),
+            Text(`${icons.Wrong} · Invalid color`),
             Text(
               `Use a valid HEX, RGB, or HSL color.
 
@@ -266,7 +266,7 @@ export default new Command({
       ...v2(
         new Container()
           .text(
-            Text(`${icons.paintpadbrush} **${hex}**`),
+            Text(`-# ${icons.paintpadbrush} · **${hex}**`),
             Text(
               `> HEX: \`${hex}\`
 > RGB: \`rgb(${normalized.r}, ${normalized.g}, ${normalized.b})\`

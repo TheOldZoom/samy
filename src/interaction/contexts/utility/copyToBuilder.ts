@@ -55,7 +55,7 @@ export default new ContextCommand({
       await interaction.reply({
         ...v2(
           new Container().text(
-            Text(`-# ${icons.code} Copy to Builder\n${codeBlock(script)}`),
+            Text(`-# ${icons.code} · Copy to Builder\n${codeBlock(script)}`),
           ),
         ),
         ephemeral: true,
@@ -66,7 +66,7 @@ export default new ContextCommand({
         ...v2(
           new Container().text(
             Text(
-              `-# ${icons.Wrong} Copy to Builder\n${
+              `-# ${icons.Wrong} · Copy to Builder\n${
                 error instanceof Error
                   ? error.message
                   : "Could not copy that message."

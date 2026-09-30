@@ -8,6 +8,12 @@ import {
   setMentionLinksEnabled,
 } from "@/libs/GuildConfig";
 import { Container, Text, v2 } from "@/utils/ui/components";
+import {
+  imuteConfig,
+  jailConfig,
+  lockdownConfig,
+  rmuteConfig,
+} from "@/interaction/config/moderation";
 
 function response(content: string) {
   return {
@@ -26,6 +32,7 @@ const mentionLinks = new SubcommandGroup({
       description: "Enable mention-triggered link previews.",
       async execute(_client, interaction) {
         if (!interaction.guildId) return;
+        await interaction.defer(true);
 
         await setMentionLinksEnabled(interaction.guildId, true);
         await interaction.reply(
@@ -38,6 +45,7 @@ const mentionLinks = new SubcommandGroup({
       description: "Disable mention-triggered link previews.",
       async execute(_client, interaction) {
         if (!interaction.guildId) return;
+        await interaction.defer(true);
 
         await setMentionLinksEnabled(interaction.guildId, false);
         await interaction.reply(
@@ -50,6 +58,7 @@ const mentionLinks = new SubcommandGroup({
       description: "Show whether mention-triggered link previews are enabled.",
       async execute(_client, interaction) {
         if (!interaction.guildId) return;
+        await interaction.defer(true);
 
         const enabled = await getMentionLinksEnabled(interaction.guildId);
 
@@ -79,5 +88,9 @@ export default new Command({
       subcommands: [...leaver.subcommands.values()],
     }),
     mentionLinks,
+    imuteConfig,
+    rmuteConfig,
+    jailConfig,
+    lockdownConfig,
   ],
 });

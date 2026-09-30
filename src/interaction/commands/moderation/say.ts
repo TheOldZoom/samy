@@ -37,6 +37,7 @@ function fail(interaction: Interaction, content: string) {
 export default new Command({
   name: "say",
   description: "Send a message as the bot to a channel.",
+  ephemeral: true,
   options: [
     {
       name: "message",

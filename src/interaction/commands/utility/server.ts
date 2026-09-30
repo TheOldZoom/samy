@@ -70,7 +70,7 @@ export default new Command({
           [
             "-# " +
               icons.folder +
-              " **" +
+              " · **" +
               guild.name +
               "** · " +
               guild.memberCount.toLocaleString() +

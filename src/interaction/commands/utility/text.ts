@@ -31,7 +31,7 @@ const base64Encode = new Subcommand({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.fingerprint} Base64 encoded`),
+          Text(`-# ${icons.fingerprint} · Base64 encoded`),
           Text(`\`\`\`\n${encoded}\n\`\`\``),
         ),
       ),
@@ -58,7 +58,7 @@ const base64Decode = new Subcommand({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.fingerprint} Base64 decoded`),
+          Text(`-# ${icons.fingerprint} · Base64 decoded`),
           Text(`\`\`\`\n${decoded}\n\`\`\``),
         ),
       ),
@@ -113,7 +113,7 @@ const hash = new Subcommand({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.fingerprint} Text hash`),
+          Text(`-# ${icons.fingerprint} · Text hash`),
           Text(
             `> Algorithm: \`${algorithm.toUpperCase()}\`\n> Hash: \`${digest}\``,
           ),
@@ -142,7 +142,7 @@ const reverse = new Subcommand({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.backforward} Reversed text`),
+          Text(`-# ${icons.backforward} · Reversed text`),
           Text(`\`\`\`\n${reversed}\n\`\`\``),
         ),
       ),
@@ -179,7 +179,7 @@ const mock = new Subcommand({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.magicwand} Mock text`),
+          Text(`-# ${icons.magicwand} · Mock text`),
           Text(`\`\`\`\n${mocked}\n\`\`\``),
         ),
       ),
@@ -206,7 +206,7 @@ const ascii = new Subcommand({
     await interaction.reply(
       v2(
         new Container().text(
-          Text(`-# ${icons.heart} ASCII art`),
+          Text(`-# ${icons.heart} · ASCII art`),
           Text(`\`\`\`\n${art}\n\`\`\``),
         ),
       ),
