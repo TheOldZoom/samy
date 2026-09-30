@@ -1,6 +1,7 @@
 services:
   bot:
     build: .
+    init: true
     restart: unless-stopped
     environment:
       NODE_ENV: ${NODE_ENV:-production}
@@ -13,7 +14,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    stop_grace_period: 20s
+    stop_signal: SIGTERM
+    stop_grace_period: 130s
 
   db:
     image: postgres:18
@@ -26,6 +28,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-samy}
     volumes:
       - postgres:/var/lib/postgresql
+    stop_signal: SIGINT
+    stop_grace_period: 30s
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
