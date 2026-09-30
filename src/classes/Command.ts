@@ -14,6 +14,10 @@ import {
   type RESTPutAPIApplicationCommandsResult,
   type AutocompleteInteraction,
   type ChatInputCommandInteraction,
+  type ContextMenuCommandBuilder,
+  type ContextMenuCommandInteraction,
+  type PermissionsString,
+  type RESTPostAPIContextMenuApplicationCommandsJSONBody,
 } from "discord.js";
 
 import type { Interaction } from "./Interaction";
@@ -287,6 +291,39 @@ export default class Command {
   }
 }
 
+export interface ContextCommandOptions {
+  data: ContextMenuCommandBuilder;
+  botPermissions?: PermissionsString[];
+  cooldown?: number;
+  dailyLimit?: number;
+  execute: (
+    client: Client,
+    interaction: Interaction<ContextMenuCommandInteraction>,
+  ) => Promise<void> | void;
+}
+
+export class ContextCommand {
+  public readonly data: RESTPostAPIContextMenuApplicationCommandsJSONBody;
+  public readonly cooldown?: number;
+  public readonly dailyLimit?: number;
+  public readonly execute: ContextCommandOptions["execute"];
+
+  constructor(options: ContextCommandOptions) {
+    this.data = options.data.toJSON();
+    this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
+    this.dailyLimit = options.dailyLimit;
+    this.execute = options.execute;
+  }
+
+  get name() {
+    return this.data.name;
+  }
+
+  get key() {
+    return `${this.data.type}:${this.name}`;
+  }
+}
+
 async function getCommandFiles(directory: string): Promise<string[]> {
   const entries = await readdir(directory, {
     withFileTypes: true,
@@ -315,24 +352,30 @@ async function getCommandFiles(directory: string): Promise<string[]> {
 
 export async function LoadCommands(client: Client) {
   const commandsDirectory = join(import.meta.dir, "../interaction/commands");
-  const files = await getCommandFiles(commandsDirectory);
+  const commandFiles = await getCommandFiles(commandsDirectory);
 
-  for (const file of files) {
-    const command = (
-      (await import(file)) as {
-        default: Command;
-      }
-    ).default;
+  for (const file of commandFiles) {
+    const command = ((await import(file)) as { default: Command }).default;
 
     client.commands.set(command.name, command);
+    client.logger.info("[COMMAND]:".padEnd(10) + " " + command.name);
+  }
 
-    client.logger.info(`${`[COMMAND]:`.padEnd(10)} ${command.name}`);
+  const contextsDirectory = join(import.meta.dir, "../interaction/contexts");
+  const contextFiles = await getCommandFiles(contextsDirectory);
+
+  for (const file of contextFiles) {
+    const command = ((await import(file)) as { default: ContextCommand })
+      .default;
+
+    client.contextCommands.set(command.key, command);
+    client.logger.info("[CONTEXT]:".padEnd(10) + " " + command.name);
   }
 }
 
 interface NormalizableCommand {
   name: string;
-  description: string;
+  description?: string;
   type?: ApplicationCommandType | number;
   options?: readonly APIApplicationCommandOption[];
   default_member_permissions?: string | null;
@@ -344,7 +387,7 @@ interface NormalizableCommand {
 function normalize(command: NormalizableCommand) {
   return stableStringify({
     name: command.name,
-    description: command.description,
+    description: command.description ?? "",
     type: command.type ?? 1,
     options: command.options ?? [],
     default_member_permissions: command.default_member_permissions ?? null,
@@ -376,7 +419,10 @@ function stableStringify(value: unknown): string {
 }
 
 export async function RegisterCommands(client: Client) {
-  const local = [...client.commands.values()].map((command) => command.data);
+  const local = [
+    ...[...client.commands.values()].map((command) => command.data),
+    ...[...client.contextCommands.values()].map((command) => command.data),
+  ];
 
   if (!client.user) {
     client.logger.warn("Skipping command registration before client is ready");
@@ -393,7 +439,9 @@ export async function RegisterCommands(client: Client) {
     sameCount &&
     local.every((localCommand) => {
       const match = existing.find(
-        (existingCommand) => existingCommand.name === localCommand.name,
+        (existingCommand) =>
+          existingCommand.name === localCommand.name &&
+          existingCommand.type === localCommand.type,
       );
 
       if (!match) return false;

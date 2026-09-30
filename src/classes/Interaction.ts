@@ -5,6 +5,7 @@ import {
   type APIApplicationCommandInteractionDataOption,
   type AutocompleteInteraction,
   type ChatInputCommandInteraction,
+  type ContextMenuCommandInteraction,
   type CommandInteraction,
   type Interaction as DiscordInteraction,
   type InteractionEditReplyOptions,
@@ -32,6 +33,7 @@ type OptionValueMap = {
 
 type PatchableInteraction =
   | ChatInputCommandInteraction
+  | ContextMenuCommandInteraction
   | AutocompleteInteraction
   | MessageComponentInteraction
   | ModalSubmitInteraction;

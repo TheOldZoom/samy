@@ -1,6 +1,7 @@
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import type {
+  ContextMenuCommandInteraction,
   Interaction as DiscordInteraction,
   MessageComponentInteraction,
 } from "discord.js";
@@ -38,7 +39,10 @@ export default class InteractionHandler {
 
 export function LogInteraction(
   client: Client,
-  interaction: DiscordInteraction | MessageComponentInteraction,
+  interaction:
+    | DiscordInteraction
+    | MessageComponentInteraction
+    | ContextMenuCommandInteraction,
   target: string,
 ) {
   const data: Record<string, unknown> = {
@@ -55,6 +59,11 @@ export function LogInteraction(
     type = "command";
     data.commandName = interaction.commandName;
     data.options = interaction.options.data.map((option) => option.name);
+  } else if (interaction.isContextMenuCommand()) {
+    type = "context";
+    data.commandName = interaction.commandName;
+    data.commandType = interaction.commandType;
+    data.targetId = interaction.targetId;
   } else if (interaction.isAutocomplete()) {
     type = "autocomplete";
     data.commandName = interaction.commandName;

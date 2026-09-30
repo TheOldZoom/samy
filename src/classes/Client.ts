@@ -3,6 +3,7 @@ import { Client as DiscordClient, GatewayIntentBits, Routes } from "discord.js";
 import Logger from "./Logger";
 import { LoadEvents } from "./Event";
 import type Command from "./Command";
+import type { ContextCommand } from "./Command";
 import { LoadCommands } from "./Command";
 import InteractionHandler, {
   LoadInteractionHandlers,
@@ -32,6 +33,7 @@ export default class Client extends DiscordClient {
   private readonly cooldowns = new Map<string, number>();
 
   commands = new Map<string, Command>();
+  contextCommands = new Map<string, ContextCommand>();
 
   interactionHandlers: {
     buttons: Map<string, InteractionHandler>;
