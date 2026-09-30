@@ -23,7 +23,6 @@
 [x] `/user` View information about a user
 [x] `/server` View information about the server
 [x] `/emoji` View information about an emoji
-[ ] `/sticker` View information about a sticker
 [ ] `/remind` Create and manage reminders
 [ ] `/timestamp` Create and manage Discord timestamps
 [ ] `/afk` Set or remove your AFK status
@@ -46,11 +45,11 @@
 
 ### Fun
 
-[ ] `/cat` Get a random cat
-[ ] `/dog` Get a random dog
-[ ] `/meme` Get a random meme
-[ ] `/fact` Get a random fact
-[ ] `/joke` Get a random joke
+[x] `/cat` Get a random cat
+[x] `/dog` Get a random dog
+[x] `/meme` Get a random meme
+[x] `/fact` Get a random fact
+[x] `/joke` Get a random joke
 [ ] `/roll` Roll a random number
 [ ] `/coinflip` Flip a coin
 [ ] `/guess` Play a guessing game
