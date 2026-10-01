@@ -53,7 +53,15 @@ export default new Command({
       ...(guild.icon
         ? [Buttons.secondary("Icon", "server:icon:" + guild.id, icons.image)]
         : []),
-      Buttons.secondary("Banner", "server:banner:" + guild.id, icons.image),
+      ...(guild.banner
+        ? [
+            Buttons.secondary(
+              "Banner",
+              "server:banner:" + guild.id,
+              icons.image,
+            ),
+          ]
+        : []),
     ];
     const container = new Container()
       .media(Media("attachment://" + filename))

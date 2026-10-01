@@ -5,6 +5,7 @@ import sharp from "sharp";
 import UPNG from "upng-js";
 import { GIFEncoder, quantize, applyPalette } from "gifenc";
 import type { APIGuildMember, User } from "discord.js";
+import { renderColorBanner } from "./banner";
 
 sharp.cache(false);
 sharp.concurrency(2);
@@ -257,17 +258,14 @@ async function build({ user, member }: UserCardOptions): Promise<Card> {
 
   H = fallbackLayer.height;
 
-  const fallback = fallbackLayer.asPng();
+  const generatedBanner = await renderColorBanner(user.id, user.accentColor);
+  const fallback = await sharp(generatedBanner.data)
+    .resize(W, H, { fit: "fill" })
+    .png()
+    .toBuffer();
 
   const shade = layer(`
-    <defs>
-      <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#0b0b10" stop-opacity=".25"/>
-        <stop offset=".55" stop-color="#0b0b10" stop-opacity=".7"/>
-        <stop offset="1" stop-color="#0b0b10" stop-opacity=".95"/>
-      </linearGradient>
-    </defs>
-    <rect width="900" height="320" fill="url(#shade)"/>
+    <rect width="900" height="320" fill="#0b0b10" fill-opacity=".68"/>
   `).asPng();
 
   const front = layer(
@@ -401,6 +399,7 @@ export async function renderUserCard(options: UserCardOptions) {
     user.id,
     user.avatar,
     user.banner,
+    user.accentColor,
     user.avatarDecorationData?.asset,
     user.globalName,
     user.username,
