@@ -44,10 +44,9 @@ export default new InteractionHandler({
 
     if (guild.icon.startsWith("a_"))
       buttons.push(Buttons.link("GIF", link("gif"), icons.gif));
-    if (guild.banner)
-      buttons.push(
-        Buttons.secondary("Banner", `server:banner:${guild.id}`, icons.image),
-      );
+    buttons.push(
+      Buttons.secondary("Banner", `server:banner:${guild.id}`, icons.image),
+    );
 
     await interaction.reply({
       ...v2(

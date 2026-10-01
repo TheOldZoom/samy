@@ -1,6 +1,7 @@
 import InteractionHandler from "@/interaction/Handler";
 import { escapeMarkdown } from "discord.js";
 import { icons } from "@/utils/icons";
+import { renderColorBanner } from "@/utils/ui/cards/banner";
 import {
   ActionRow,
   Buttons,
@@ -26,12 +27,18 @@ export default new InteractionHandler({
       : null;
 
     if (!guild.banner) {
-      const container = new Container().text(
-        Text(`-# ${icons.image} · **${name}** doesn't have a banner.`),
-      );
+      const banner = await renderColorBanner(guild.id);
+      const container = new Container()
+        .text(
+          Text(
+            `-# ${icons.image} · **${name}**'s banner · \`${banner.color}\``,
+          ),
+        )
+        .media(Media("attachment://banner.png"));
       if (iconButton) container.actionRow(ActionRow(iconButton));
 
       await interaction.reply({
+        files: [{ name: "banner.png", attachment: banner.data }],
         ...v2(container),
         ephemeral: true,
         allowedMentions: { parse: [] },

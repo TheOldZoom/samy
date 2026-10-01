@@ -78,10 +78,9 @@ export default new Command({
     ];
 
     if (animated) buttons.push(Buttons.link("GIF", link("gif"), icons.gif));
-    if (user.banner)
-      buttons.push(
-        Buttons.secondary("Banner", `user:banner:${user.id}`, icons.image),
-      );
+    buttons.push(
+      Buttons.secondary("Banner", `user:banner:${user.id}`, icons.image),
+    );
 
     await interaction.reply({
       ...v2(

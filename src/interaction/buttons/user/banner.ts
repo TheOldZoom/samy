@@ -9,6 +9,7 @@ import {
   v2,
 } from "@/utils/ui/components";
 import { icons } from "@/utils/icons";
+import { renderColorBanner } from "@/utils/ui/cards/banner";
 
 export default new InteractionHandler({
   feature: "user",
@@ -39,21 +40,18 @@ export default new InteractionHandler({
     );
 
     if (!user.banner) {
+      const banner = await renderColorBanner(user.id, user.accentColor);
+
       await interaction.reply({
+        files: [{ name: "banner.png", attachment: banner.data }],
         ...v2(
           new Container()
             .text(
               Text(
-                [
-                  `-# ${icons.image} · **${name}** doesn't have a banner.`,
-                  user.hexAccentColor
-                    ? `Accent color: \`${user.hexAccentColor}\``
-                    : "",
-                ]
-                  .filter(Boolean)
-                  .join("\n"),
+                `-# ${icons.image} · **${name}**'s banner · \`${banner.color}\``,
               ),
             )
+            .media(Media("attachment://banner.png"))
             .actionRow(ActionRow(avatarButton)),
         ),
         ephemeral: true,
