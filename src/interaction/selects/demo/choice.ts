@@ -5,7 +5,7 @@ export default new InteractionHandler({
   feature: "demo",
   action: "choice",
 
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     if (!interaction.isSelect()) {
       return;
     }

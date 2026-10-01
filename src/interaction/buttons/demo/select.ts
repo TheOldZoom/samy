@@ -11,7 +11,7 @@ export default new InteractionHandler({
   feature: "demo",
   action: "select",
 
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     await interaction.updateMessage(
       v2(
         new Container().text(Text("### Choose an option")).actionRow(
