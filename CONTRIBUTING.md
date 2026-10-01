@@ -28,7 +28,7 @@ Changes merged into `development` are deployed to the development environment. W
 Fork the repository and clone your fork:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/samy.git
+git clone https://github.com/TheOldZoom/samy.git
 cd samy
 git checkout development
 ```
