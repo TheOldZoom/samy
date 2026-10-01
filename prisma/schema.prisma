@@ -135,3 +135,14 @@ model LockdownRole {
 
   @@unique([guildId, roleId])
 }
+
+model ForcedNickname {
+  id          String   @id @default(cuid())
+  guildId     String
+  userId      String
+  nickname    String
+  moderatorId String
+  createdAt   DateTime @default(now())
+
+  @@unique([guildId, userId])
+}

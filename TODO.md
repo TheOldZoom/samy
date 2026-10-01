@@ -23,8 +23,6 @@
 [x] `/user` View information about a user
 [x] `/server` View information about the server
 [x] `/emoji` View information about an emoji
-[ ] `/remind` Create and manage reminders
-[ ] `/timestamp` Create and manage Discord timestamps
 [ ] `/afk` Set or remove your AFK status
 [ ] `/weather` Check the weather for a location
 [ ] `/translate` Translate text between languages
@@ -52,16 +50,11 @@
 [x] `/joke` Get a random joke
 [ ] `/roll` Roll a random number
 [ ] `/coinflip` Flip a coin
-[ ] `/guess` Play a guessing game
-[ ] `/8ball` Ask the magic 8-ball a question
 [ ] `/choose` Choose between multiple options
-[ ] `/connect4` Play Connect Four
-[ ] `/tictactoe` Play Tic-Tac-Toe
 
 ### Social
 
 [ ] `/ship` Check the compatibility between two users
-[ ] `/rep` Give or view reputation
 [ ] `/marry` Manage marriages between users
 [ ] `/hug` Hug a user
 [ ] `/pat` Pat a user
@@ -69,7 +62,6 @@
 [ ] `/highfive` High-five a user
 [ ] `/birthday` Manage birthday settings
 [ ] `/confess` Send and manage anonymous confessions
-[ ] `/starboard` Manage the server starboard
 
 ### Integrations
 

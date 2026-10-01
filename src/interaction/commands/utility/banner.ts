@@ -1,5 +1,6 @@
-import InteractionHandler from "@/interaction/Handler";
-import { escapeMarkdown } from "discord.js";
+import { ApplicationCommandOptionType, escapeMarkdown } from "discord.js";
+import Command from "@/classes/Command";
+import { icons } from "@/utils/icons";
 import {
   ActionRow,
   Buttons,
@@ -8,26 +9,35 @@ import {
   Text,
   v2,
 } from "@/utils/ui/components";
-import { icons } from "@/utils/icons";
 
-export default new InteractionHandler({
-  feature: "user",
-  action: "banner",
+export default new Command({
+  name: "banner",
+  description: "Shows a user's profile banner",
+  everywhere: true,
+  ephemeral: true,
+  options: [
+    {
+      name: "user",
+      description: "The user to look up (defaults to you)",
+      type: ApplicationCommandOptionType.User,
+    },
+  ],
 
-  async execute(client, interaction, component) {
-    if (!interaction.isMessageComponent() || !component.id) {
-      return;
-    }
+  async execute(client, interaction) {
+    await interaction.defer();
 
-    const userId = component.id;
+    const targetId =
+      interaction.getOptionValue("user", ApplicationCommandOptionType.User) ??
+      interaction.user.id;
+
     const user = await client.users
-      .fetch(userId, { force: true })
+      .fetch(targetId, { force: true })
       .catch(() => null);
+
     if (!user) {
-      await interaction.reply({
-        ...v2(new Container().text(Text("Couldn't find that user."))),
-        ephemeral: true,
-      });
+      await interaction.reply(
+        v2(new Container().text(Text("Couldn't find that user."))),
+      );
       return;
     }
 
@@ -56,20 +66,20 @@ export default new InteractionHandler({
             )
             .actionRow(ActionRow(avatarButton)),
         ),
-        ephemeral: true,
         allowedMentions: { parse: [] },
       });
-
       return;
     }
 
     const animated = user.banner.startsWith("a_");
+
     const link = (extension: "png" | "jpg" | "webp" | "gif") =>
       user.bannerURL({
         extension,
         size: 4096,
         forceStatic: extension !== "gif",
       })!;
+
     const buttons = [
       Buttons.link("PNG", link("png"), icons.png),
       Buttons.link("JPG", link("jpg"), icons.jpg),
@@ -83,10 +93,9 @@ export default new InteractionHandler({
       ...v2(
         new Container()
           .text(Text(`-# ${icons.image} · **${name}**'s banner`))
-          .media(Media(link("png")))
+          .media(Media(user.bannerURL({ size: 1024, extension: "png" })!))
           .actionRow(ActionRow(...buttons)),
       ),
-      ephemeral: true,
       allowedMentions: { parse: [] },
     });
   },
