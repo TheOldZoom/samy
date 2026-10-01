@@ -11,7 +11,7 @@ export default new Command({
   name: "nuke",
   description: "Delete and recreate a text channel.",
   ephemeral: true,
-  defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+  defaultMemberPermissions: PermissionFlagsBits.Administrator,
   cooldown: 30,
   options: [
     {
