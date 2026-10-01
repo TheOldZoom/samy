@@ -118,6 +118,24 @@ async function handleCommand(
 
   const userId = interaction.user.id;
 
+  if (
+    command.defaultMemberPermissions !== undefined &&
+    (!interaction.inGuild() ||
+      !interaction.memberPermissions?.has(command.defaultMemberPermissions))
+  ) {
+    await wrapped
+      .reply({
+        ...v2(
+          new Container().text(
+            Text("You don't have permission to use this command."),
+          ),
+        ),
+        ephemeral: true,
+      })
+      .catch(() => {});
+    return;
+  }
+
   if (cooldown) {
     const expires = client.useCooldown(key, userId, cooldown);
 

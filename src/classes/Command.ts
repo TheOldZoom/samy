@@ -141,6 +141,7 @@ export default class Command {
   public readonly cooldown?: number;
   public readonly dailyLimit?: number;
   public readonly ephemeral: boolean;
+  public readonly defaultMemberPermissions?: bigint;
   public readonly execute?: CommandExecute;
   public readonly autocomplete?: AutocompleteExecute;
 
@@ -211,6 +212,10 @@ export default class Command {
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
     this.dailyLimit = options.dailyLimit;
     this.ephemeral = ephemeral;
+    this.defaultMemberPermissions =
+      options.defaultMemberPermissions === undefined
+        ? undefined
+        : BigInt(options.defaultMemberPermissions);
     this.execute = options.execute;
     this.autocomplete = options.autocomplete;
   }
@@ -384,17 +389,80 @@ interface NormalizableCommand {
   contexts?: unknown[] | null;
 }
 
-function normalize(command: NormalizableCommand) {
-  return stableStringify({
+const EMPTY_OPTION_ARRAYS = new Set(["options", "choices", "channel_types"]);
+const FALSE_OPTION_DEFAULTS = new Set(["required", "autocomplete"]);
+
+function normalizeOptionValue(value: unknown, key?: string): unknown {
+  if (value === undefined || value === null) return undefined;
+  if (value === false && key && FALSE_OPTION_DEFAULTS.has(key)) {
+    return undefined;
+  }
+  if (Array.isArray(value)) {
+    const normalized = value.map((item) => normalizeOptionValue(item));
+    if (key === "channel_types") {
+      normalized.sort((left, right) => Number(left) - Number(right));
+    }
+    if (!normalized.length && key && EMPTY_OPTION_ARRAYS.has(key)) {
+      return undefined;
+    }
+    return normalized;
+  }
+  if (typeof value === "object") {
+    const normalized: Record<string, unknown> = {};
+    for (const [childKey, childValue] of Object.entries(value)) {
+      const child = normalizeOptionValue(childValue, childKey);
+      if (child !== undefined) normalized[childKey] = child;
+    }
+    return normalized;
+  }
+  return value;
+}
+
+function canonicalCommand(
+  command: NormalizableCommand,
+  template: NormalizableCommand = command,
+) {
+  return {
     name: command.name,
     description: command.description ?? "",
     type: command.type ?? 1,
-    options: command.options ?? [],
+    options: normalizeOptionValue(command.options ?? [], "options") ?? [],
     default_member_permissions: command.default_member_permissions ?? null,
     nsfw: command.nsfw ?? false,
-    integration_types: command.integration_types ?? [],
-    contexts: command.contexts ?? [],
-  });
+    integration_types:
+      template.integration_types == null
+        ? null
+        : [...(command.integration_types ?? [])].sort(
+            (left, right) => Number(left) - Number(right),
+          ),
+    contexts:
+      template.contexts == null
+        ? null
+        : [...(command.contexts ?? [])].sort(
+            (left, right) => Number(left) - Number(right),
+          ),
+  };
+}
+
+function normalize(
+  command: NormalizableCommand,
+  template: NormalizableCommand = command,
+) {
+  return stableStringify(canonicalCommand(command, template));
+}
+
+function changedFields(
+  local: NormalizableCommand,
+  existing: NormalizableCommand,
+) {
+  const wanted = canonicalCommand(local);
+  const actual = canonicalCommand(existing, local);
+
+  return Object.keys(wanted).filter(
+    (key) =>
+      stableStringify(wanted[key as keyof typeof wanted]) !==
+      stableStringify(actual[key as keyof typeof actual]),
+  );
 }
 
 function stableStringify(value: unknown): string {
@@ -446,13 +514,64 @@ export async function RegisterCommands(client: Client) {
 
       if (!match) return false;
 
-      return normalize(localCommand) === normalize(match);
+      return normalize(localCommand) === normalize(match, localCommand);
     });
 
   if (noDifferences) {
     client.logger.info("Commands unchanged, skipping registration");
 
     return;
+  }
+
+  client.logger.warn(
+    { localCount: local.length, existingCount: existing.length },
+    "Command registration differences detected",
+  );
+
+  for (const localCommand of local) {
+    const match = existing.find(
+      (existingCommand) =>
+        existingCommand.name === localCommand.name &&
+        existingCommand.type === localCommand.type,
+    );
+
+    if (!match) {
+      client.logger.warn(
+        { command: localCommand.name, type: localCommand.type },
+        "Command is missing remotely",
+      );
+      continue;
+    }
+
+    const fields = changedFields(localCommand, match);
+    if (!fields.length) continue;
+
+    client.logger.warn(
+      { command: localCommand.name, type: localCommand.type, fields },
+      "Command fields changed",
+    );
+    client.logger.debug(
+      {
+        command: localCommand.name,
+        local: canonicalCommand(localCommand),
+        existing: canonicalCommand(match, localCommand),
+      },
+      "Command registration comparison",
+    );
+  }
+
+  for (const existingCommand of existing) {
+    const match = local.find(
+      (localCommand) =>
+        localCommand.name === existingCommand.name &&
+        localCommand.type === existingCommand.type,
+    );
+    if (!match) {
+      client.logger.warn(
+        { command: existingCommand.name, type: existingCommand.type },
+        "Remote command no longer exists locally",
+      );
+    }
   }
 
   const result = (await client.rest.put(

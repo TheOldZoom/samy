@@ -1,3 +1,5 @@
+import { Events } from "discord.js";
+
 import Event from "@/classes/Event";
 import type Client from "@/classes/Client";
 import prisma from "@/libs/Prisma";
@@ -30,7 +32,7 @@ async function expireModerationActions(client: Client) {
   }
 }
 export default new Event({
-  name: "ready",
+  name: Events.ClientReady,
   once: true,
   async execute(client) {
     await expireModerationActions(client);
