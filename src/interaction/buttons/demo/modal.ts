@@ -4,7 +4,7 @@ export default new InteractionHandler({
   feature: "demo",
   action: "modal",
 
-  async execute(client, interaction) {
+  async execute(_client, interaction) {
     if (!interaction.isButton()) {
       return;
     }

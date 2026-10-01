@@ -10,11 +10,13 @@ import {
 
 const MAX_PARENTS = 3;
 const MEDIA_GALLERY_LIMIT = 10;
+const LINK_CACHE_TTL_MS = 5 * 60 * 1000;
+const LINK_CACHE_LIMIT = 500;
 
 const INSTAGRAM_HOST =
   process.env.INSTAGRAM_EMBED_HOST ?? "https://ig.mynameistito.com";
 
-const REDDIT_UA =
+const DISCORD_UA =
   "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)";
 
 type LinkButton = { label: string; icon: string };
@@ -30,10 +32,50 @@ type Post = {
   timestamp?: number;
 };
 
+type KoutubeData = {
+  contentType?: string | null;
+  playerStreamUrl?: string | null;
+  image?: string | null;
+  description?: string | null;
+  originalUrl?: string | null;
+  authorName?: string | null;
+  uploadDate?: string | null;
+  likeCount?: string | number | null;
+  dislikeCount?: string | number | null;
+  subscriberCount?: string | number | null;
+  viewCount?: string | number | null;
+  videoCount?: string | number | null;
+  songCount?: string | number | null;
+  error?: string | null;
+};
+
 export type LinkHandler = {
   pattern: RegExp;
   run: (match: RegExpMatchArray) => Promise<Container[] | null>;
 };
+
+type CacheEntry = {
+  expiresAt: number;
+  value: Container[];
+};
+
+const linkCache = new Map<string, CacheEntry>();
+const pendingLinks = new Map<string, Promise<Container[] | null>>();
+
+function cacheLink(key: string, value: Container[]) {
+  const now = Date.now();
+  for (const [cachedKey, entry] of linkCache) {
+    if (entry.expiresAt <= now) linkCache.delete(cachedKey);
+  }
+
+  while (linkCache.size >= LINK_CACHE_LIMIT) {
+    const oldest = linkCache.keys().next().value;
+    if (oldest === undefined) break;
+    linkCache.delete(oldest);
+  }
+
+  linkCache.set(key, { expiresAt: now + LINK_CACHE_TTL_MS, value });
+}
 
 const compact = new Intl.NumberFormat("en", { notation: "compact" });
 
@@ -44,14 +86,26 @@ const decodeHtml = (s: string) =>
     .replaceAll("&lt;", "<")
     .replaceAll("&gt;", ">")
     .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'");
+    .replaceAll("&#39;", "'")
+    .replaceAll("&#x27;", "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) =>
+      String.fromCodePoint(Number.parseInt(hex, 16)),
+    )
+    .replace(/&#(\d+);/g, (_, decimal: string) =>
+      String.fromCodePoint(Number.parseInt(decimal, 10)),
+    );
 
 const stat = (icon: string, n?: number | null) =>
   n != null ? [`${icon} ${compact.format(n)}`] : [];
 
 async function fetchJson<T>(url: string, timeout = 8000): Promise<T | null> {
-  const res = await fetch(url, { signal: AbortSignal.timeout(timeout) });
-  return res.ok ? ((await res.json()) as T) : null;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(timeout) });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
 }
 
 function postContainer(
@@ -90,6 +144,76 @@ function postContainer(
 const single = (post: Post, button: LinkButton) => [
   postContainer(post, button, { total: 1 }),
 ];
+
+function ogTags(html: string) {
+  const tags: Record<string, string> = {};
+  for (const [tag] of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const key = tag.match(/(?:property|name)=(["'])(.*?)\1/i)?.[2];
+    const value = tag.match(/content=(["'])(.*?)\1/is)?.[2];
+    if (key && value !== undefined)
+      tags[key.toLowerCase()] ??= decodeHtml(value);
+  }
+  return tags;
+}
+
+function koutubeUrls(url: string) {
+  const original = new URL(url);
+  const short = original.hostname.toLowerCase() === "youtu.be";
+  const music = original.hostname.toLowerCase().startsWith("music.");
+  const host = short ? "koutu.be" : music ? "music.koutube.com" : "koutube.com";
+  const page = new URL(original);
+  page.hostname = host;
+
+  const api = new URL(page);
+  api.pathname = `/api${page.pathname}`;
+  return { api: api.toString(), page: page.toString() };
+}
+
+const koutubeStat = (icon: string, value?: string | number | null) =>
+  value != null && value !== "" ? `${icon} ${value}` : null;
+
+async function fetchKoutube(url: string): Promise<Post | null> {
+  try {
+    const urls = koutubeUrls(url);
+    const [data, html] = await Promise.all([
+      fetchJson<KoutubeData>(urls.api, 12_000),
+      fetch(urls.page, {
+        headers: { "User-Agent": DISCORD_UA },
+        signal: AbortSignal.timeout(12_000),
+      })
+        .then((res) => (res.ok ? res.text() : ""))
+        .catch(() => ""),
+    ]);
+    if (data?.error) return null;
+
+    const tags = ogTags(html);
+    const title = tags["twitter:title"] ?? tags["og:title"];
+    const video = data?.playerStreamUrl ?? tags["og:video"];
+    const image = data?.image ?? tags["twitter:image"] ?? tags["og:image"];
+    if (!data && !title && !video && !image) return null;
+
+    return {
+      url: data?.originalUrl ?? url,
+      header: `**${title ?? data?.authorName ?? "YouTube"}**`,
+      text: [
+        data?.authorName ? `**${data.authorName}**` : null,
+        data?.description ? decodeHtml(data.description) : null,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      extra: [data?.contentType, data?.uploadDate].filter(Boolean).join(" · "),
+      media: video ? [video] : image ? [image] : [],
+      stats: [
+        koutubeStat(icons.view, data?.viewCount),
+        koutubeStat(icons.heart, data?.likeCount),
+        koutubeStat(icons.dislike, data?.dislikeCount),
+        koutubeStat(icons.people, data?.subscriberCount),
+      ].filter((value): value is string => Boolean(value)),
+    };
+  } catch {
+    return null;
+  }
+}
 
 type Author = { name: string; screen_name: string };
 type Reply = { screen_name: string; status: string };
@@ -230,7 +354,7 @@ async function fetchReddit(id: string) {
 async function resolveRedditShare(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": REDDIT_UA },
+      headers: { "User-Agent": DISCORD_UA },
       redirect: "manual",
       signal: AbortSignal.timeout(8000),
     });
@@ -282,66 +406,95 @@ function redditPost(p: RedditPost): Post {
   };
 }
 
-function ogTags(html: string) {
-  const tags: Record<string, string> = {};
-  for (const [tag] of html.matchAll(/<meta\b[^>]*>/gi)) {
-    const key = tag.match(/(?:property|name)="([^"]+)"/i)?.[1];
-    const value = tag.match(/content="([^"]*)"/i)?.[1];
-    if (key && value !== undefined) tags[key] ??= decodeHtml(value);
+const INSTAGRAM_BUTTON: LinkButton = {
+  label: "Open on Instagram",
+  icon: icons.instagram,
+};
+
+async function fetchInstagram(path: string, url: string): Promise<Post | null> {
+  try {
+    const res = await fetch(`${INSTAGRAM_HOST}/${path}`, {
+      headers: { "User-Agent": DISCORD_UA },
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) return null;
+
+    const tags = ogTags(await res.text());
+    const media = tags["og:video"] ?? tags["og:image"];
+    if (!media && !tags["og:description"]) return null;
+
+    return {
+      url,
+      header: `**${tags["og:title"] ?? "Instagram"}**`,
+      text: tags["og:description"] ?? "",
+      media: media ? [media] : [],
+      stats: [],
+    };
+  } catch {
+    return null;
   }
-  return tags;
 }
 
-async function fetchInstagram(kind: string, code: string, url: string) {
-  const res = await fetch(`${INSTAGRAM_HOST}/${kind}/${code}`, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)",
-    },
-    redirect: "manual",
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (!res.ok) return null;
-
-  const tags = ogTags(await res.text());
-  const media = tags["og:video"] ?? tags["og:image"];
-  if (!media && !tags["og:description"]) return null;
-
+function handler(pattern: RegExp, run: LinkHandler["run"]): LinkHandler {
   return {
-    url,
-    header: `**${tags["og:title"] ?? "Instagram"}**`,
-    text: tags["og:description"] ?? "",
-    media: media ? [media] : [],
-    stats: [],
-  } satisfies Post;
+    pattern,
+    async run(match) {
+      const key = `${pattern.source}\0${match[0]}`;
+      const cached = linkCache.get(key);
+      if (cached && cached.expiresAt > Date.now()) {
+        linkCache.delete(key);
+        linkCache.set(key, cached);
+        return cached.value;
+      }
+      if (cached) linkCache.delete(key);
+
+      const pending = pendingLinks.get(key);
+      if (pending) return pending;
+
+      const request = (async () => {
+        try {
+          const result = await run(match);
+          if (result) cacheLink(key, result);
+          return result;
+        } catch {
+          return null;
+        }
+      })();
+      pendingLinks.set(key, request);
+
+      try {
+        return await request;
+      } finally {
+        pendingLinks.delete(key);
+      }
+    },
+  };
 }
 
 export const linkHandlers: LinkHandler[] = [
-  {
-    pattern:
-      /https?:\/\/(?:www\.|mobile\.)?(?:x|twitter|fxtwitter|fixupx|vxtwitter)\.com\/\w+\/status\/(\d+)/i,
-    async run([, id]) {
-      return buildThread(await fetchX(id!), (r) => fetchX(r.status), {
+  handler(
+    /https?:\/\/(?:www\.|mobile\.)?(?:x|twitter|fxtwitter|fixupx|vxtwitter|fixvx)\.com\/\w+\/(?:web\/)?status\/(\d+)/i,
+    async ([, id]) =>
+      buildThread(await fetchX(id!), (r) => fetchX(r.status), {
         label: "Open on X",
         icon: icons.twitter,
-      });
-    },
-  },
-  {
-    pattern:
-      /https?:\/\/(?:www\.)?bsky\.app\/profile\/([\w.:-]+)\/post\/(\w+)/i,
-    async run([, handle, rkey]) {
-      return buildThread(
+      }),
+  ),
+
+  handler(
+    /https?:\/\/(?:www\.)?bsky\.app\/profile\/([\w.:-]+)\/post\/(\w+)/i,
+    async ([, handle, rkey]) =>
+      buildThread(
         await fetchBsky(handle!, rkey!),
         (r) => fetchBsky(r.screen_name, r.status),
         { label: "Open on Bluesky", icon: icons.globe },
-      );
-    },
-  },
-  {
-    pattern:
-      /https?:\/\/(?:(?:(?:www|old|new|np|m)\.)?reddit\.com\/(?:(?:r\/\w+\/)?comments\/(\w+)|r\/\w+\/s\/(\w+))|redd\.it\/(\w+))/i,
-    async run([url, commentsId, shareToken, shortId]) {
+      ),
+  ),
+
+  handler(
+    /https?:\/\/(?:(?:(?:www|old|new|np|m)\.)?reddit\.com\/(?:(?:r\/\w+\/)?comments\/(\w+)|r\/\w+\/s\/(\w+))|redd\.it\/(\w+))/i,
+    async ([url, commentsId, shareToken, shortId]) => {
       const id = shareToken
         ? await resolveRedditShare(url!)
         : (commentsId ?? shortId);
@@ -356,16 +509,28 @@ export const linkHandlers: LinkHandler[] = [
         })
       );
     },
-  },
-  {
-    pattern:
-      /https?:\/\/(?:www\.)?instagram\.com\/(?:[\w.]+\/)?(p|reels?|tv)\/([\w-]+)/i,
-    async run([url, kind, code]) {
-      const post = await fetchInstagram(kind!, code!, url!);
+  ),
+
+  handler(
+    /https?:\/\/(?:(?:(?:www|m|music)\.)?youtube\.com\/(?:(?:watch|playlist)\?[^\s<]+|(?:shorts|live|embed|channel|c|user)\/[^\s<]+|@[\w.-]+[^\s<]*)|youtu\.be\/[\w-]+[^\s<]*)/i,
+    async ([url]) => {
+      const post = await fetchKoutube(url!);
       return (
         post &&
-        single(post, { label: "Open on Instagram", icon: icons.instagram })
+        single(post, {
+          label: "Open on YouTube",
+          icon: icons.youtube,
+        })
       );
     },
-  },
+  ),
+
+  handler(
+    /https?:\/\/(?:www\.)?instagr(?:am\.com|\.am)\/(?:[\w.]+\/)?(p|reels?|tv)\/([\w-]+)/i,
+    async ([url, mediaKind, mediaCode]) => {
+      const path = `${mediaKind!.toLowerCase().startsWith("reel") ? "reel" : mediaKind!.toLowerCase()}/${mediaCode}`;
+      const post = await fetchInstagram(path, url!);
+      return post && single(post, INSTAGRAM_BUTTON);
+    },
+  ),
 ];
