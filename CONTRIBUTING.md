@@ -1,295 +1,202 @@
 # Contributing
 
-Thanks for taking the time to contribute to Samy!
+Thanks for taking the time to contribute to Samy.
 
-This document explains the development workflow, branch structure, commit conventions, pull requests, and deployment process.
+Bug fixes, new features, documentation updates, and suggestions are welcome.
 
-## Branch structure
+## Before you start
+
+For large features or changes to the project structure, open an issue or talk to us in the [Samy Support Server](https://samy.zoomhub.xyz/discord) first.
+
+This helps avoid duplicated work and makes sure the change fits the project.
+
+## Branches
 
 Samy uses two main branches:
 
-| Branch        | Purpose                             |
-| ------------- | ----------------------------------- |
-| `master`      | Production-ready code only          |
-| `development` | Main development and testing branch |
+| Branch        | Purpose                          |
+| ------------- | -------------------------------- |
+| `master`      | Stable production code           |
+| `development` | New features, fixes, and testing |
 
-### `master`
+Do not commit directly to `master`. Normal pull requests should target `development`.
 
-`master` contains only stable, production-ready code.
-
-**Never commit directly to `master`.**
-
-Changes reach `master` through a pull request from `development`.
-
-Merging into `master` triggers the production deployment.
-
-### `development`
-
-`development` is the main development branch.
-
-All contributions should be made on `development` and submitted through a pull request.
-
-Changes merged into `development` are deployed to the development environment for testing before being released to production.
+Changes merged into `development` are deployed to the development environment. When the branch is stable, maintainers merge it into `master` for production.
 
 ## Getting started
 
 Fork the repository and clone your fork:
 
 ```bash
-git clone https://github.com/theoldzoom/samy.git
+git clone https://github.com/YOUR_USERNAME/samy.git
 cd samy
-```
-
-Switch to the `development` branch:
-
-```bash
 git checkout development
 ```
 
-Make sure it is up to date:
+Install the dependencies and create your environment file:
 
 ```bash
-git pull origin development
+bun install
+cp .env.example .env
 ```
 
-All changes should be made on the `development` branch.
+Set `DISCORD_TOKEN` and `DATABASE_URL` in `.env`, then prepare the database and generated files:
+
+```bash
+bunx prisma generate
+bunx prisma migrate dev
+bun run icons
+```
+
+Start the bot in development mode:
+
+```bash
+bun run dev
+```
+
+You can also use Docker Compose. Set `DISCORD_TOKEN` and `POSTGRES_PASSWORD` in `.env`, then run:
+
+```bash
+docker compose up --build
+```
+
+## Project structure
+
+```text
+src/
+├── classes/             # Command, event, client, and interaction foundations
+├── events/              # Discord events and background tasks
+├── interaction/
+│   ├── commands/        # Slash commands
+│   ├── contexts/        # Context menu commands
+│   ├── buttons/         # Button handlers
+│   ├── selects/         # Select menu handlers
+│   ├── modals/          # Modal handlers
+│   └── config/          # Shared server configuration commands
+├── libs/                # Database and message scripting
+└── utils/               # Shared feature and UI helpers
+prisma/                  # Schema and migrations
+docs/                    # Documentation
+scripts/                 # Project scripts
+```
 
 ## Making changes
 
-Keep changes focused.
+Keep each change focused. Avoid mixing unrelated features, fixes, and refactors in one pull request.
 
-Avoid combining unrelated features, fixes, and refactors in the same pull request.
+Follow the existing code style and reuse shared utilities where possible. Commands should use the command framework in `src/classes/Command.ts`, and interactive components should use the matching handler directory under `src/interaction`.
 
-Before committing, run:
+When changing Discord behavior, test the relevant command, permissions, buttons, modals, or events in a development server.
 
-```bash
-bun run format .
-```
+### Commands
 
-Make sure the project builds and that your changes work as expected.
-
-For Discord-related changes, test the relevant command, event, interaction, or permission behavior in a development server.
-
-## Commands
-
-Samy contains both message commands and slash commands.
-
-When adding or modifying a command, follow the existing project structure and conventions.
-
-If a command has both a message-command and slash-command implementation, keep shared behavior in the appropriate `shared` module rather than duplicating the logic.
-
-For example:
+Slash commands live in `src/interaction/commands` and are grouped by purpose:
 
 ```text
-src/commands/
-├── message/
-├── shared/
-├── slash/
-└── context/
+commands/
+├── fun/
+├── moderation/
+├── server/
+└── utility/
 ```
 
-## Database changes
+New commands are loaded automatically. You do not need to add them to a central command list.
+
+Use the existing `Command`, `Subcommand`, and `SubcommandGroup` classes. Add permission requirements, cooldowns, autocomplete, and ephemeral responses where appropriate.
+
+Samy registers global application commands when it starts. New or changed commands may take a short while to appear in Discord.
+
+### Interactions
+
+Buttons, selects, and modals are stored in their matching directories under `src/interaction`.
+
+Use the existing component ID helpers and keep shared logic outside individual handlers when it is used in more than one place.
+
+### Message scripting
+
+The embed and Components V2 scripting system lives in `src/libs/scripting`.
+
+If you change its syntax or supported parameters, update [`docs/scripting.md`](docs/scripting.md) in the same pull request.
+
+### Database changes
 
 Samy uses Prisma with PostgreSQL.
 
-If your change modifies the Prisma schema, create a migration as part of the same change.
-
-Do not modify existing migrations that have already been applied to shared or production databases.
-
-After changing the schema, create a new migration:
+After changing `prisma/schema.prisma`, create a new migration:
 
 ```bash
-bunx prisma migrate dev
+bunx prisma migrate dev --name describe_your_change
 ```
 
-Commit the generated migration together with the schema change.
+Commit the schema and generated migration together. Do not edit migrations that have already been applied to shared or production databases.
 
-For example:
+## Formatting and checks
 
-```text
-prisma/schema.prisma
-prisma/migrations/<migration-name>/migration.sql
-```
-
-Database migrations should be reviewed carefully before opening a pull request.
-
-## Commits
-
-Keep commits focused and use clear commit messages.
-
-Good:
-
-```text
-- Add avatar command
-- Add message command
-- Add slash command
-- Add shared implementation
-```
-
-Also good for smaller changes:
-
-```text
-Fix permission check for restricted commands
-```
-
-Avoid messages such as:
-
-```text
-update
-fix
-stuff
-changes
-asdf
-```
-
-## Pull requests
-
-Push your changes to your fork's `development` branch:
-
-```bash
-git add .
-git commit -m "Add avatar command"
-git push origin development
-```
-
-Then open a pull request targeting the development branch.
-
-**Do not target `master` for normal contributions.**
-
-Your pull request should explain:
-
-- What does this change do?
-- Why is the change needed?
-- How was it tested?
-- Are there any database migrations?
-- Are there any configuration or environment-variable changes?
-- Are command or documentation changes included?
-
-For Discord UI or interaction changes, screenshots or recordings can be useful.
-
-### Contributor roles
-
-If you would like to receive a contributor **role in Samy** and a corresponding **role in the Samy Support Server**, include your **Discord user ID** somewhere in your pull request description.
-
-Providing your Discord ID is optional and is only needed if you want these roles.
-
-For example:
-
-```text
-## Contributor Role
-
-Discord ID: 123456789012345678
-```
-
-For example:
-
-```text
-## Summary
-
-Adds the `/avatar` command.
-
-## Changes
-
-- Added slash command
-- Added message command
-- Added shared implementation
-- Added documentation
-
-## Testing
-
-- Tested in development server
-- Tested with users and bots
-- Tested invalid user input
-
-## Database
-
-No database changes.
-
-## Contributor Role
-
-Discord ID: 123456789012345678
-```
-
-## Code review
-
-Once a pull request is opened, maintainers will review it.
-
-If changes are requested, make them on your `development` branch and push them again:
-
-```bash
-git add .
-git commit -m "Address review feedback"
-git push origin development
-```
-
-The existing pull request will automatically update.
-
-Once the pull request is approved, a maintainer will merge it into Samy's `development` branch.
-
-## Deployment workflow
-
-Samy's deployment workflow follows this structure:
-
-```text
-Your fork
-    │
-    │ Push changes to development
-    ▼
-development
-    │
-    │ Pull Request
-    ▼
-Samy development
-    │
-    │ Development deployment
-    ▼
-Testing
-    │
-    │ Pull Request
-    ▼
-master
-    │
-    │ Production deployment
-    ▼
-Production
-```
-
-### Development deployment
-
-Changes merged into `development` are automatically deployed to the development environment.
-
-This allows new features and fixes to be tested before they reach production.
-
-### Production deployment
-
-When `development` is considered stable, a maintainer opens a pull request:
-
-```text
-development → master
-```
-
-After the pull request is approved and merged, the production deployment is triggered.
-
-Only maintainers should merge `development` into `master`.
-
-## Code style
-
-Before submitting a pull request, run:
+Format the files you changed:
 
 ```bash
 bun run format .
 ```
 
-Follow the existing TypeScript and project conventions.
+Check formatting before opening a pull request:
 
-When modifying existing code, prefer consistency with the surrounding code over introducing a different style.
+```bash
+bun run format:check
+```
 
-## Questions and large changes
+Also run TypeScript checking:
 
-If you are unsure about an implementation or want to make a large architectural change, open an issue or discuss it with the maintainers through our Discord server before doing significant work.
+```bash
+bunx tsc --noEmit
+```
 
-For questions, help, or general support, visit the [Samy Support Server](https://samy.zoomhub.xyz/discord).
+There is currently no automated test suite, so include the manual testing you performed in your pull request.
 
-This helps prevent duplicated work and allows architectural decisions to be made before implementation begins.
+## Commits
 
-Thanks for contributing to Samy!
+Use short, clear commit messages that explain the change.
+
+Good examples:
+
+```text
+Add avatar command
+Fix temporary mute expiry
+Update scripting documentation
+```
+
+Avoid vague messages such as `update`, `fix`, or `changes`.
+
+## Pull requests
+
+Push your branch to your fork and open a pull request against `development`.
+
+Your pull request should explain:
+
+- What changed
+- Why the change is needed
+- How it was tested
+- Whether it includes a database migration
+- Whether it adds or changes environment variables
+- Whether documentation was updated
+
+Screenshots or recordings are helpful for visible Discord UI changes.
+
+### Contributor role
+
+If you want the contributor role in Samy and the support server, include your Discord user ID in the pull request description:
+
+```text
+## Contributor Role
+
+Discord ID: 123456789012345678
+```
+
+This is optional.
+
+## Code review
+
+Maintainers may ask for changes. Make the updates on the same branch and push them again; the pull request will update automatically.
+
+Once the pull request is approved, a maintainer will merge it into `development`.
+
+Thanks for helping improve Samy!
