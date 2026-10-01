@@ -10,7 +10,7 @@ export default new Command({
   description: "Translate text between languages",
   everywhere: true,
   ephemeral: true,
-  cooldown: 5,
+  cooldown: 10,
   options: [
     {
       name: "text",

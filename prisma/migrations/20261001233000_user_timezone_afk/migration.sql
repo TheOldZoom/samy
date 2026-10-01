@@ -1,0 +1,3 @@
+ALTER TABLE "User" ADD COLUMN "timezone" TEXT;
+ALTER TABLE "User" ADD COLUMN "afkReason" TEXT;
+ALTER TABLE "User" ADD COLUMN "afkSince" TIMESTAMP(3);

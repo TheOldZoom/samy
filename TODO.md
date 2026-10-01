@@ -23,12 +23,12 @@
 [x] `/user` View information about a user
 [x] `/server` View information about the server
 [x] `/emoji` View information about an emoji
-[ ] `/afk` Set or remove your AFK status
+[x] `/afk` Set or remove your AFK status
 [x] `/weather` Check the weather for a location
 [x] `/translate` Translate text between languages
 [x] `/calc` Calculate a mathematical expression
 [x] `/convert` Convert between units and currencies
-[ ] `/timezone` Manage and compare timezones
+[x] `/timezone` Manage and compare timezones
 [x] `/shorten` Shorten or expand a URL
 [x] `/text` Encode and transform text
 
