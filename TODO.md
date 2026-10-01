@@ -54,8 +54,8 @@
 
 ### Social
 
-[ ] `/ship` Check the compatibility between two users
-[ ] `/marry` Manage marriages between users
+[x] `/ship` Check the compatibility between two users
+[x] `/marry` Manage marriages between users
 [ ] `/hug` Hug a user
 [ ] `/pat` Pat a user
 [ ] `/wave` Wave at a user
