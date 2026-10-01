@@ -59,10 +59,11 @@ export async function cacheDiscordUsers(...users: DiscordUser[]) {
   });
 
   await Promise.all(stale.map(writeDiscordUser));
+  return stale.length;
 }
 
 export async function refreshDiscordUserIfStale(user: DiscordUser) {
-  await cacheDiscordUsers(user);
+  return (await cacheDiscordUsers(user)) > 0 ? "updated" : "fresh";
 }
 
 export function cachedAvatarUrl(user: CachedUser, size = 128) {

@@ -56,12 +56,57 @@ export default class Client extends DiscordClient {
   }
 
   override async login() {
-    await LoadEvents(this);
-    await LoadCommands(this);
+    const startedAt = performance.now();
+    this.logger.debug(
+      {
+        runtime: `Bun ${Bun.version}`,
+        environment: process.env.NODE_ENV ?? "development",
+        logLevel: process.env.LOG_LEVEL ?? "info",
+        intents: this.options.intents,
+      },
+      "Starting bot client",
+    );
 
+    if (!token) {
+      throw new Error("DISCORD_TOKEN is not configured");
+    }
+
+    let stageStartedAt = performance.now();
+    await LoadEvents(this);
+    this.logger.debug(
+      { durationMs: Math.round(performance.now() - stageStartedAt) },
+      "Events initialized",
+    );
+
+    stageStartedAt = performance.now();
+    await LoadCommands(this);
+    this.logger.debug(
+      {
+        commands: this.commands.size,
+        contextCommands: this.contextCommands.size,
+        durationMs: Math.round(performance.now() - stageStartedAt),
+      },
+      "Commands initialized",
+    );
+
+    stageStartedAt = performance.now();
     await LoadInteractionHandlers(this, "buttons");
     await LoadInteractionHandlers(this, "selects");
     await LoadInteractionHandlers(this, "modals");
+    this.logger.debug(
+      {
+        buttons: this.interactionHandlers.buttons.size,
+        selects: this.interactionHandlers.selects.size,
+        modals: this.interactionHandlers.modals.size,
+        durationMs: Math.round(performance.now() - stageStartedAt),
+      },
+      "Interaction framework initialized",
+    );
+
+    this.logger.debug(
+      { durationMs: Math.round(performance.now() - startedAt) },
+      "Connecting to Discord gateway",
+    );
 
     return super.login(token);
   }
@@ -145,10 +190,16 @@ export default class Client extends DiscordClient {
 
   startInteraction() {
     if (this.shuttingDown) {
+      this.logger.debug("Rejected interaction during shutdown");
       return false;
     }
 
     this.activeInteractions++;
+
+    this.logger.debug(
+      { activeInteractions: this.activeInteractions },
+      "Interaction started",
+    );
 
     return true;
   }
@@ -156,12 +207,18 @@ export default class Client extends DiscordClient {
   finishInteraction() {
     this.activeInteractions--;
 
+    this.logger.debug(
+      { activeInteractions: this.activeInteractions },
+      "Interaction finished",
+    );
+
     if (this.shuttingDown && this.activeInteractions === 0) {
       this.resolveShutdown?.();
     }
   }
 
   override async destroy() {
+    const startedAt = performance.now();
     this.shuttingDown = true;
 
     this.logger.info(
@@ -176,10 +233,23 @@ export default class Client extends DiscordClient {
 
     this.logger.info("All interactions finished");
 
+    const discordStartedAt = performance.now();
     await super.destroy();
+    this.logger.debug(
+      { durationMs: Math.round(performance.now() - discordStartedAt) },
+      "Discord client destroyed",
+    );
 
+    const databaseStartedAt = performance.now();
     await prisma.$disconnect();
+    this.logger.debug(
+      { durationMs: Math.round(performance.now() - databaseStartedAt) },
+      "Database disconnected",
+    );
 
-    this.logger.info("Shutdown complete");
+    this.logger.info(
+      { durationMs: Math.round(performance.now() - startedAt) },
+      "Shutdown complete",
+    );
   }
 }

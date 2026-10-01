@@ -356,26 +356,63 @@ async function getCommandFiles(directory: string): Promise<string[]> {
 }
 
 export async function LoadCommands(client: Client) {
+  const startedAt = performance.now();
   const commandsDirectory = join(import.meta.dir, "../interaction/commands");
   const commandFiles = await getCommandFiles(commandsDirectory);
+
+  client.logger.debug(
+    { directory: commandsDirectory, files: commandFiles.length },
+    "Discovered command files",
+  );
 
   for (const file of commandFiles) {
     const command = ((await import(file)) as { default: Command }).default;
 
+    if (client.commands.has(command.name)) {
+      client.logger.warn(
+        { command: command.name, file },
+        "Duplicate command replaced",
+      );
+    }
     client.commands.set(command.name, command);
+    client.logger.debug({ command: command.name, file }, "Loaded command");
     client.logger.info("[COMMAND]:".padEnd(10) + " " + command.name);
   }
 
   const contextsDirectory = join(import.meta.dir, "../interaction/contexts");
   const contextFiles = await getCommandFiles(contextsDirectory);
 
+  client.logger.debug(
+    { directory: contextsDirectory, files: contextFiles.length },
+    "Discovered context command files",
+  );
+
   for (const file of contextFiles) {
     const command = ((await import(file)) as { default: ContextCommand })
       .default;
 
+    if (client.contextCommands.has(command.key)) {
+      client.logger.warn(
+        { command: command.name, key: command.key, file },
+        "Duplicate context command replaced",
+      );
+    }
     client.contextCommands.set(command.key, command);
+    client.logger.debug(
+      { command: command.name, key: command.key, file },
+      "Loaded context command",
+    );
     client.logger.info("[CONTEXT]:".padEnd(10) + " " + command.name);
   }
+
+  client.logger.debug(
+    {
+      commands: client.commands.size,
+      contextCommands: client.contextCommands.size,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    "Commands loaded",
+  );
 }
 
 interface NormalizableCommand {
@@ -487,6 +524,7 @@ function stableStringify(value: unknown): string {
 }
 
 export async function RegisterCommands(client: Client) {
+  const startedAt = performance.now();
   const local = [
     ...[...client.commands.values()].map((command) => command.data),
     ...[...client.contextCommands.values()].map((command) => command.data),
@@ -497,9 +535,22 @@ export async function RegisterCommands(client: Client) {
     return;
   }
 
+  client.logger.debug(
+    { applicationId: client.user.id, localCount: local.length },
+    "Checking global command registration",
+  );
+
+  const fetchStartedAt = performance.now();
   const existing = (await client.rest.get(
     Routes.applicationCommands(client.user.id),
   )) as RESTGetAPIApplicationCommandsResult;
+  client.logger.debug(
+    {
+      existingCount: existing.length,
+      durationMs: Math.round(performance.now() - fetchStartedAt),
+    },
+    "Fetched global commands",
+  );
 
   const sameCount = local.length === existing.length;
 
@@ -518,7 +569,13 @@ export async function RegisterCommands(client: Client) {
     });
 
   if (noDifferences) {
-    client.logger.info("Commands unchanged, skipping registration");
+    client.logger.info(
+      {
+        commands: local.length,
+        durationMs: Math.round(performance.now() - startedAt),
+      },
+      "Commands unchanged, skipping registration",
+    );
 
     return;
   }
@@ -574,6 +631,7 @@ export async function RegisterCommands(client: Client) {
     }
   }
 
+  const registrationStartedAt = performance.now();
   const result = (await client.rest.put(
     Routes.applicationCommands(client.user.id),
     {
@@ -581,5 +639,12 @@ export async function RegisterCommands(client: Client) {
     },
   )) as RESTPutAPIApplicationCommandsResult;
 
-  client.logger.info(`Registered ${result.length} global commands`);
+  client.logger.info(
+    {
+      commands: result.length,
+      apiDurationMs: Math.round(performance.now() - registrationStartedAt),
+      totalDurationMs: Math.round(performance.now() - startedAt),
+    },
+    "Registered global commands",
+  );
 }

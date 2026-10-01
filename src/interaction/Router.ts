@@ -20,9 +20,25 @@ export async function routeInteraction(
   client: Client,
   interaction: Interaction,
 ) {
+  const startedAt = performance.now();
   if (!client.startInteraction()) {
+    client.logger.debug(
+      { interactionId: interaction.id },
+      "Interaction routing skipped",
+    );
     return;
   }
+
+  client.logger.debug(
+    {
+      interactionId: interaction.id,
+      type: interaction.type,
+      userId: interaction.user.id,
+      guildId: interaction.guildId,
+      channelId: interaction.channelId,
+    },
+    "Interaction received",
+  );
 
   const userUpdate = interaction.isAutocomplete()
     ? Promise.resolve()
@@ -41,9 +57,26 @@ export async function routeInteraction(
       await handleModal(client, interaction);
     }
   } catch (error) {
-    client.logger.error({ err: error }, "Error handling interaction");
+    client.logger.error(
+      {
+        err: error,
+        interactionId: interaction.id,
+        type: interaction.type,
+        userId: interaction.user.id,
+        guildId: interaction.guildId,
+        durationMs: Math.round(performance.now() - startedAt),
+      },
+      "Error handling interaction",
+    );
   } finally {
     await userUpdate;
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        durationMs: Math.round(performance.now() - startedAt),
+      },
+      "Interaction routing completed",
+    );
     client.finishInteraction();
   }
 }
@@ -107,10 +140,25 @@ async function handleCommand(
   const { execute, options, cooldown, key, dailyLimit } =
     command.resolve(interaction);
 
+  client.logger.debug(
+    {
+      interactionId: interaction.id,
+      command: command.name,
+      key,
+      cooldown,
+      dailyLimit,
+      requiredPermissions: command.defaultMemberPermissions?.toString(),
+    },
+    "Command resolved",
+  );
+
   const wrapped = createInteraction(interaction, options, false);
 
   if (!execute) {
-    client.logger.warn(`No handler resolved for "${interaction.commandName}"`);
+    client.logger.warn(
+      { interactionId: interaction.id, command: interaction.commandName, key },
+      "No command handler resolved",
+    );
     return;
   }
 
@@ -123,6 +171,16 @@ async function handleCommand(
     (!interaction.inGuild() ||
       !interaction.memberPermissions?.has(command.defaultMemberPermissions))
   ) {
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        command: command.name,
+        userId,
+        requiredPermissions: command.defaultMemberPermissions.toString(),
+        memberPermissions: interaction.memberPermissions?.bitfield.toString(),
+      },
+      "Command denied by member permissions",
+    );
     await wrapped
       .reply({
         ...v2(
@@ -140,6 +198,16 @@ async function handleCommand(
     const expires = client.useCooldown(key, userId, cooldown);
 
     if (expires) {
+      client.logger.debug(
+        {
+          interactionId: interaction.id,
+          command: command.name,
+          key,
+          userId,
+          expiresAt: expires,
+        },
+        "Command denied by cooldown",
+      );
       await wrapped
         .reply({
           ...v2(
@@ -160,6 +228,18 @@ async function handleCommand(
   if (dailyLimit !== undefined) {
     const result = await consumeDailyUse(userId, key, dailyLimit);
 
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        command: command.name,
+        key,
+        userId,
+        dailyLimit,
+        allowed: result.allowed,
+      },
+      "Command daily limit checked",
+    );
+
     if (!result.allowed) {
       await wrapped
         .reply({
@@ -178,11 +258,33 @@ async function handleCommand(
     }
   }
 
+  const executionStartedAt = performance.now();
+  client.logger.debug(
+    { interactionId: interaction.id, command: command.name, key },
+    "Command execution started",
+  );
   try {
     await execute(client, wrapped);
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        command: command.name,
+        key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+        deferred: wrapped.isDeferred(),
+        replied: wrapped.isReplied(),
+      },
+      "Command execution completed",
+    );
   } catch (error) {
     client.logger.error(
-      { err: error },
+      {
+        err: error,
+        interactionId: interaction.id,
+        command: command.name,
+        key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
       `Error executing command "${command.name}"`,
     );
 
@@ -216,6 +318,17 @@ async function handleContextCommand(
   const wrapped = createInteraction(interaction);
   const key = "context:" + lookupKey;
 
+  client.logger.debug(
+    {
+      interactionId: interaction.id,
+      command: command.name,
+      key,
+      cooldown: command.cooldown,
+      dailyLimit: command.dailyLimit,
+    },
+    "Context command resolved",
+  );
+
   LogInteraction(client, interaction, key);
 
   if (command.cooldown) {
@@ -226,6 +339,15 @@ async function handleContextCommand(
     );
 
     if (expires) {
+      client.logger.debug(
+        {
+          interactionId: interaction.id,
+          command: command.name,
+          key,
+          expiresAt: expires,
+        },
+        "Context command denied by cooldown",
+      );
       await wrapped.reply({
         ...v2(
           new Container().text(
@@ -266,11 +388,31 @@ async function handleContextCommand(
     }
   }
 
+  const executionStartedAt = performance.now();
+  client.logger.debug(
+    { interactionId: interaction.id, command: command.name, key },
+    "Context command execution started",
+  );
   try {
     await command.execute(client, wrapped);
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        command: command.name,
+        key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
+      "Context command execution completed",
+    );
   } catch (error) {
     client.logger.error(
-      { err: error },
+      {
+        err: error,
+        interactionId: interaction.id,
+        command: command.name,
+        key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
       "Error executing context command " + JSON.stringify(command.name),
     );
 
@@ -306,13 +448,33 @@ async function handleAutocomplete(
   const wrapped = createInteraction(interaction);
 
   if (!execute) {
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        command: interaction.commandName,
+      },
+      "Autocomplete has no handler",
+    );
     return;
   }
 
   LogInteraction(client, interaction, interaction.commandName);
 
+  const executionStartedAt = performance.now();
+  client.logger.debug(
+    { interactionId: interaction.id, command: command.name },
+    "Autocomplete execution started",
+  );
   try {
     await execute(client, wrapped);
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        command: command.name,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
+      "Autocomplete execution completed",
+    );
   } catch (error) {
     client.logger.error(
       { err: error },
@@ -346,12 +508,36 @@ async function handleComponent(
     return;
   }
 
+  client.logger.debug(
+    {
+      interactionId: interaction.id,
+      componentType: type.slice(0, -1),
+      feature: parsed.feature,
+      action: parsed.action,
+      handler: handler.key,
+    },
+    "Component handler resolved",
+  );
   LogInteraction(client, interaction, handler.key);
+  const executionStartedAt = performance.now();
   try {
     await handler.execute(client, createInteraction(interaction), parsed);
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        handler: handler.key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
+      "Component execution completed",
+    );
   } catch (error) {
     client.logger.error(
-      { err: error },
+      {
+        err: error,
+        interactionId: interaction.id,
+        handler: handler.key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
       `Error handling ${type.slice(0, -1)} "${handler.key}"`,
     );
   }
@@ -379,12 +565,35 @@ async function handleModal(
     return;
   }
 
+  client.logger.debug(
+    {
+      interactionId: interaction.id,
+      feature: parsed.feature,
+      action: parsed.action,
+      handler: handler.key,
+    },
+    "Modal handler resolved",
+  );
   LogInteraction(client, interaction, handler.key);
+  const executionStartedAt = performance.now();
   try {
     await handler.execute(client, createInteraction(interaction), parsed);
+    client.logger.debug(
+      {
+        interactionId: interaction.id,
+        handler: handler.key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
+      "Modal execution completed",
+    );
   } catch (error) {
     client.logger.error(
-      { err: error },
+      {
+        err: error,
+        interactionId: interaction.id,
+        handler: handler.key,
+        durationMs: Math.round(performance.now() - executionStartedAt),
+      },
       `Error handling modal "${handler.key}"`,
     );
   }
