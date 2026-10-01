@@ -24,10 +24,10 @@
 [x] `/server` View information about the server
 [x] `/emoji` View information about an emoji
 [ ] `/afk` Set or remove your AFK status
-[ ] `/weather` Check the weather for a location
-[ ] `/translate` Translate text between languages
-[ ] `/calc` Calculate a mathematical expression
-[ ] `/convert` Convert between units and currencies
+[x] `/weather` Check the weather for a location
+[x] `/translate` Translate text between languages
+[x] `/calc` Calculate a mathematical expression
+[x] `/convert` Convert between units and currencies
 [ ] `/timezone` Manage and compare timezones
 [x] `/shorten` Shorten or expand a URL
 [x] `/text` Encode and transform text
