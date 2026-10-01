@@ -208,7 +208,7 @@ const marry = new SubcommandGroup({
 
 export default new Command({
   name: "family",
-  description: "Make a wholesame family with other users",
+  description: "Build and explore your family",
   everywhere: true,
   subcommandGroups: [marry],
   subcommands: [

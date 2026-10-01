@@ -192,21 +192,19 @@ export default class Command {
       type: ApplicationCommandType.ChatInput,
       options: commandOptions,
       default_member_permissions: options.defaultMemberPermissions?.toString(),
-
-      ...(options.everywhere
-        ? {
-            integration_types: [
-              ApplicationIntegrationType.GuildInstall,
-              ApplicationIntegrationType.UserInstall,
-            ],
-
-            contexts: [
-              InteractionContextType.Guild,
-              InteractionContextType.BotDM,
-              InteractionContextType.PrivateChannel,
-            ],
-          }
-        : {}),
+      integration_types: options.everywhere
+        ? [
+            ApplicationIntegrationType.GuildInstall,
+            ApplicationIntegrationType.UserInstall,
+          ]
+        : [ApplicationIntegrationType.GuildInstall],
+      contexts: options.everywhere
+        ? [
+            InteractionContextType.Guild,
+            InteractionContextType.BotDM,
+            InteractionContextType.PrivateChannel,
+          ]
+        : [InteractionContextType.Guild],
     };
 
     this.cooldown = options.cooldown ?? DEFAULT_COOLDOWN;
@@ -638,6 +636,18 @@ export async function RegisterCommands(client: Client) {
       body: local as RESTPutAPIApplicationCommandsJSONBody,
     },
   )) as RESTPutAPIApplicationCommandsResult;
+
+  client.logger.debug(
+    {
+      commands: result.map((command) => ({
+        name: command.name,
+        contexts: command.contexts,
+        integrationTypes: command.integration_types,
+        defaultMemberPermissions: command.default_member_permissions,
+      })),
+    },
+    "Verified registered command access settings",
+  );
 
   client.logger.info(
     {
