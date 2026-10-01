@@ -129,15 +129,11 @@ export default new Command({
                 `user:avatar:${user.id}`,
                 icons.Person,
               ),
-              ...(user.banner
-                ? [
-                    Buttons.secondary(
-                      "Banner",
-                      `user:banner:${user.id}`,
-                      icons.image,
-                    ),
-                  ]
-                : []),
+              Buttons.secondary(
+                "Banner",
+                `user:banner:${user.id}`,
+                icons.image,
+              ),
             ),
           ),
       ),

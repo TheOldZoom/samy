@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, escapeMarkdown } from "discord.js";
 import Command from "@/classes/Command";
 import { icons } from "@/utils/icons";
+import { renderColorBanner } from "@/utils/ui/cards/banner";
 import {
   ActionRow,
   Buttons,
@@ -49,21 +50,18 @@ export default new Command({
     );
 
     if (!user.banner) {
+      const banner = await renderColorBanner(user.id, user.accentColor);
+
       await interaction.reply({
+        files: [{ name: "banner.png", attachment: banner.data }],
         ...v2(
           new Container()
             .text(
               Text(
-                [
-                  `-# ${icons.image} · **${name}** doesn't have a banner.`,
-                  user.hexAccentColor
-                    ? `Accent color: \`${user.hexAccentColor}\``
-                    : "",
-                ]
-                  .filter(Boolean)
-                  .join("\n"),
+                `-# ${icons.image} · **${name}**'s banner · \`${banner.color}\``,
               ),
             )
+            .media(Media("attachment://banner.png"))
             .actionRow(ActionRow(avatarButton)),
         ),
         allowedMentions: { parse: [] },
