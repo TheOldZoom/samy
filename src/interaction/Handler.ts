@@ -8,6 +8,7 @@ import type {
 
 import type Client from "@/classes/Client";
 import type { Interaction } from "@/classes/Interaction";
+import { refreshDiscordUserIfStale } from "@/utils/userCache";
 
 import type { ComponentId } from "./ComponentId";
 
@@ -34,6 +35,20 @@ export default class InteractionHandler {
 
   get key() {
     return `${this.feature}:${this.action}`;
+  }
+}
+
+export async function UpdateInteractionUser(
+  client: Client,
+  interaction: DiscordInteraction,
+) {
+  try {
+    await refreshDiscordUserIfStale(interaction.user);
+  } catch (error) {
+    client.logger.warn(
+      { err: error, userId: interaction.user.id },
+      "Could not update the interaction user cache",
+    );
   }
 }
 

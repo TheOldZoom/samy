@@ -14,7 +14,7 @@ import { createInteraction } from "@/classes/Interaction";
 import prisma from "@/libs/Prisma";
 import { Container, Text, v2 } from "@/utils/ui/components";
 import { parseComponentId } from "./ComponentId";
-import { LogInteraction } from "./Handler";
+import { LogInteraction, UpdateInteractionUser } from "./Handler";
 
 export async function routeInteraction(
   client: Client,
@@ -23,6 +23,10 @@ export async function routeInteraction(
   if (!client.startInteraction()) {
     return;
   }
+
+  const userUpdate = interaction.isAutocomplete()
+    ? Promise.resolve()
+    : UpdateInteractionUser(client, interaction);
 
   try {
     if (interaction.isChatInputCommand()) {
@@ -39,6 +43,7 @@ export async function routeInteraction(
   } catch (error) {
     client.logger.error({ err: error }, "Error handling interaction");
   } finally {
+    await userUpdate;
     client.finishInteraction();
   }
 }

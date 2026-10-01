@@ -8,7 +8,41 @@ datasource db {
 }
 
 model User {
-  id String @id
+  id       String  @id
+  username String
+  avatar   String?
+
+  marriageMembership MarriageMember?
+  parentAdoptions    Adoption[]      @relation("AdoptionParent")
+  childAdoptions     Adoption[]      @relation("AdoptionChild")
+}
+
+model Marriage {
+  id        String           @id @default(uuid())
+  createdAt DateTime         @default(now())
+  members   MarriageMember[]
+
+  @@index([createdAt])
+}
+
+model MarriageMember {
+  userId     String   @id
+  marriageId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  marriage   Marriage @relation(fields: [marriageId], references: [id], onDelete: Cascade)
+
+  @@index([marriageId])
+}
+
+model Adoption {
+  parentId  String
+  childId   String
+  createdAt DateTime @default(now())
+  parent    User     @relation("AdoptionParent", fields: [parentId], references: [id], onDelete: Cascade)
+  child     User     @relation("AdoptionChild", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@id([parentId, childId])
+  @@unique([childId])
 }
 
 model DailyUsage {
