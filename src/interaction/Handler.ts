@@ -43,7 +43,11 @@ export async function UpdateInteractionUser(
   interaction: DiscordInteraction,
 ) {
   try {
-    await refreshDiscordUserIfStale(interaction.user);
+    const status = await refreshDiscordUserIfStale(interaction.user);
+    client.logger.debug(
+      { userId: interaction.user.id, status },
+      "Interaction user cache checked",
+    );
   } catch (error) {
     client.logger.warn(
       { err: error, userId: interaction.user.id },
@@ -140,9 +144,15 @@ export async function LoadInteractionHandlers(
   client: Client,
   type: "buttons" | "selects" | "modals",
 ) {
+  const startedAt = performance.now();
   const directory = join(import.meta.dir, `./${type}`);
 
   const files = await getFiles(directory);
+
+  client.logger.debug(
+    { type, directory, files: files.length },
+    "Discovered interaction handler files",
+  );
 
   for (const file of files) {
     const handler = (
@@ -151,10 +161,31 @@ export async function LoadInteractionHandlers(
       }
     ).default;
 
+    if (client.interactionHandlers[type].has(handler.key)) {
+      client.logger.warn(
+        { type, key: handler.key, file },
+        "Duplicate interaction handler replaced",
+      );
+    }
+
     client.interactionHandlers[type].set(handler.key, handler);
+
+    client.logger.debug(
+      { type, key: handler.key, file },
+      "Loaded interaction handler",
+    );
 
     client.logger.info(
       `${`[${type.toUpperCase()}]:`.padEnd(10)} ${handler.key}`,
     );
   }
+
+  client.logger.debug(
+    {
+      type,
+      handlers: client.interactionHandlers[type].size,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    "Interaction handlers loaded",
+  );
 }

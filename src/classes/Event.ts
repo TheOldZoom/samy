@@ -52,8 +52,14 @@ async function getEventFiles(directory: string): Promise<string[]> {
 }
 
 export async function LoadEvents(client: Client) {
+  const startedAt = performance.now();
   const eventsDirectory = join(import.meta.dir, "../events");
   const files = await getEventFiles(eventsDirectory);
+
+  client.logger.debug(
+    { directory: eventsDirectory, files: files.length },
+    "Discovered event files",
+  );
 
   for (const file of files) {
     const event = (
@@ -62,8 +68,37 @@ export async function LoadEvents(client: Client) {
 
     client.logger.info(`${`[EVENT]:`.padEnd(10)} ${event.name}`);
 
-    const listener = (...args: ClientEvents[keyof ClientEvents]) =>
-      void event.execute(client, ...args);
+    client.logger.debug(
+      { event: event.name, once: event.once, file },
+      "Loaded event listener",
+    );
+
+    const listener = (...args: ClientEvents[keyof ClientEvents]) => {
+      const eventStartedAt = performance.now();
+      client.logger.debug({ event: event.name }, "Event execution started");
+
+      void Promise.resolve()
+        .then(() => event.execute(client, ...args))
+        .then(() => {
+          client.logger.debug(
+            {
+              event: event.name,
+              durationMs: Math.round(performance.now() - eventStartedAt),
+            },
+            "Event execution completed",
+          );
+        })
+        .catch((error) => {
+          client.logger.error(
+            {
+              err: error,
+              event: event.name,
+              durationMs: Math.round(performance.now() - eventStartedAt),
+            },
+            "Event execution failed",
+          );
+        });
+    };
 
     if (event.once) {
       client.once(event.name, listener as never);
@@ -71,4 +106,12 @@ export async function LoadEvents(client: Client) {
       client.on(event.name, listener as never);
     }
   }
+
+  client.logger.debug(
+    {
+      listeners: files.length,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    "Events loaded",
+  );
 }
